@@ -54,19 +54,17 @@ const PlusTechAnimation: React.FC = () => {
       }
     );
 
-    // Subtle hover animation for the title
-    gsap.to(titleRef.current, {
-      duration: 2,
-      scale: 1.05,
-      ease: "power1.inOut",
-      repeat: -1,
-      yoyo: true
-    });
+    // Removed breathing effect - keeping static title
 
   }, []);
 
   return (
     <>
+      {/* Import Google Fonts - Eurostile-like alternatives */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600;700;800&family=Rajdhani:wght@300;400;500;600;700&family=Audiowide&family=Chakra+Petch:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      
       <style>
         {`
           @keyframes gradient-shift {
@@ -114,12 +112,12 @@ const PlusTechAnimation: React.FC = () => {
 
           .main-title {
             font-size: clamp(3rem, 10vw, 9rem);
-            font-weight: 450;
+            font-weight: 700;
             margin-bottom: 1.5rem;
             line-height: 1.1;
             position: relative;
             z-index: 10;
-            font-family: 'Syncopate', sans-serif;
+            font-family: 'Audiowide', 'Orbitron', 'Exo 2', 'Rajdhani', 'Arial Black', sans-serif;
             letter-spacing: 0.1em;
             display: flex;
             justify-content: center;
@@ -128,11 +126,11 @@ const PlusTechAnimation: React.FC = () => {
 
           .title-letter {
             display: inline-block;
-            background: linear-gradient(to right, #00a99d, #00a99d);
+            background: linear-gradient(to right, #00aeef, #00aeef);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 0 30px rgba(0, 169, 157, 0.2));
+            filter: drop-shadow(0 0 30px rgba(0, 174, 239, 0.3));
           }
 
           .sub-title {

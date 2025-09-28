@@ -17,25 +17,22 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg shadow-lg shadow-teal-500/5" style={{ backgroundColor: '#1A1A1A' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
               <img 
                 src="/newlogo.png" 
                 alt="PlusTech Logo" 
-                className="h-12 w-auto brightness-125 contrast-125 drop-shadow-lg filter"
-                style={{
-                  filter: 'brightness(1.25) contrast(1.25) drop-shadow(0 4px 8px rgba(0, 169, 157, 0.3))'
-                }}
+                className="h-14 w-auto"
               />
             </div>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="ml-12 flex items-baseline space-x-10">
               {navItems.map((item) => (
                 <a
                   key={item.name}
