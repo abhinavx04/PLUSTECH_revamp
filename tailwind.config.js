@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         'charcoal': '#36454F',
+        'custom-dark': '#0C0C0C',
       },
     },
   },

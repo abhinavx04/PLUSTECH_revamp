@@ -2,7 +2,7 @@ import React from 'react';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-charcoal text-white">
+    <div className="min-h-screen bg-custom-dark text-white">
       {/* Your homepage content will go here */}
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-4xl font-bold mb-6">PlusTech Systems & Solutions</h1>
