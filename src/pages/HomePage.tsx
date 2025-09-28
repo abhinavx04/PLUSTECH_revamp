@@ -16,14 +16,16 @@ const HomePage: React.FC = () => {
       " />
       
       {/* Floating Text */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-2xl" style={{ color: '#00a99d' }}>
-            Developing Solutions
-          </h2>
-          <h2 className="text-5xl md:text-6xl font-bold text-white drop-shadow-2xl">
-            Delivering Quality
-          </h2>
+      <div className="relative z-10 flex items-center justify-start min-h-screen px-8" style={{ paddingTop: '25vh' }}>
+        <div className="text-left max-w-5xl">
+          <div className="flex flex-row space-x-8">
+            <h2 className="text-4xl md:text-5xl font-bold drop-shadow-2xl" style={{ color: '#00a99d' }}>
+              Developing Solutions
+            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl">
+              Delivering Quality
+            </h2>
+          </div>
         </div>
       </div>
 
