@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const HomepageAnimation: React.FC = () => {
+  // 1. Create a ref for the container
+  const containerRef = useRef<HTMLDivElement>(null);
+
   // State to hold the grid dimensions
   const [grid, setGrid] = useState({ cols: 0, rows: 0 });
   // State to hold the animation time
@@ -8,26 +11,30 @@ const HomepageAnimation: React.FC = () => {
 
   // --- CONFIGURATION ---
   const DOT_SIZE = 1.5;      // The size of each dot in pixels
-  const GAP = 18;          // The space between each dot
+  const GAP = 12;          // Use the denser gap from before
   const AMPLITUDE = 40;      // The height of the wave
   const FREQUENCY = 0.025;   // The density of the wave crests
   const ANIMATION_SPEED = 0.001; // How fast the wave moves
 
-  // Effect to calculate grid size based on window dimensions
+  // 2. Update the grid calculation effect
   useEffect(() => {
     const updateGrid = () => {
-      const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
-      setGrid({
-        cols: Math.floor(screenWidth / (DOT_SIZE + GAP)),
-        rows: Math.floor(screenHeight / (DOT_SIZE + GAP)),
-      });
+      // Check if the ref is attached to an element
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+        
+        setGrid({
+          cols: Math.floor(containerWidth / (DOT_SIZE + GAP)),
+          rows: Math.floor(containerHeight / (DOT_SIZE + GAP)),
+        });
+      }
     };
 
     updateGrid();
-    window.addEventListener('resize', updateGrid);
+    window.addEventListener('resize', updateGrid); // Keep it responsive
     return () => window.removeEventListener('resize', updateGrid);
-  }, []);
+  }, []); // This effect still runs once on mount
 
   // Effect to run the animation loop
   useEffect(() => {
@@ -72,8 +79,12 @@ const HomepageAnimation: React.FC = () => {
     return dots;
   };
 
+  // 3. Attach the ref to the main div
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div
+      ref={containerRef}
+      className="relative h-full w-full overflow-hidden"
+    >
       {renderDots()}
     </div>
   );
