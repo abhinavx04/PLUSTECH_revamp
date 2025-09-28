@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import DarkVeil from './DarkVeil'; // Your existing animation
 
@@ -24,7 +23,6 @@ const letterVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      ease: 'easeOut',
       duration: 0.5,
     },
   },
@@ -37,7 +35,6 @@ const line2Variants = {
     opacity: 1,
     x: 0,
     transition: {
-      ease: 'circOut',
       duration: 1.2,
     },
   },
@@ -50,7 +47,6 @@ const qualityBarVariants = {
     scaleX: 1,
     transition: {
       duration: 1.2,
-      ease: 'circOut',
       delay: 0.5, // Start drawing the bar shortly after the text appears
     },
   },
@@ -58,7 +54,7 @@ const qualityBarVariants = {
 
 export default function HeroLayout() {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-black font-sans" style={{ zIndex: 1, fontFamily: 'Poppins, sans-serif' }}>
+    <div className="relative h-full w-full overflow-hidden bg-black font-sans" style={{ zIndex: 1, fontFamily: 'Orbitron, Arial, sans-serif' }}>
       {/* 1. The untouched background animation */}
       <div className="absolute inset-0">
         <DarkVeil
@@ -79,6 +75,7 @@ export default function HeroLayout() {
         {/* Line 1: "Developing Solutions" */}
         <motion.h1
           className="m-0 text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] font-semibold tracking-wide text-white/80 leading-tight"
+          style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}
           aria-label={line1}
           variants={{
             visible: { transition: { staggerChildren: 0.05 } },
@@ -97,7 +94,7 @@ export default function HeroLayout() {
 
         {/* Line 2: "Delivering Quality" with the bar */}
         <motion.div className="mt-3 sm:mt-4" variants={line2Variants}>
-          <h2 className="m-0 text-[0.875rem] sm:text-[1rem] md:text-[1.25rem] font-light uppercase tracking-[1.5px] text-[#00ddff]">
+          <h2 className="m-0 text-[0.875rem] sm:text-[1rem] md:text-[1.25rem] font-light uppercase tracking-[1.5px] text-white/80" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
             {line2}
           </h2>
           <motion.div

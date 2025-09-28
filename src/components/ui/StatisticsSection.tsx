@@ -107,7 +107,7 @@ const StatCard: React.FC<StatCardProps> = ({ number, label, icon, delay }) => {
 
         {/* Label */}
         <div ref={labelRef}>
-          <p className="text-gray-300 text-sm lg:text-base font-medium leading-relaxed">
+          <p className="text-gray-300 text-sm lg:text-base font-medium leading-relaxed" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
             {label}
           </p>
         </div>
@@ -178,17 +178,17 @@ const StatisticsSection: React.FC = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="relative py-20 px-6 sm:px-8 lg:px-12" style={{ fontFamily: 'Poppins, sans-serif' }}>
+    <section ref={sectionRef} className="relative py-20 px-6 sm:px-8 lg:px-12" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
       {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Title */}
         <div className="text-center mb-16">
-          <h2 ref={titleRef} className="text-3xl lg:text-4xl font-bold text-white mb-4">
+          <h2 ref={titleRef} className="text-3xl lg:text-4xl font-bold text-white mb-4" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
             Our Impact in Numbers
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
             Delivering excellence across industries with proven results and unwavering commitment to quality.
           </p>
         </div>

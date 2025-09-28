@@ -10,7 +10,6 @@ const VideoAboutSection: React.FC = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLHeadingElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -18,7 +17,7 @@ const VideoAboutSection: React.FC = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Set initial states
-      gsap.set([headerRef.current, titleRef.current, textRef.current, buttonRef.current], {
+      gsap.set([titleRef.current, textRef.current, buttonRef.current], {
         opacity: 0,
         y: 50
       });
@@ -32,7 +31,7 @@ const VideoAboutSection: React.FC = () => {
       // Removed container hover animation for stability
 
       // Scroll-triggered animations
-      const tl = gsap.timeline({
+      gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 80%",
@@ -63,19 +62,11 @@ const VideoAboutSection: React.FC = () => {
             }
 
             // Content animations
-            gsap.to(headerRef.current, {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power3.out"
-            });
-
             gsap.to(titleRef.current, {
               opacity: 1,
               y: 0,
               duration: 1,
-              ease: "power3.out",
-              delay: 0.2
+              ease: "power3.out"
             });
 
             gsap.to(textRef.current, {
@@ -83,7 +74,7 @@ const VideoAboutSection: React.FC = () => {
               y: 0,
               duration: 1,
               ease: "power3.out",
-              delay: 0.4
+              delay: 0.2
             });
 
             gsap.to(buttonRef.current, {
@@ -91,7 +82,7 @@ const VideoAboutSection: React.FC = () => {
               y: 0,
               duration: 0.8,
               ease: "power3.out",
-              delay: 0.6
+              delay: 0.4
             });
           }
         }
@@ -115,7 +106,7 @@ const VideoAboutSection: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative pt-8 pb-32 overflow-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
+    <section ref={sectionRef} className="relative pt-8 pb-8 overflow-hidden" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
       {/* Background blur effect */}
       <div className="absolute inset-0 backdrop-blur-[1px]"></div>
       
@@ -154,38 +145,29 @@ const VideoAboutSection: React.FC = () => {
           
           {/* Right Side - Content (55-60% width) */}
           <div ref={contentRef} className="flex-1 lg:flex-[0.55] space-y-8 flex flex-col justify-center">
-            {/* Small "About us" header */}
-            <h3 ref={headerRef} className="text-sm font-medium text-gray-400 uppercase tracking-wider text-left">
-              About us
-            </h3>
-            
             {/* Main headline */}
             <div className="space-y-4 sm:space-y-6">
-              <h2 ref={titleRef} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.2] text-left">
+              <h2 ref={titleRef} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-[1.2] text-left" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
                 About Us
               </h2>
             </div>
             
              {/* Body text - Proper text wrapping */}
              <div ref={textRef} className="space-y-4 sm:space-y-6 w-full">
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
-                 At Plustech Systems and Solutions, we specialize in building advanced, fully integrated paintshops for both the Automotive sector and a wide range of General Industry applications.
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+                 At Plustech Systems and Solutions, we design and build advanced, fully integrated paintshops for the Automotive sector and diverse General Industry applications.
                </p>
                
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
-                 Our core strength lies in delivering customized, end-to-end solutions — from concept and detailed design to engineering, procurement, construction, and final commissioning. Every paintshop we create is tailored to meet the unique requirements of our customers, ensuring optimal efficiency, reliability, and long-term performance.
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+                 Our expertise spans the full project lifecycle — from concept and design to engineering, procurement, construction, and commissioning. Every solution is customized to meet specific client needs, delivering efficiency, reliability, and long-term performance.
                </p>
 
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
-                 Over the years, Plustech has earned a reputation for consistency, dependability, and robust engineering. This trust has become our seal of success, as we continue to provide paintshops that not only meet but exceed client expectations.
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+                 Known for consistency and robust engineering, Plustech has built lasting trust with customers by exceeding expectations. Guided by innovation and continuous improvement, we work closely with clients to boost productivity, minimize downtime, and create lasting value.
                </p>
 
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
-                 Driven by the principles of innovation and continuous improvement, we work closely with our customers to understand their goals and challenges. By combining technical expertise with practical insights, we deliver solutions that enhance productivity, reduce downtime, and add real value to their operations.
-               </p>
-
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
-                 At Plustech, our mission is simple: to be a trusted partner in surface finishing solutions, empowering industries with paintshops that perform today and evolve for tomorrow.
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+                 Our mission is clear: to be a trusted partner in surface finishing solutions, providing paintshops that perform today and adapt for tomorrow.
                </p>
              </div>
             
@@ -194,6 +176,7 @@ const VideoAboutSection: React.FC = () => {
               <button 
                 ref={buttonRef}
                 className="group px-8 py-3 border border-teal-400 text-white font-medium rounded-lg hover:bg-teal-400 hover:text-black transition-all duration-300 relative overflow-hidden text-left"
+                style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}
               >
                 <span className="relative z-10">More about us</span>
                 <div className="absolute inset-0 bg-teal-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>

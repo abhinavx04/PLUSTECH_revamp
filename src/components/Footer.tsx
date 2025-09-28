@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   return (
     <footer 
       className="relative bg-black border-t border-white/10 py-16"
-      style={{ fontFamily: 'Poppins, sans-serif' }}
+      style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}
     >
       
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -26,14 +26,14 @@ const Footer: React.FC = () => {
               </div>
             </div>
             <div className="flex space-x-4">
+              <a href="https://www.linkedin.com/company/plustech-systems-solutions-private-limited/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-[#00ddff] hover:text-black transition-all duration-200">
+                <FaLinkedinIn />
+              </a>
               <a href="#" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-[#00ddff] hover:text-black transition-all duration-200">
                 <FaTwitter />
               </a>
               <a href="#" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-[#00ddff] hover:text-black transition-all duration-200">
                 <FaFacebookF />
-              </a>
-              <a href="#" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-[#00ddff] hover:text-black transition-all duration-200">
-                <FaLinkedinIn />
               </a>
             </div>
           </div>
@@ -52,15 +52,19 @@ const Footer: React.FC = () => {
 
           {/* Contact Info */}
           <div className="space-y-6">
-            <h4 className="text-white text-lg font-semibold">Contact Info</h4>
+            <h4 className="text-white text-lg font-semibold">Head Office</h4>
             <address className="space-y-3 not-italic">
               <div className="flex items-start space-x-3 text-gray-400">
                 <FaMapMarkerAlt className="flex-shrink-0 mt-1 text-[#00ddff]" />
-                <span>123 Industrial Road, Tech City, TX 78901</span>
+                <span>"Antariksh Towers" Office Nos.412-418, 9th Floor, CTS No. 391,392, Near Narpatgiri Chowk, Pune– 411 011 (MS) India</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <FaPhone className="flex-shrink-0 text-[#00ddff]" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 20 26114961</span>
+              </div>
+              <div className="flex items-center space-x-3 text-gray-400">
+                <FaPhone className="flex-shrink-0 text-[#00ddff]" />
+                <span>+91 20 26056366</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">
                 <FaEnvelope className="flex-shrink-0 text-[#00ddff]" />
