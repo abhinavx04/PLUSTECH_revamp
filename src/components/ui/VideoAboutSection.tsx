@@ -122,7 +122,7 @@ const VideoAboutSection: React.FC = () => {
       <div className="relative z-10 w-full">
         <div 
           ref={containerRef}
-          className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center min-h-[600px] p-8 lg:p-12 rounded-none bg-black/30 backdrop-blur-sm border border-white/10 shadow-2xl"
+          className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center min-h-[600px] p-8 lg:p-12 rounded-none bg-black/10 backdrop-blur-sm border border-white/10 shadow-2xl"
         >
           
           {/* Left Side - Video/Image (40-45% width) */}

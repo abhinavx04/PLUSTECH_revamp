@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import VideoAboutSection from '../components/ui/VideoAboutSection';
 import HeroLayout from '../components/ui/HeroLayout';
@@ -10,23 +11,23 @@ const HomePage: React.FC = () => {
       {/* Navbar */}
       <Navbar />
       
-      {/* Background Image - Pushed down further below DarkVeil and VideoAboutSection */}
+      {/* Background Image - Covers CompanyAnimation and Footer */}
       <div 
         className="absolute bg-cover bg-center bg-no-repeat opacity-10"
         style={{
           backgroundImage: `url('/home/home.png')`,
-          top: '1200px',
+          top: '800px',
           left: 0,
           right: 0,
           bottom: 0,
         }}
       />
       
-      {/* Dark overlay for better text readability - Only below sections */}
+      {/* Dark overlay for better text readability - Covers CompanyAnimation and Footer */}
       <div 
         className="absolute bg-black bg-opacity-50"
         style={{
-          top: '1200px',
+          top: '800px',
           left: 0,
           right: 0,
           bottom: 0,
@@ -42,10 +43,15 @@ const HomePage: React.FC = () => {
       <VideoAboutSection />
 
       {/* Company Animation Component */}
-      <div className="relative z-10 flex justify-end px-8 py-8">
-        <div className="w-full max-w-md">
+      <div className="relative z-10 flex justify-center px-8 py-4">
+        <div className="w-full max-w-7xl">
           <CompanyAnimation />
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-[30rem]">
+        <Footer />
       </div>
 
     </div>
