@@ -24,9 +24,10 @@ const HomepageAnimation: React.FC = () => {
         const containerWidth = containerRef.current.clientWidth;
         const containerHeight = containerRef.current.clientHeight;
         
+        // Calculate grid to fill the entire container
         setGrid({
-          cols: Math.floor(containerWidth / (DOT_SIZE + GAP)),
-          rows: Math.floor(containerHeight / (DOT_SIZE + GAP)),
+          cols: Math.ceil(containerWidth / (DOT_SIZE + GAP)),
+          rows: Math.ceil(containerHeight / (DOT_SIZE + GAP)),
         });
       }
     };
