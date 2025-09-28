@@ -115,7 +115,7 @@ const VideoAboutSection: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-32 overflow-hidden">
+    <section ref={sectionRef} className="relative pt-8 pb-32 overflow-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
       {/* Background blur effect */}
       <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"></div>
       
@@ -153,37 +153,47 @@ const VideoAboutSection: React.FC = () => {
           </div>
           
           {/* Right Side - Content (55-60% width) */}
-          <div ref={contentRef} className="flex-1 lg:flex-[0.55] space-y-8">
+          <div ref={contentRef} className="flex-1 lg:flex-[0.55] space-y-8 flex flex-col justify-center">
             {/* Small "About us" header */}
-            <h3 ref={headerRef} className="text-sm font-medium text-gray-400 uppercase tracking-wider">
+            <h3 ref={headerRef} className="text-sm font-medium text-gray-400 uppercase tracking-wider text-left">
               About us
             </h3>
             
             {/* Main headline */}
-            <div className="space-y-4">
-              <h2 ref={titleRef} className="text-4xl lg:text-6xl font-bold text-white leading-[1.1]">
-                Industrial finishing solutions.
-                <br />
-                <span className="text-teal-400">Plustech delivers that.</span>
+            <div className="space-y-6">
+              <h2 ref={titleRef} className="text-4xl lg:text-5xl font-bold text-white leading-[1.2] text-left">
+                About Us
               </h2>
             </div>
             
             {/* Body text */}
             <div ref={textRef} className="space-y-6 max-w-2xl">
-              <p className="text-gray-300 leading-relaxed text-lg">
-                Plustech is a trusted name in the industrial finishing industry, specializing in the design, engineering, procurement, construction, and commissioning of surface finishing plants.
+              <p className="text-gray-300 leading-relaxed text-lg text-left">
+                At Plustech Systems and Solutions, we specialize in building advanced, fully integrated paintshops for both the Automotive sector and a wide range of General Industry applications.
               </p>
               
-              <p className="text-gray-300 leading-relaxed text-lg">
-                We deliver semi-automatic and fully automatic plants, customized to meet each customer's unique requirements. Guided by the principle of continuous improvement, we focus on understanding client needs and providing the most effective engineered solutions.
+              <p className="text-gray-300 leading-relaxed text-lg text-left">
+                Our core strength lies in delivering customized, end-to-end solutions — from concept and detailed design to engineering, procurement, construction, and final commissioning. Every paintshop we create is tailored to meet the unique requirements of our customers, ensuring optimal efficiency, reliability, and long-term performance.
+              </p>
+
+              <p className="text-gray-300 leading-relaxed text-lg text-left">
+                Over the years, Plustech has earned a reputation for consistency, dependability, and robust engineering. This trust has become our seal of success, as we continue to provide paintshops that not only meet but exceed client expectations.
+              </p>
+
+              <p className="text-gray-300 leading-relaxed text-lg text-left">
+                Driven by the principles of innovation and continuous improvement, we work closely with our customers to understand their goals and challenges. By combining technical expertise with practical insights, we deliver solutions that enhance productivity, reduce downtime, and add real value to their operations.
+              </p>
+
+              <p className="text-gray-300 leading-relaxed text-lg text-left">
+                At Plustech, our mission is simple: to be a trusted partner in surface finishing solutions, empowering industries with paintshops that perform today and evolve for tomorrow.
               </p>
             </div>
             
             {/* CTA Button */}
-            <div className="pt-4">
+            <div className="pt-6">
               <button 
                 ref={buttonRef}
-                className="group px-8 py-3 border border-teal-400 text-white font-medium rounded-lg hover:bg-teal-400 hover:text-black transition-all duration-300 relative overflow-hidden"
+                className="group px-8 py-3 border border-teal-400 text-white font-medium rounded-lg hover:bg-teal-400 hover:text-black transition-all duration-300 relative overflow-hidden text-left"
               >
                 <span className="relative z-10">More about us</span>
                 <div className="absolute inset-0 bg-teal-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>

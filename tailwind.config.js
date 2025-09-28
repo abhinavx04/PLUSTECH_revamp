@@ -10,6 +10,9 @@ export default {
         'charcoal': '#36454F',
         'custom-dark': '#0C0C0C',
       },
+      fontFamily: {
+        'sans': ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
     },
   },
   plugins: [],

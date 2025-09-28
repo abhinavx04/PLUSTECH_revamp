@@ -114,7 +114,7 @@ const CompanyAnimation: React.FC = () => {
   return (
     <>
       <AnimationStyles />
-      <div className="w-full flex flex-col items-center justify-center gap-6">
+      <div className="w-full flex flex-col items-center justify-center gap-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
         <h2 className="text-gray-300 text-center text-base font-semibold drop-shadow-lg">
           Trusted by leading companies
         </h2>
