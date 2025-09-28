@@ -115,14 +115,14 @@ const VideoAboutSection: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-32 px-4 overflow-hidden">
+    <section ref={sectionRef} className="relative py-32 overflow-hidden">
       {/* Background blur effect */}
       <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"></div>
       
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative z-10 w-full">
         <div 
           ref={containerRef}
-          className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center min-h-[600px] p-8 lg:p-12 rounded-2xl bg-black/30 backdrop-blur-sm border border-white/10 shadow-2xl"
+          className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center min-h-[600px] p-8 lg:p-12 rounded-none bg-black/30 backdrop-blur-sm border border-white/10 shadow-2xl"
         >
           
           {/* Left Side - Video/Image (40-45% width) */}
