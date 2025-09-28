@@ -1,10 +1,14 @@
 import React from 'react';
+import Navbar from '../components/Navbar';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import PlusTechAnimation from '../components/ui/PlusTechAnimation';
 
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-custom-dark text-white relative">
+      {/* Navbar */}
+      <Navbar />
+      
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
