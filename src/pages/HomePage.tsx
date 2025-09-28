@@ -1,4 +1,5 @@
 import React from 'react';
+import CompanyAnimation from '../components/ui/CompanyAnimation';
 
 const HomePage: React.FC = () => {
   return (
@@ -16,7 +17,7 @@ const HomePage: React.FC = () => {
       " />
       
       {/* Floating Text */}
-      <div className="relative z-10 flex items-center justify-start min-h-screen px-8" style={{ paddingTop: '25vh' }}>
+      <div className="relative z-10 flex items-center justify-between min-h-screen px-8" style={{ paddingTop: '25vh' }}>
         <div className="text-left max-w-5xl">
           <div className="flex flex-row space-x-8">
             <h2 className="text-4xl md:text-5xl font-bold drop-shadow-2xl" style={{ color: '#00a99d' }}>
@@ -26,6 +27,11 @@ const HomePage: React.FC = () => {
               Delivering Quality
             </h2>
           </div>
+        </div>
+        
+        {/* Company Animation Component - Right Side */}
+        <div className="w-full max-w-md" style={{ marginTop: '20rem' }}>
+          <CompanyAnimation />
         </div>
       </div>
 
