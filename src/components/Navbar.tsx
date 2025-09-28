@@ -38,35 +38,35 @@ const Navbar: React.FC = () => {
         left: '0',
         right: '0',
         width: '100%',
-        height: '64px',
+            height: '64px',
         display: 'block',
         visibility: 'visible',
         opacity: '1'
       }}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12" style={{ fontFamily: 'Poppins, sans-serif' }}>
-        <div className="flex items-center justify-between h-16">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <div className="flex items-center justify-between h-16">
           {/* Logo and Company Name - Left */}
           <div className="flex items-center space-x-3">
-            <img 
-              src="/newlogo.png" 
-              alt="PlusTech Logo" 
-              className="h-12 w-auto brightness-110 contrast-110"
-            />
-            <span 
-              className="text-white font-bold text-lg tracking-wider"
-              style={{ 
-                fontFamily: 'Orbitron, Arial, sans-serif',
-                fontWeight: '800',
-                letterSpacing: '0.1em'
-              }}
-            >
-              PLUSTECH
-            </span>
+                <img 
+                  src="/newlogo.png" 
+                  alt="PlusTech Logo" 
+                  className="h-12 w-auto brightness-110 contrast-110"
+                />
+                <span 
+                  className="text-white font-bold text-lg tracking-wider"
+                  style={{ 
+                    fontFamily: 'Orbitron, Arial, sans-serif',
+                    fontWeight: '800',
+                    letterSpacing: '0.1em'
+                  }}
+                >
+                  PLUSTECH
+                </span>
           </div>
 
-          {/* Desktop Navigation - Center with GooeyNav */}
-          <div className="hidden md:block w-96 h-16">
+              {/* Desktop Navigation - Center with GooeyNav */}
+              <div className="hidden md:block w-96 h-16">
             <GooeyNav
               items={gooeyItems}
               particleCount={15}
