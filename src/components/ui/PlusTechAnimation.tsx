@@ -113,11 +113,6 @@ const PlusTechAnimation: React.FC = () => {
             padding: 2rem;
           }
 
-          .gradient-bg {
-            position: absolute;
-            inset: 0;
-            background: transparent;
-          }
 
           .main-title {
             font-size: clamp(3rem, 10vw, 9rem);
@@ -171,46 +166,11 @@ const PlusTechAnimation: React.FC = () => {
             pointer-events: none;
           }
 
-          .blob-1 {
-            top: 30%;
-            left: 20%;
-            background: rgba(0, 169, 157, 0.08);
-            animation: blob 12s infinite;
-          }
 
-          .blob-2 {
-            top: 60%;
-            right: 20%;
-            background: rgba(0, 169, 157, 0.06);
-            animation: blob 12s infinite;
-            animation-delay: 4s;
-          }
-
-          .blob-3 {
-            bottom: 30%;
-            left: 40%;
-            background: rgba(0, 169, 157, 0.05);
-            animation: blob 12s infinite;
-            animation-delay: 8s;
-          }
-
-          .grain-overlay {
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.05;
-            pointer-events: none;
-          }
         `}
       </style>
 
       <div className="tagline-container" ref={containerRef}>
-        <div className="gradient-bg" />
-        <div className="grain-overlay" />
-
-        <div className="blob blob-1" />
-        <div className="blob blob-2" />
-        <div className="blob blob-3" />
 
         <div ref={titleRef} className="main-title">
           {"PLUSTECH".split('').map((letter, index) => (
