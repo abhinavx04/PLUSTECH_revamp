@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   return (
     <footer 
       className="relative bg-black border-t border-white/10 py-16"
-      style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}
+      style={{ fontFamily: 'Roboto Flex, sans-serif' }}
     >
       
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">

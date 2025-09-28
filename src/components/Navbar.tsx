@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
         opacity: '1'
       }}
     >
-          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
             <div className="flex items-center justify-between h-16">
           {/* Logo and Company Name - Left */}
           <div className="flex items-center space-x-2">

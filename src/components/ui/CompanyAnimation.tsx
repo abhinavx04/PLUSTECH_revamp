@@ -184,8 +184,8 @@ const CompanyAnimation: React.FC = () => {
   return (
     <>
       <AnimationStyles />
-      <div className="w-full flex flex-col items-center justify-center gap-4 sm:gap-6 px-4 sm:px-0" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
-        <h2 className="text-gray-300 text-center text-xl sm:text-2xl md:text-3xl font-semibold drop-shadow-lg" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+      <div className="w-full flex flex-col items-center justify-center gap-4 sm:gap-6 px-4 sm:px-0" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+        <h2 className="text-gray-300 text-center text-xl sm:text-2xl md:text-3xl font-semibold drop-shadow-lg" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
           Trusted by leading companies
         </h2>
         <div className="w-full mx-auto relative overflow-hidden group"
