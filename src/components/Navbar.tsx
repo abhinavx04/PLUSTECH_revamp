@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GooeyNav from './GooeyNav';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +14,15 @@ const Navbar: React.FC = () => {
     { name: 'Services', href: '/services' },
     { name: 'Projects', href: '/projects' },
     { name: 'Contact', href: '/contact' }
+  ];
+
+  // GooeyNav items
+  const gooeyItems = [
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Services", href: "/services" },
+    { label: "Projects", href: "/projects" },
+    { label: "Contact", href: "/contact" }
   ];
 
   return (
@@ -36,31 +46,37 @@ const Navbar: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12" style={{ fontFamily: 'Poppins, sans-serif' }}>
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <div className="flex items-center">
-              <img 
-                src="/newlogo.png" 
-                alt="PlusTech Logo" 
-                className="h-10 w-auto brightness-110 contrast-110"
-              />
-            </div>
+          {/* Logo and Company Name - Left */}
+          <div className="flex items-center space-x-3">
+            <img 
+              src="/newlogo.png" 
+              alt="PlusTech Logo" 
+              className="h-12 w-auto brightness-110 contrast-110"
+            />
+            <span 
+              className="text-white font-bold text-lg tracking-wider"
+              style={{ 
+                fontFamily: 'Orbitron, Arial, sans-serif',
+                fontWeight: '800',
+                letterSpacing: '0.1em'
+              }}
+            >
+              PLUSTECH
+            </span>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-12 flex items-center space-x-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-white/10 hover:text-white relative group"
-                >
-                  {item.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-200 group-hover:w-full"></span>
-                </a>
-              ))}
-            </div>
+          {/* Desktop Navigation - Center with GooeyNav */}
+          <div className="hidden md:block w-96 h-16">
+            <GooeyNav
+              items={gooeyItems}
+              particleCount={15}
+              particleDistances={[90, 10]}
+              particleR={100}
+              initialActiveIndex={0}
+              animationTime={600}
+              timeVariance={300}
+              colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+            />
           </div>
 
           {/* Mobile menu button */}
