@@ -1,12 +1,13 @@
 import React from 'react';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
+import PlusTechAnimation from '../components/ui/PlusTechAnimation';
 
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-custom-dark text-white relative">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
         style={{
           backgroundImage: `url('/home/home.png')`,
         }}
@@ -16,21 +17,12 @@ const HomePage: React.FC = () => {
       <div className="absolute inset-0 bg-black bg-opacity-50
       " />
       
-      {/* Floating Text */}
-      <div className="relative z-10 flex items-center justify-between min-h-screen px-8" style={{ paddingTop: '25vh' }}>
-        <div className="text-left max-w-5xl">
-          <div className="flex flex-row space-x-8">
-            <h2 className="text-4xl md:text-5xl font-bold drop-shadow-2xl" style={{ color: '#00a99d' }}>
-              Developing Solutions
-            </h2>
-            <h2 className="text-4xl md:text-5xl font-bold text-white drop-shadow-2xl">
-              Delivering Quality
-            </h2>
-          </div>
-        </div>
-        
-        {/* Company Animation Component - Right Side */}
-        <div className="w-full max-w-md" style={{ marginTop: '20rem' }}>
+      {/* PlusTech Animation Component - Above taglines */}
+      <PlusTechAnimation />
+      
+      {/* Company Animation Component */}
+      <div className="relative z-10 flex justify-end px-8" style={{ paddingTop: '5vh' }}>
+        <div className="w-full max-w-md">
           <CompanyAnimation />
         </div>
       </div>
