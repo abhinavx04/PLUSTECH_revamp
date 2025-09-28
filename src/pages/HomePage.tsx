@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import VideoAboutSection from '../components/ui/VideoAboutSection';
 import HeroLayout from '../components/ui/HeroLayout';
+import StatisticsSection from '../components/ui/StatisticsSection';
 
 const HomePage: React.FC = () => {
   return (
@@ -16,7 +17,7 @@ const HomePage: React.FC = () => {
         className="absolute bg-cover bg-center bg-no-repeat opacity-10"
         style={{
           backgroundImage: `url('/home/home.png')`,
-          top: '800px',
+          top: '600px',
           left: 0,
           right: 0,
           bottom: 0,
@@ -27,7 +28,7 @@ const HomePage: React.FC = () => {
       <div 
         className="absolute bg-black bg-opacity-50"
         style={{
-          top: '800px',
+          top: '600px',
           left: 0,
           right: 0,
           bottom: 0,
@@ -48,6 +49,9 @@ const HomePage: React.FC = () => {
           <CompanyAnimation />
         </div>
       </div>
+
+      {/* Statistics Section */}
+      <StatisticsSection />
 
       {/* Footer */}
       <div className="mt-[30rem]">

@@ -184,16 +184,16 @@ const CompanyAnimation: React.FC = () => {
   return (
     <>
       <AnimationStyles />
-      <div className="w-full flex flex-col items-center justify-center gap-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
-        <h2 className="text-gray-300 text-center text-3xl font-semibold drop-shadow-lg">
+      <div className="w-full flex flex-col items-center justify-center gap-4 sm:gap-6 px-4 sm:px-0" style={{ fontFamily: 'Poppins, sans-serif' }}>
+        <h2 className="text-gray-300 text-center text-xl sm:text-2xl md:text-3xl font-semibold drop-shadow-lg">
           Trusted by leading companies
         </h2>
         <div className="w-full mx-auto relative overflow-hidden group"
              style={{ maskImage: 'linear-gradient(to right, transparent, white 10%, white 90%, transparent)' }}>
           <div className="flex w-max animate-scroll">
             {duplicatedLogos.map((logo, index) => (
-              <div key={index} className="flex-shrink-0 w-96 h-32 mx-12 flex items-center justify-center">
-                <div className="grayscale transition-all duration-300 opacity-60 group-hover:grayscale-0 group-hover:opacity-100 scale-150">
+              <div key={index} className="flex-shrink-0 w-64 sm:w-80 md:w-96 h-24 sm:h-28 md:h-32 mx-6 sm:mx-8 md:mx-12 flex items-center justify-center">
+                <div className="grayscale transition-all duration-300 opacity-60 group-hover:grayscale-0 group-hover:opacity-100 scale-100 sm:scale-125 md:scale-150">
                   {logo.component}
                 </div>
               </div>

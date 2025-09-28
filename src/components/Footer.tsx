@@ -14,14 +14,17 @@ const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center space-x-3">
-              <img src="/newlogo.png" alt="PlusTech Logo" className="h-10 w-auto brightness-110 contrast-110" />
-              <span className="text-white font-bold text-xl tracking-wider" style={{ fontFamily: 'Orbitron, Arial, sans-serif', fontWeight: '800', letterSpacing: '0.1em' }}>
-                PLUSTECH
-              </span>
+              <img src="/newlogo.png" alt="PlusTech Logo" className="h-14 w-auto brightness-110 contrast-110" />
+              <div className="flex flex-col justify-center">
+                <span className="font-bold text-xl tracking-wider" style={{ fontFamily: 'Orbitron, Arial, sans-serif', fontWeight: '800', letterSpacing: '0.1em', color: '#00aeef' }}>
+                  PLUSTECH
+                </span>
+                <p className="text-gray-400 text-xs mt-1">
+                  Developing Solutions<br />
+                  Delivering Quality
+                </p>
+              </div>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-              Industrial Finishing Solutions. Plustech delivers that.
-            </p>
             <div className="flex space-x-4">
               <a href="#" className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:bg-[#00ddff] hover:text-black transition-all duration-200">
                 <FaTwitter />

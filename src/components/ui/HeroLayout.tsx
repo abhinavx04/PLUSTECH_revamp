@@ -64,21 +64,21 @@ export default function HeroLayout() {
         <DarkVeil
           hueShift={10}
           warpAmount={0.2}
-          speed={0.3}
+          speed={1.5}
           noiseIntensity={0.01}
         />
       </div>
 
       {/* 2. The new, animated tagline, styled with Tailwind CSS */}
       <motion.div
-        className="absolute bottom-[10%] left-[5%] right-[5%] text-white md:left-[8%] md:right-auto z-10"
+        className="absolute bottom-[8%] sm:bottom-[10%] left-[4%] right-[4%] sm:left-[5%] sm:right-[5%] md:left-[8%] md:right-auto text-white z-10"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Line 1: "Developing Solutions" */}
         <motion.h1
-          className="m-0 text-[2rem] font-semibold tracking-wide text-white/80 md:text-[2.5rem]"
+          className="m-0 text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] font-semibold tracking-wide text-white/80 leading-tight"
           aria-label={line1}
           variants={{
             visible: { transition: { staggerChildren: 0.05 } },
@@ -96,12 +96,12 @@ export default function HeroLayout() {
         </motion.h1>
 
         {/* Line 2: "Delivering Quality" with the bar */}
-        <motion.div className="mt-4" variants={line2Variants}>
-          <h2 className="m-0 text-[1rem] font-light uppercase tracking-[1.5px] text-[#00ddff] md:text-[1.25rem]">
+        <motion.div className="mt-3 sm:mt-4" variants={line2Variants}>
+          <h2 className="m-0 text-[0.875rem] sm:text-[1rem] md:text-[1.25rem] font-light uppercase tracking-[1.5px] text-[#00ddff]">
             {line2}
           </h2>
           <motion.div
-            className="mt-3 h-[2px] bg-gradient-to-r from-cyan-400/50 to-cyan-400 shadow-[0_0_8px_rgba(0,221,255,0.6)]"
+            className="mt-2 sm:mt-3 h-[1.5px] sm:h-[2px] bg-gradient-to-r from-cyan-400/50 to-cyan-400 shadow-[0_0_8px_rgba(0,221,255,0.6)]"
             variants={qualityBarVariants}
             // Ensure the bar originates from the left
             style={{ originX: 0 }}

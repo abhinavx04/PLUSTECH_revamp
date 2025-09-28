@@ -117,17 +117,17 @@ const VideoAboutSection: React.FC = () => {
   return (
     <section ref={sectionRef} className="relative pt-8 pb-32 overflow-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
       {/* Background blur effect */}
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"></div>
+      <div className="absolute inset-0 backdrop-blur-[1px]"></div>
       
       <div className="relative z-10 w-full">
         <div 
           ref={containerRef}
-          className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center min-h-[600px] p-8 lg:p-12 rounded-none bg-black/10 backdrop-blur-sm border border-white/10 shadow-2xl"
+          className="flex flex-col lg:flex-row gap-8 sm:gap-12 lg:gap-16 items-center min-h-[500px] sm:min-h-[600px] p-4 sm:p-8 lg:p-12 rounded-none backdrop-blur-sm shadow-2xl"
         >
           
           {/* Left Side - Video/Image (40-45% width) */}
-          <div ref={videoContainerRef} className="flex-1 lg:flex-[0.45] max-w-lg">
-            <div className="relative w-full h-[400px] lg:h-[500px] rounded-xl overflow-hidden shadow-2xl">
+          <div ref={videoContainerRef} className="flex-1 lg:flex-[0.45] max-w-lg w-full">
+            <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-xl overflow-hidden shadow-2xl">
               {/* Video Player */}
               <video 
                 ref={videoRef}
@@ -160,34 +160,34 @@ const VideoAboutSection: React.FC = () => {
             </h3>
             
             {/* Main headline */}
-            <div className="space-y-6">
-              <h2 ref={titleRef} className="text-4xl lg:text-5xl font-bold text-white leading-[1.2] text-left">
+            <div className="space-y-4 sm:space-y-6">
+              <h2 ref={titleRef} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.2] text-left">
                 About Us
               </h2>
             </div>
             
-            {/* Body text */}
-            <div ref={textRef} className="space-y-6 max-w-2xl">
-              <p className="text-gray-300 leading-relaxed text-lg text-left">
-                At Plustech Systems and Solutions, we specialize in building advanced, fully integrated paintshops for both the Automotive sector and a wide range of General Industry applications.
-              </p>
-              
-              <p className="text-gray-300 leading-relaxed text-lg text-left">
-                Our core strength lies in delivering customized, end-to-end solutions — from concept and detailed design to engineering, procurement, construction, and final commissioning. Every paintshop we create is tailored to meet the unique requirements of our customers, ensuring optimal efficiency, reliability, and long-term performance.
-              </p>
+             {/* Body text - Proper text wrapping */}
+             <div ref={textRef} className="space-y-4 sm:space-y-6 w-full">
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
+                 At Plustech Systems and Solutions, we specialize in building advanced, fully integrated paintshops for both the Automotive sector and a wide range of General Industry applications.
+               </p>
+               
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
+                 Our core strength lies in delivering customized, end-to-end solutions — from concept and detailed design to engineering, procurement, construction, and final commissioning. Every paintshop we create is tailored to meet the unique requirements of our customers, ensuring optimal efficiency, reliability, and long-term performance.
+               </p>
 
-              <p className="text-gray-300 leading-relaxed text-lg text-left">
-                Over the years, Plustech has earned a reputation for consistency, dependability, and robust engineering. This trust has become our seal of success, as we continue to provide paintshops that not only meet but exceed client expectations.
-              </p>
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
+                 Over the years, Plustech has earned a reputation for consistency, dependability, and robust engineering. This trust has become our seal of success, as we continue to provide paintshops that not only meet but exceed client expectations.
+               </p>
 
-              <p className="text-gray-300 leading-relaxed text-lg text-left">
-                Driven by the principles of innovation and continuous improvement, we work closely with our customers to understand their goals and challenges. By combining technical expertise with practical insights, we deliver solutions that enhance productivity, reduce downtime, and add real value to their operations.
-              </p>
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
+                 Driven by the principles of innovation and continuous improvement, we work closely with our customers to understand their goals and challenges. By combining technical expertise with practical insights, we deliver solutions that enhance productivity, reduce downtime, and add real value to their operations.
+               </p>
 
-              <p className="text-gray-300 leading-relaxed text-lg text-left">
-                At Plustech, our mission is simple: to be a trusted partner in surface finishing solutions, empowering industries with paintshops that perform today and evolve for tomorrow.
-              </p>
-            </div>
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto">
+                 At Plustech, our mission is simple: to be a trusted partner in surface finishing solutions, empowering industries with paintshops that perform today and evolve for tomorrow.
+               </p>
+             </div>
             
             {/* CTA Button */}
             <div className="pt-6">
