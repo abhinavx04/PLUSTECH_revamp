@@ -15,11 +15,18 @@ const HomePage: React.FC = () => {
       <div className="absolute inset-0 bg-black bg-opacity-50
       " />
       
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold mb-6">PlusTech Systems & Solutions</h1>
-        <p className="text-xl mb-8">Industrial Finishing Excellence</p>
+      {/* Floating Text */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-2xl" style={{ color: '#00a99d' }}>
+            Developing Solutions
+          </h2>
+          <h2 className="text-5xl md:text-6xl font-bold text-white drop-shadow-2xl">
+            Delivering Quality
+          </h2>
+        </div>
       </div>
+
     </div>
   );
 };
