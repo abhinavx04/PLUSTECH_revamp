@@ -66,7 +66,7 @@ const Navbar: React.FC = () => {
           </div>
 
               {/* Desktop Navigation - Center with GooeyNav */}
-              <div className="hidden md:block w-96 h-16">
+              <div className="hidden md:block w-96 h-16 flex items-center justify-center">
             <GooeyNav
               items={gooeyItems}
               particleCount={15}

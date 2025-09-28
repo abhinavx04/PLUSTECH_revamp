@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface GooeyNavItem {
   label: string;
@@ -30,6 +31,8 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
   const navRef = useRef<HTMLUListElement>(null);
   const filterRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState<number>(initialActiveIndex);
 
   const noise = (n = 1) => n / 2 - Math.random() * n;
@@ -98,8 +101,13 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
     textRef.current.innerText = element.innerText;
   };
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, index: number) => {
+    e.preventDefault();
     const liEl = e.currentTarget;
     if (activeIndex === index) return;
+    
+    // Navigate to the new route
+    navigate(items[index].href);
+    
     setActiveIndex(index);
     updateEffectPosition(liEl);
     if (filterRef.current) {
@@ -129,6 +137,14 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
       }
     }
   };
+  // Update active index based on current location
+  useEffect(() => {
+    const currentIndex = items.findIndex(item => item.href === location.pathname);
+    if (currentIndex !== -1) {
+      setActiveIndex(currentIndex);
+    }
+  }, [location.pathname, items]);
+
   useEffect(() => {
     if (!navRef.current || !containerRef.current) return;
     const activeLi = navRef.current.querySelectorAll('li')[activeIndex] as HTMLElement;
@@ -299,10 +315,11 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
         <nav className="flex relative" style={{ transform: 'translate3d(0,0,0.01px)' }}>
           <ul
             ref={navRef}
-            className="flex gap-8 list-none p-0 px-4 m-0 relative z-[3]"
+            className="flex gap-8 list-none p-0 px-4 m-0 relative z-[3] items-center"
             style={{
               color: 'white',
-              textShadow: '0 1px 1px hsl(205deg 30% 10% / 0.2)'
+              textShadow: '0 1px 1px hsl(205deg 30% 10% / 0.2)',
+              paddingTop: '8px'
             }}
           >
             {items.map((item, index) => (
@@ -316,7 +333,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
                   href={item.href}
                   onClick={e => handleClick(e, index)}
                   onKeyDown={e => handleKeyDown(e, index)}
-                  className="outline-none py-[0.6em] px-[1em] inline-block"
+                  className="outline-none py-[0.6em] px-[1em] inline-block flex items-center justify-center"
                 >
                   {item.label}
                 </a>
