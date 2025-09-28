@@ -67,6 +67,15 @@ const PlusTechAnimation: React.FC = () => {
       
       <style>
         {`
+          @keyframes shimmer {
+            0% {
+              background-position: -200% 0;
+            }
+            100% {
+              background-position: 200% 0;
+            }
+          }
+
           @keyframes gradient-shift {
             0%, 100% {
               background-size: 200% 200%;
@@ -126,11 +135,13 @@ const PlusTechAnimation: React.FC = () => {
 
           .title-letter {
             display: inline-block;
-            background: linear-gradient(to right, #00aeef, #00aeef);
+            background: linear-gradient(45deg, #C0C0C0, #E8E8E8, #C0C0C0, #F0F0F0);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 0 30px rgba(0, 174, 239, 0.3));
+            filter: drop-shadow(0 0 20px rgba(192, 192, 192, 0.5));
+            animation: shimmer 3s ease-in-out infinite;
           }
 
           .sub-title {
