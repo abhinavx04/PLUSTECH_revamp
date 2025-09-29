@@ -1,4 +1,5 @@
-import React, { ReactNode, useLayoutEffect, useRef, useCallback } from 'react';
+import React, { useLayoutEffect, useRef, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import Lenis from 'lenis';
 
 export interface ScrollStackItemProps {
@@ -104,7 +105,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
     isUpdatingRef.current = true;
 
-    const { scrollTop, containerHeight, scrollContainer } = getScrollData();
+    const { scrollTop, containerHeight } = getScrollData();
     const stackPositionPx = parsePercentage(stackPosition, containerHeight);
     const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
 
