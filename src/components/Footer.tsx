@@ -4,9 +4,10 @@ import { FaTwitter, FaFacebookF, FaLinkedinIn, FaMapMarkerAlt, FaPhone, FaEnvelo
 const Footer: React.FC = () => {
   return (
     <footer 
-      className="relative bg-black border-t border-white/10 py-16"
+      className="relative border-t py-16"
       style={{ fontFamily: 'Roboto Flex, sans-serif' }}
     >
+      <div className="absolute inset-0" style={{ background: '#FFF9FB', borderColor: '#D3D4D9' }} />
       
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
@@ -40,13 +41,13 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div className="space-y-6">
-            <h4 className="text-white text-lg font-semibold">Quick Links</h4>
+            <h4 className="text-[#252627] text-lg font-semibold">Quick Links</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-[#00ddff] transition-colors duration-200">Home</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#00ddff] transition-colors duration-200">About Us</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#00ddff] transition-colors duration-200">Services</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#00ddff] transition-colors duration-200">Projects</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[#00ddff] transition-colors duration-200">Contact</a></li>
+              <li><a href="#" className="text-[#4B88A2] hover:text-[#BB0A21] transition-colors duration-200">Home</a></li>
+              <li><a href="#" className="text-[#4B88A2] hover:text-[#BB0A21] transition-colors duration-200">About Us</a></li>
+              <li><a href="#" className="text-[#4B88A2] hover:text-[#BB0A21] transition-colors duration-200">Services</a></li>
+              <li><a href="#" className="text-[#4B88A2] hover:text-[#BB0A21] transition-colors duration-200">Projects</a></li>
+              <li><a href="#" className="text-[#4B88A2] hover:text-[#BB0A21] transition-colors duration-200">Contact</a></li>
             </ul>
           </div>
 

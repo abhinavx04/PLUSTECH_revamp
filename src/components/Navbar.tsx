@@ -27,11 +27,10 @@ const Navbar: React.FC = () => {
 
   return (
     <nav 
-      className="fixed top-0 left-0 right-0 border-b border-white/10 shadow-lg"
+      className="fixed top-0 left-0 right-0 border-b shadow-lg"
       style={{
-        background: 'rgba(0, 0, 0, 0.3)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
+        background: '#FFF9FB',
+        borderColor: '#D3D4D9',
         zIndex: 9999,
         position: 'fixed',
         top: '0',
@@ -84,7 +83,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="text-gray-300 hover:text-white focus:outline-none focus:text-white"
+              className="text-[#252627] hover:text-[#4B88A2] focus:outline-none focus:text-[#4B88A2]"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMenuOpen ? (
@@ -100,12 +99,12 @@ const Navbar: React.FC = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black bg-opacity-90 rounded-lg mt-2">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-[#FFF9FB] rounded-lg mt-2 border" style={{ borderColor: '#D3D4D9' }}>
               {navItems.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                  className="text-[#252627] hover:text-[#4B88A2] block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}

@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import DarkVeil from './DarkVeil'; // Your existing animation
 
 // The tagline text
 const line1 = "Developing Solutions";
@@ -54,27 +53,18 @@ const qualityBarVariants = {
 
 export default function HeroLayout() {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-black font-sans" style={{ zIndex: 1, fontFamily: 'Roboto Flex, sans-serif' }}>
-      {/* 1. The untouched background animation */}
-      <div className="absolute inset-0">
-        <DarkVeil
-          hueShift={10}
-          warpAmount={0.2}
-          speed={1.5}
-          noiseIntensity={0.01}
-        />
-      </div>
+    <div className="relative h-full w-full overflow-hidden bg-[#FFF9FB] font-sans" style={{ zIndex: 1, fontFamily: 'Roboto Flex, sans-serif' }}>
 
       {/* 2. The new, animated tagline, styled with Tailwind CSS */}
       <motion.div
-        className="absolute bottom-[8%] sm:bottom-[10%] left-[4%] right-[4%] sm:left-[5%] sm:right-[5%] md:left-[8%] md:right-auto text-white z-10"
+        className="absolute bottom-[8%] sm:bottom-[10%] left-[4%] right-[4%] sm:left-[5%] sm:right-[5%] md:left-[8%] md:right-auto text-[#252627] z-10"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Line 1: "Developing Solutions" */}
         <motion.h1
-          className="m-0 text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] font-semibold tracking-wide text-white/80 leading-tight"
+          className="m-0 text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] font-semibold tracking-wide text-[#252627] leading-tight"
           style={{ fontFamily: 'Roboto Flex, sans-serif' }}
           aria-label={line1}
           variants={{
@@ -94,11 +84,11 @@ export default function HeroLayout() {
 
         {/* Line 2: "Delivering Quality" with the bar */}
         <motion.div className="mt-3 sm:mt-4" variants={line2Variants}>
-          <h2 className="m-0 text-[0.875rem] sm:text-[1rem] md:text-[1.25rem] font-light uppercase tracking-[1.5px] text-white/80" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+          <h2 className="m-0 text-[0.875rem] sm:text-[1rem] md:text-[1.25rem] font-light uppercase tracking-[1.5px] text-[#252627]/80" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
             {line2}
           </h2>
           <motion.div
-            className="mt-2 sm:mt-3 h-[1.5px] sm:h-[2px] bg-gradient-to-r from-cyan-400/50 to-cyan-400 shadow-[0_0_8px_rgba(0,221,255,0.6)]"
+            className="mt-2 sm:mt-3 h-[1.5px] sm:h-[2px] bg-gradient-to-r from-[#4B88A2] to-[#4B88A2]"
             variants={qualityBarVariants}
             // Ensure the bar originates from the left
             style={{ originX: 0 }}

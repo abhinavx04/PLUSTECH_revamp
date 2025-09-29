@@ -112,10 +112,10 @@ const IndustryApplications: React.FC = () => {
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section Title */}
         <div className="text-center mb-16">
-          <h2 ref={titleRef} className="text-3xl lg:text-4xl font-bold text-white mb-4" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+          <h2 ref={titleRef} className="text-3xl lg:text-4xl font-bold text-[#252627] mb-4" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
             Industry Applications
           </h2>
-          <p className="text-gray-400 text-lg max-w-3xl mx-auto" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+          <p className="text-[#252627]/70 text-lg max-w-3xl mx-auto" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
             Specialized paintshop solutions tailored for diverse industries, delivering precision, efficiency, and reliability across all sectors.
           </p>
         </div>
@@ -126,31 +126,32 @@ const IndustryApplications: React.FC = () => {
             <div
               key={index}
               ref={el => { if (el) cardsRef.current[index] = el; }}
-              className="group relative bg-gray-900/40 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all duration-300 hover:transform hover:scale-105"
+              className="group relative bg-[#D3D4D9]/40 backdrop-blur-sm border rounded-xl p-6 transition-all duration-300 hover:transform hover:scale-105"
+              style={{ borderColor: '#D3D4D9' }}
             >
               {/* Background gradient */}
               <div className={`absolute inset-0 bg-gradient-to-br ${app.gradient} rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
               
               <div className="relative z-10">
                 {/* Icon */}
-                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-white/20 transition-colors duration-300">
+                <div className="w-16 h-16 bg-[#4B88A2]/15 rounded-full flex items-center justify-center mb-4 transition-colors duration-300">
                   <span className="text-2xl">{app.icon}</span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-semibold text-white mb-3" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+                <h3 className="text-xl font-semibold text-[#252627] mb-3" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                   {app.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+                <p className="text-[#252627]/70 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                   {app.description}
                 </p>
 
                 {/* Features */}
                 <ul className="space-y-2">
                   {app.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center text-gray-300 text-sm">
+                    <li key={featureIndex} className="flex items-center text-[#252627]/80 text-sm">
                       <span className="w-1.5 h-1.5 bg-[#00ddff] rounded-full mr-3 flex-shrink-0"></span>
                       <span style={{ fontFamily: 'Roboto Flex, sans-serif' }}>{feature}</span>
                     </li>
@@ -166,10 +167,12 @@ const IndustryApplications: React.FC = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <p className="text-gray-400 mb-6" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+          <p className="text-[#252627]/70 mb-6" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
             Need a custom solution for your industry?
           </p>
-          <button className="group px-8 py-3 border border-[#00ddff] text-[#00ddff] font-medium rounded-lg hover:bg-[#00ddff] hover:text-black transition-all duration-300 relative overflow-hidden">
+          <button className="group px-8 py-3 border font-medium rounded-lg transition-all duration-300 relative overflow-hidden"
+            style={{ borderColor: '#4B88A2', color: '#4B88A2' }}
+          >
             <span className="relative z-10" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>Discuss Your Project</span>
             <div className="absolute inset-0 bg-[#00ddff] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
           </button>
