@@ -53,9 +53,10 @@ const HomePage: React.FC = () => {
       {/* Statistics Section */}
       <StatisticsSection />
 
-
       {/* Footer */}
-      <Footer />
+      <div className="mt-[30rem]">
+        <Footer />
+      </div>
 
     </div>
   );
