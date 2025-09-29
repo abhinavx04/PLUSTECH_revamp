@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import GooeyNav from './GooeyNav';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,13 +15,13 @@ const Navbar: React.FC = () => {
     { name: 'Contact', href: '/contact' }
   ];
 
-  // GooeyNav items
+  // Navigation items (placeholder)
   const gooeyItems = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
-    { label: "Services", href: "/services" },
-    { label: "Projects", href: "/projects" },
-    { label: "Contact", href: "/contact" }
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Services', href: '/services' },
+    { name: 'Projects', href: '/projects' },
+    { name: 'Contact', href: '/contact' }
   ];
 
   return (
@@ -66,13 +65,14 @@ const Navbar: React.FC = () => {
                 </span>
           </div>
 
-              {/* Desktop Navigation - Center with GooeyNav */}
-              <div className="hidden md:block w-96 h-16 flex items-center justify-center">
-            <GooeyNav
-              items={gooeyItems}
-              initialActiveIndex={0}
-            />
-          </div>
+              {/* Desktop Navigation - Center (placeholder links) */}
+              <div className="hidden md:flex gap-6 items-center justify-center text-white/90">
+                {gooeyItems.map((item) => (
+                  <a key={item.name} href={item.href} className="hover:text-white transition-colors">
+                    {item.name}
+                  </a>
+                ))}
+              </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
