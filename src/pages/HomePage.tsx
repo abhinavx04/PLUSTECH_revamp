@@ -288,7 +288,7 @@ const HomePage: React.FC = () => {
             rotationAmount={0}
             blurAmount={0}
           >
-            <ScrollStackItem>
+            <ScrollStackItem surfaceInsetClassName="top-2 bottom-2 left-4 right-4 md:top-4 md:bottom-4 md:left-24 md:right-24 lg:left-32 lg:right-32">
               <div className="w-full h-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
                 <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">Automated and Customised Material Handling</h4>
                 <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">

@@ -4,10 +4,15 @@ import Lenis from 'lenis';
 
 export interface ScrollStackItemProps {
   itemClassName?: string;
+  /**
+   * Optional className to control the surface insets (distance from viewport edges).
+   * Defaults to 'inset-2 md:inset-4'.
+   */
+  surfaceInsetClassName?: string;
   children: ReactNode;
 }
 
-export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({ children, itemClassName = '' }) => (
+export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({ children, itemClassName = '', surfaceInsetClassName }) => (
   <div
     className={`scroll-stack-card relative w-full h-screen my-0 p-0 rounded-none shadow-none box-border origin-top will-change-transform ${itemClassName}`.trim()}
     style={{
@@ -15,7 +20,7 @@ export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({ children, item
       transformStyle: 'preserve-3d'
     }}
   >
-    <div className="absolute inset-2 md:inset-4 rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.25)] border border-[#00aeef]/20">
+    <div className={`absolute ${surfaceInsetClassName ?? 'inset-2 md:inset-4'} rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.25)] border border-[#00aeef]/20`}>
       <div
         className="card-surface absolute inset-0"
         style={{
@@ -191,8 +196,8 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         card.style.filter = filter;
         // Keep fully opaque during the card's pin window.
         // Only after the pinEnd is passed do we fade it out, over a larger distance.
-        const fadeDelay = 60; // px grace after pinEnd before fading begins
-        const fadeOutRange = 320; // px after delay to fully disappear
+        const fadeDelay = 100; // px grace after pinEnd before fading begins
+        const fadeOutRange = 400; // px after delay to fully disappear
         let opacity = 1;
         if (scrollTop > pinEnd + fadeDelay) {
           const over = scrollTop - pinEnd - fadeDelay;
