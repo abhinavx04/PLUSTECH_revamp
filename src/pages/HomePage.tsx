@@ -5,6 +5,8 @@ import CompanyAnimation from '../components/ui/CompanyAnimation';
 import VideoAboutSection from '../components/ui/VideoAboutSection';
 import HeroLayout from '../components/ui/HeroLayout';
 import StatisticsSection from '../components/ui/StatisticsSection';
+import RoboticApplications from '../components/ui/RoboticApplications';
+import MaterialHandling from '../components/ui/MaterialHandling';
 
 const HomePage: React.FC = () => {
   return (
@@ -49,6 +51,12 @@ const HomePage: React.FC = () => {
           <CompanyAnimation />
         </div>
       </div>
+
+      {/* Robotic Applications Section */}
+      <RoboticApplications />
+
+      {/* Material Handling Section */}
+      <MaterialHandling />
 
       {/* Statistics Section */}
       <StatisticsSection />
