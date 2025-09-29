@@ -3,8 +3,13 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --font-heading: 'Orbitron', system-ui, sans-serif;
+    --font-body: 'Exo 2', system-ui, sans-serif;
+    --font-retro: 'VT323', ui-monospace, monospace;
+  }
   body {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-body);
   }
   :root {
     --background: 0 0% 100%;
@@ -61,6 +66,16 @@
   }
 }
 
+@keyframes floaty {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+.animate-floaty {
+  animation: floaty 2.6s ease-in-out infinite;
+}
+
 
 
 @layer base {
@@ -69,3 +84,8 @@
     color: hsl(var(--foreground));
   }
 }
+
+/* Utility classes for targeted overrides if needed */
+.font-heading { font-family: var(--font-heading); }
+.font-body { font-family: var(--font-body); }
+.font-retro { font-family: var(--font-retro); }
