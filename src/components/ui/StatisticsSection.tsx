@@ -164,16 +164,10 @@ const StatisticsSection: React.FC = () => {
       delay: 0.1
     },
     {
-      number: "50+",
-      label: "Countries Served",
-      icon: "◯",
-      delay: 0.2
-    },
-    {
       number: "99%",
       label: "Client Satisfaction",
       icon: "◐",
-      delay: 0.3
+      delay: 0.2
     }
   ];
 
@@ -194,7 +188,7 @@ const StatisticsSection: React.FC = () => {
         </div>
 
         {/* Statistics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-4xl mx-auto">
           {stats.map((stat, index) => (
             <StatCard
               key={index}

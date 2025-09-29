@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import CircularGallery from '../CircularGallery';
+import CircularGallery from './CircularGallery';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);

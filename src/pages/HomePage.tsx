@@ -5,7 +5,6 @@ import CompanyAnimation from '../components/ui/CompanyAnimation';
 import VideoAboutSection from '../components/ui/VideoAboutSection';
 import HeroLayout from '../components/ui/HeroLayout';
 import StatisticsSection from '../components/ui/StatisticsSection';
-import OurOfficeSection from '../components/ui/OurOfficeSection';
 
 const HomePage: React.FC = () => {
   return (
@@ -54,8 +53,6 @@ const HomePage: React.FC = () => {
       {/* Statistics Section */}
       <StatisticsSection />
 
-      {/* Our Office Section */}
-      <OurOfficeSection />
 
       {/* Footer */}
       <Footer />
