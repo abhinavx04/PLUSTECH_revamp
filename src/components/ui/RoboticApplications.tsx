@@ -70,7 +70,7 @@ const cardVariants = {
 
 export default function RoboticApplications() {
   return (
-    <section className="py-16 px-6 sm:px-8 lg:px-12 bg-black relative overflow-hidden">
+    <section className="py-16 px-6 sm:px-8 lg:px-12 bg-[#FFF9FB] relative overflow-hidden">
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-900/20 to-transparent" />
       
@@ -84,7 +84,7 @@ export default function RoboticApplications() {
           viewport={{ once: true }}
         >
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-white mb-6"
+            className="text-4xl md:text-5xl font-bold text-[#252627] mb-6"
             style={{ fontFamily: 'Roboto Flex, sans-serif' }}
           >
             Robotic Applications
@@ -97,7 +97,7 @@ export default function RoboticApplications() {
             viewport={{ once: true }}
           />
           <motion.p 
-            className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed"
+            className="text-lg text-[#252627]/70 max-w-3xl mx-auto leading-relaxed"
             style={{ fontFamily: 'Roboto Flex, sans-serif' }}
           >
             Advanced robotic systems for precision manufacturing, quality control, and automated processes 
@@ -124,7 +124,8 @@ export default function RoboticApplications() {
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
               <motion.div
-                className="relative bg-gray-900/50 rounded-2xl overflow-hidden border border-gray-800/50 shadow-2xl backdrop-blur-sm"
+                className="relative bg-[#D3D4D9]/40 rounded-2xl overflow-hidden border shadow-2xl"
+                style={{ borderColor: '#D3D4D9' }}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
@@ -143,7 +144,7 @@ export default function RoboticApplications() {
                     transition={{ duration: 0.4, ease: "easeOut" }}
                   />
                   <motion.div
-                    className="absolute inset-0 bg-gray-800 flex items-center justify-center"
+                    className="absolute inset-0 bg-[#FFF9FB] flex items-center justify-center"
                     whileHover={{ 
                       scale: 1.1,
                       filter: "brightness(1) contrast(1.2)"
@@ -156,12 +157,12 @@ export default function RoboticApplications() {
                   >
                     {/* Placeholder with industrial icon */}
                     <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
-                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-[#4B88A2] rounded-lg flex items-center justify-center">
+                        <svg className="w-8 h-8 text-[#FFF9FB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                         </svg>
                       </div>
-                      <p className="text-gray-400 text-sm">Industrial Plant {index + 1}</p>
+                      <p className="text-[#252627]/70 text-sm">Industrial Plant {index + 1}</p>
                     </div>
                   </motion.div>
                   
@@ -175,22 +176,22 @@ export default function RoboticApplications() {
 
                 {/* Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+                  <h3 className="text-xl font-bold text-[#252627] mb-3" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                     {plant.title}
                   </h3>
-                  <p className="text-gray-400 text-sm leading-relaxed" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+                  <p className="text-[#252627]/70 text-sm leading-relaxed" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                     {plant.description}
                   </p>
                   
                   {/* Animated progress indicator */}
                   <motion.div 
-                    className="mt-4 h-1 bg-gray-800 rounded-full overflow-hidden"
+                    className="mt-4 h-1 bg-[#D3D4D9] rounded-full overflow-hidden"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
                   >
                     <motion.div
-                      className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"
+                      className="h-full bg-gradient-to-r from-[#4B88A2] to-[#4B88A2] rounded-full"
                       initial={{ scaleX: 0, originX: 0 }}
                       whileInView={{ scaleX: 0.8 }}
                       transition={{ duration: 1.5, delay: 0.8 + index * 0.1 }}
@@ -219,7 +220,7 @@ export default function RoboticApplications() {
           viewport={{ once: true }}
         >
           <motion.button
-            className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-cyan-500/25 transition-all duration-300"
+            className="px-8 py-4 bg-[#4B88A2] text-[#FFF9FB] font-semibold rounded-lg hover:shadow-lg transition-all duration-300"
             style={{ fontFamily: 'Roboto Flex, sans-serif' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

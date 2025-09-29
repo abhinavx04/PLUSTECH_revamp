@@ -10,25 +10,15 @@ import MaterialHandling from '../components/ui/MaterialHandling';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-black text-white relative">
+    <div className="min-h-screen bg-[#FFF9FB] text-[#252627] relative">
       {/* Navbar */}
       <Navbar />
       
-      {/* Background Image - Covers CompanyAnimation and Footer */}
-      <div 
-        className="absolute bg-cover bg-center bg-no-repeat opacity-10"
-        style={{
-          backgroundImage: `url('/home/home.png')`,
-          top: '600px',
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-      />
+      {/* Background image removed as requested */}
       
-      {/* Dark overlay for better text readability - Covers CompanyAnimation and Footer */}
+      {/* Subtle surface tint for lower sections */}
       <div 
-        className="absolute bg-black bg-opacity-50"
+        className="absolute bg-[#D3D4D9]/30"
         style={{
           top: '600px',
           left: 0,

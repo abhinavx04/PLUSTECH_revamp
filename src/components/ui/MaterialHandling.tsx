@@ -66,7 +66,7 @@ const cardVariants = {
 
 // Icon components
 const getIcon = (iconType: string) => {
-  const iconProps = { className: "w-8 h-8 text-white" };
+  const iconProps = { className: "w-8 h-8 text-[#252627]" };
   
   switch (iconType) {
     case 'conveyor':
@@ -104,11 +104,11 @@ const getIcon = (iconType: string) => {
 
 export default function MaterialHandling() {
   return (
-    <section className="py-20 px-6 sm:px-8 lg:px-12 bg-gradient-to-b from-black via-gray-900/50 to-black relative overflow-hidden">
+    <section className="py-20 px-6 sm:px-8 lg:px-12 bg-[#FFF9FB] relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#4B88A2]/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.6, 0.3]
@@ -120,7 +120,7 @@ export default function MaterialHandling() {
           }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#4B88A2]/10 rounded-full blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             opacity: [0.4, 0.7, 0.4]
@@ -144,7 +144,7 @@ export default function MaterialHandling() {
           viewport={{ once: true }}
         >
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-white mb-6"
+            className="text-4xl md:text-5xl font-bold text-[#252627] mb-6"
             style={{ fontFamily: 'Roboto Flex, sans-serif' }}
           >
             Automated Material Handling
@@ -157,7 +157,7 @@ export default function MaterialHandling() {
             viewport={{ once: true }}
           />
           <motion.p 
-            className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed"
+            className="text-xl text-[#252627]/70 max-w-4xl mx-auto leading-relaxed"
             style={{ fontFamily: 'Roboto Flex, sans-serif' }}
           >
             Intelligent automation solutions for efficient material flow, handling, and processing 
@@ -183,11 +183,11 @@ export default function MaterialHandling() {
                 whileHover={{ scale: 1.02, x: 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="bg-gray-900/70 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-cyan-400/30 transition-all duration-300">
+                <div className="bg-[#D3D4D9]/40 backdrop-blur-sm border rounded-2xl p-6 transition-all duration-300" style={{ borderColor: '#D3D4D9' }}>
                   <div className="flex items-start space-x-4">
                     {/* Icon */}
                     <motion.div 
-                      className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center"
+                      className="flex-shrink-0 w-14 h-14 bg-[#4B88A2] rounded-xl flex items-center justify-center"
                       whileHover={{ rotate: 360 }}
                       transition={{ duration: 0.6 }}
                     >
@@ -196,10 +196,10 @@ export default function MaterialHandling() {
                     
                     {/* Content */}
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+                      <h3 className="text-xl font-bold text-[#252627] mb-2" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                         {system.title}
                       </h3>
-                      <p className="text-gray-400 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
+                      <p className="text-[#252627]/70 text-sm mb-4 leading-relaxed" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                         {system.description}
                       </p>
                       
@@ -208,7 +208,8 @@ export default function MaterialHandling() {
                         {system.features.map((feature, idx) => (
                           <motion.span
                             key={idx}
-                            className="px-3 py-1 bg-black/50 text-cyan-400 text-xs rounded-full border border-cyan-400/20"
+                            className="px-3 py-1 bg-[#252627]/50 text-[#4B88A2] text-xs rounded-full border"
+                            style={{ borderColor: '#4B88A2' }}
                             initial={{ opacity: 0, scale: 0.8 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.1 * idx, duration: 0.3 }}
@@ -222,12 +223,12 @@ export default function MaterialHandling() {
                       {/* Efficiency Bar */}
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-500">Efficiency</span>
-                          <span className="text-xs text-cyan-400 font-semibold">{system.efficiency}%</span>
+                          <span className="text-xs text-[#252627]/60">Efficiency</span>
+                          <span className="text-xs text-[#4B88A2] font-semibold">{system.efficiency}%</span>
                         </div>
-                        <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="h-2 bg-[#D3D4D9] rounded-full overflow-hidden">
                           <motion.div
-                            className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"
+                            className="h-full bg-gradient-to-r from-[#4B88A2] to-[#4B88A2] rounded-full"
                             initial={{ scaleX: 0, originX: 0 }}
                             whileInView={{ scaleX: system.efficiency / 100 }}
                             transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
@@ -240,7 +241,7 @@ export default function MaterialHandling() {
                   
                   {/* Hover glow effect */}
                   <motion.div
-                    className="absolute inset-0 rounded-2xl opacity-0 bg-gradient-to-br from-cyan-400/5 to-blue-500/5 pointer-events-none"
+                    className="absolute inset-0 rounded-2xl opacity-0 bg-[#4B88A2]/10 pointer-events-none"
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
