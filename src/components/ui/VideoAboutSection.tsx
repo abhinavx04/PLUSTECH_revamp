@@ -106,7 +106,7 @@ const VideoAboutSection: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative pt-8 pb-8 overflow-hidden" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+    <section ref={sectionRef} className="relative pt-8 pb-8 overflow-hidden" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
       {/* Background blur effect */}
       <div className="absolute inset-0 backdrop-blur-[1px]"></div>
       
@@ -147,26 +147,26 @@ const VideoAboutSection: React.FC = () => {
           <div ref={contentRef} className="flex-1 lg:flex-[0.55] space-y-8 flex flex-col justify-center">
             {/* Main headline */}
             <div className="space-y-4 sm:space-y-6">
-              <h2 ref={titleRef} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-[1.2] text-left" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+              <h2 ref={titleRef} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-[1.2] text-left" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                 About Us
               </h2>
             </div>
             
              {/* Body text - Proper text wrapping */}
              <div ref={textRef} className="space-y-4 sm:space-y-6 w-full">
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                  At Plustech Systems and Solutions, we design and build advanced, fully integrated paintshops for the Automotive sector and diverse General Industry applications.
                </p>
                
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                  Our expertise spans the full project lifecycle — from concept and design to engineering, procurement, construction, and commissioning. Every solution is customized to meet specific client needs, delivering efficiency, reliability, and long-term performance.
                </p>
 
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                  Known for consistency and robust engineering, Plustech has built lasting trust with customers by exceeding expectations. Guided by innovation and continuous improvement, we work closely with clients to boost productivity, minimize downtime, and create lasting value.
                </p>
 
-               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>
+               <p className="text-gray-300 leading-relaxed text-base sm:text-lg text-left break-words hyphens-auto" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
                  Our mission is clear: to be a trusted partner in surface finishing solutions, providing paintshops that perform today and adapt for tomorrow.
                </p>
              </div>
@@ -176,7 +176,7 @@ const VideoAboutSection: React.FC = () => {
               <button 
                 ref={buttonRef}
                 className="group px-8 py-3 border border-teal-400 text-white font-medium rounded-lg hover:bg-teal-400 hover:text-black transition-all duration-300 relative overflow-hidden text-left"
-                style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}
+                style={{ fontFamily: 'Roboto Flex, sans-serif' }}
               >
                 <span className="relative z-10">More about us</span>
                 <div className="absolute inset-0 bg-teal-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>

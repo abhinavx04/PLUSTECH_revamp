@@ -5,6 +5,7 @@ import CompanyAnimation from '../components/ui/CompanyAnimation';
 import VideoAboutSection from '../components/ui/VideoAboutSection';
 import HeroLayout from '../components/ui/HeroLayout';
 import StatisticsSection from '../components/ui/StatisticsSection';
+import InnovativeEngineering from '../components/ui/InnovativeEngineering';
 
 const HomePage: React.FC = () => {
   return (
@@ -42,6 +43,9 @@ const HomePage: React.FC = () => {
 
       {/* Video and About Section - No gap */}
       <VideoAboutSection />
+
+      {/* Innovative Engineering Section */}
+      <InnovativeEngineering />
 
       {/* Company Animation Component */}
       <div className="relative z-10 flex justify-center px-8 py-4">
