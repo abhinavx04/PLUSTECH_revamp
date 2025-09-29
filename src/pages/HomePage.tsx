@@ -10,6 +10,19 @@ const HomePage: React.FC = () => {
   const cloudRef = useRef<HTMLButtonElement>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [panelOrigin, setPanelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [showWisp, setShowWisp] = useState(false);
+  const [wispDirection, setWispDirection] = useState<'open' | 'close' | null>(null);
+
+  const getWispPath = (origin: { x: number; y: number }) => {
+    const startX = window.innerWidth / 2 + origin.x;
+    const startY = window.innerHeight / 2 + origin.y;
+    const endX = window.innerWidth / 2;
+    const endY = window.innerHeight / 2;
+    const midX = (startX + endX) / 2;
+    const midY = (startY + endY) / 2 - 180; // stronger arc upwards
+    // Quadratic Bezier: single elegant curve from cloud to center
+    return `M ${startX},${startY} Q ${midX},${midY} ${endX},${endY}`;
+  };
   const handleCloudClick = () => {
     const rect = cloudRef.current?.getBoundingClientRect();
     if (rect) {
@@ -20,9 +33,16 @@ const HomePage: React.FC = () => {
     } else {
       setPanelOrigin({ x: 0, y: 0 });
     }
+    setShowWisp(true);
+    setWispDirection('open');
     setIsPanelOpen(true);
   };
-  const closePanel = () => setIsPanelOpen(false);
+  const closePanel = () => {
+    // trigger reverse wisp then close
+    setWispDirection('close');
+    setShowWisp(true);
+    setIsPanelOpen(false);
+  };
 
   useEffect(() => {
     const robot = robotRef.current;
@@ -164,9 +184,9 @@ const HomePage: React.FC = () => {
                 Welcome to Plustech
               </h2>
               <p className="text-lg md:text-xl text-gray-700 font-body leading-relaxed">
-                We specialize in cutting-edge manufacturing solutions that integrate 
-                advanced robotics, AI-driven automation, and precision engineering 
-                to transform your production capabilities.
+                At Plustech, we design and build <strong>surface finishing plants</strong> for automotive and general
+                industries. With expertise in engineering, automation, and commissioning, we deliver
+                <strong> customized solutions</strong> that combine innovation, efficiency, and quality.
               </p>
               
               
@@ -223,7 +243,7 @@ const HomePage: React.FC = () => {
       </div>
     {/* Floating large flexbox panel - genie from cloud */}
     <AnimatePresence>
-      {isPanelOpen && (
+      {(isPanelOpen || wispDirection === 'close') && (
         <div role="dialog" aria-modal="true" className="fixed inset-0 z-[2000] pointer-events-none">
           {/* transparent backdrop for outside click, no blur/dim */}
           <button
@@ -232,12 +252,37 @@ const HomePage: React.FC = () => {
             className="absolute inset-0 bg-transparent"
             style={{ pointerEvents: 'auto' }}
           />
+          {/* Wisp trail from cloud to center */}
+          {showWisp && (
+            <motion.svg
+              key="wisp"
+              className="fixed inset-0 w-full h-full z-[2100]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{ pointerEvents: 'none' }}
+            >
+              <motion.path
+                d={getWispPath(panelOrigin)}
+                fill="none"
+                stroke="#00aeef"
+                strokeOpacity={0.95}
+                strokeWidth={8}
+                strokeLinecap="round"
+                initial={{ pathLength: wispDirection === 'close' ? 1 : 0 }}
+                animate={{ pathLength: wispDirection === 'close' ? 0 : 1 }}
+                transition={{ duration: 2.2, ease: 'easeOut' }}
+                onAnimationComplete={() => { setShowWisp(false); setWispDirection(null); }}
+              />
+            </motion.svg>
+          )}
           <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
             <motion.div
               initial={{ x: panelOrigin.x, y: panelOrigin.y, scale: 0.4, opacity: 0 }}
               animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
               exit={{ x: panelOrigin.x, y: panelOrigin.y, scale: 0.4, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 160, damping: 18 }}
+              onAnimationComplete={() => setShowWisp(false)}
               style={{ transformOrigin: 'center' }}
             >
               <div className="relative w-[92vw] max-w-6xl h-[70vh] md:h-[75vh] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] border border-black/10 overflow-hidden flex flex-col">
