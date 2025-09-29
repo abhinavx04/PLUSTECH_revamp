@@ -111,8 +111,8 @@ const HomePage: React.FC = () => {
               PLUSTECH
             </span>
           </div>
-          {/* Center: PillNav */}
-          <div className="hidden md:flex items-center justify-center">
+          {/* Center: PillNav (render on mobile too so hamburger shows) */}
+          <div className="flex items-center justify-center">
             <PillNav
               logo={'/newlogo.png'}
               logoAlt="Company Logo"
