@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PillNav from '../components/PillNav';
 import Threads from '../components/Threads';
+import ScrollStack, { ScrollStackItem } from '../components/ScrollStack';
 
 const HomePage: React.FC = () => {
   const handRef = useRef<HTMLImageElement>(null);
@@ -264,6 +265,69 @@ const HomePage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Product / Story Cards - ScrollStack */}
+      <section id="highlights" className="w-full px-6 md:px-12 lg:px-16 py-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-10 md:mb-12 text-center">
+            <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">OUR CAPABILITIES</h3>
+            <p className="mt-3 text-gray-600 font-body text-base md:text-lg">A quick story of how we deliver value — one card at a time.</p>
+          </div>
+
+          <ScrollStack
+            className=""
+            useWindowScroll={true}
+            itemDistance={160}
+            itemScale={0.045}
+            itemStackDistance={40}
+            baseScale={0.9}
+            stackPosition={'35%'}
+            scaleEndPosition={'18%'}
+            rotationAmount={0.25}
+            blurAmount={1.2}
+          >
+            <ScrollStackItem>
+              <div className="flex items-center gap-4">
+                <div className="text-3xl">⚙️</div>
+                <div>
+                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Process Design</h4>
+                  <p className="text-gray-700 font-body mt-1">Cycle-time mapping, layout engineering, and spec development for surface finishing lines.</p>
+                </div>
+              </div>
+            </ScrollStackItem>
+
+            <ScrollStackItem>
+              <div className="flex items-center gap-4">
+                <div className="text-3xl">🤖</div>
+                <div>
+                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Automation & Robotics</h4>
+                  <p className="text-gray-700 font-body mt-1">Robot handling, conveyors, vision checks, and interlocks tuned for reliability.</p>
+                </div>
+              </div>
+            </ScrollStackItem>
+
+            <ScrollStackItem>
+              <div className="flex items-center gap-4">
+                <div className="text-3xl">🧪</div>
+                <div>
+                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Quality & Testing</h4>
+                  <p className="text-gray-700 font-body mt-1">Bath control, pretreatment checks, and end‑of‑line testing with data capture.</p>
+                </div>
+              </div>
+            </ScrollStackItem>
+
+            <ScrollStackItem>
+              <div className="flex items-center gap-4">
+                <div className="text-3xl">🚀</div>
+                <div>
+                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Commissioning & Support</h4>
+                  <p className="text-gray-700 font-body mt-1">Site execution, ramp‑up assistance, and ongoing optimisation for throughput.</p>
+                </div>
+              </div>
+            </ScrollStackItem>
+          </ScrollStack>
         </div>
       </section>
 

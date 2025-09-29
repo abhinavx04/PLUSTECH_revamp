@@ -326,7 +326,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
   return (
     <div
-      className={`relative w-full h-full overflow-y-auto overflow-x-visible ${className}`.trim()}
+      className={`relative w-full ${useWindowScroll ? 'h-auto' : 'h-full overflow-y-auto'} overflow-x-visible ${className}`.trim()}
       ref={scrollerRef}
       style={{
         overscrollBehavior: 'contain',
@@ -337,7 +337,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         willChange: 'scroll-position'
       }}
     >
-      <div className="scroll-stack-inner pt-[20vh] px-20 pb-[50rem] min-h-screen">
+      <div className={`scroll-stack-inner ${useWindowScroll ? 'pt-[30vh] pb-[60vh]' : 'pt-[20vh] pb-[50rem]'} px-6 md:px-12`}>
         {children}
         {/* Spacer so the last pin can release cleanly */}
         <div className="scroll-stack-end w-full h-px" />
