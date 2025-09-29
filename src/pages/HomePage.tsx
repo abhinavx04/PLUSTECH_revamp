@@ -241,7 +241,35 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* About Us - video left, text right */}
+      <section id="about" className="w-full px-6 md:px-12 lg:px-16 py-12">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div className="w-full">
+              <video className="w-full rounded-2xl shadow-[0_12px_36px_rgba(0,0,0,0.25)]" src="/home/aboutvideo.mp4" autoPlay muted loop playsInline />
+            </div>
+            <div className="space-y-5">
+              <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">ABOUT US</h3>
+              <div className="text-lg md:text-xl text-gray-800 font-body leading-relaxed space-y-4">
+                <p>
+                  Plustech Systems and Solutions is a trusted partner in building <strong>integrated paintshops</strong> for automotive and general industry applications. With expertise spanning <strong>design, engineering, procurement, construction, and commissioning</strong>, we provide <strong>customized solutions</strong> tailored to each customer’s unique requirements.
+                </p>
+                <p>
+                  Our reputation has been built over the years on delivering paintshops that embody <strong>consistency, reliability, and robust performance</strong>. Whether semi-automatic or fully automatic, every solution reflects our commitment to <strong>continuous improvement, innovation, and long-term value</strong> for our clients.
+                </p>
+                <p>
+                  At Plustech, we don’t just build plants—we build partnerships that enable industries to achieve <strong>precision, efficiency, and excellence</strong> in finishing operations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     {/* Floating large flexbox panel - genie from cloud */}
+    
+      
     <AnimatePresence>
       {(isPanelOpen || wispDirection === 'close') && (
         <div role="dialog" aria-modal="true" className="fixed inset-0 z-[2000] pointer-events-none">
