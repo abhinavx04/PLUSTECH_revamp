@@ -455,7 +455,7 @@ const PillNav: React.FC<PillNavProps> = ({
             };
 
             const linkClasses =
-              'block py-3 px-4 text-[16px] font-medium rounded-[50px] transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]';
+              'block py-3 px-4 text-[16px] font-medium rounded-[50px] transition-all duration-200 ease-&lsqb;cubic-bezier(0.25,0.1,0.25,1)&rsqb;';
 
             return (
               <li key={item.href}>

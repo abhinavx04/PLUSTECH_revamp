@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import PillNav from '../components/PillNav';
 import Threads from '../components/Threads';
 
@@ -6,10 +7,22 @@ const HomePage: React.FC = () => {
   const handRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const robotRef = useRef<HTMLDivElement>(null);
+  const cloudRef = useRef<HTMLButtonElement>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [panelOrigin, setPanelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const handleCloudClick = () => {
-    // Placeholder action; replace with navigation or callback
-    console.log('Cloud clicked');
+    const rect = cloudRef.current?.getBoundingClientRect();
+    if (rect) {
+      // Clamp the start so the panel always flies in towards center and stays visible
+      const startX = Math.max(-window.innerWidth / 2 + 50, Math.min(rect.left + rect.width / 2 - window.innerWidth / 2, window.innerWidth / 2 - 50));
+      const startY = Math.max(-window.innerHeight / 2 + 50, Math.min(rect.top + rect.height / 2 - window.innerHeight / 2, window.innerHeight / 2 - 50));
+      setPanelOrigin({ x: startX, y: startY });
+    } else {
+      setPanelOrigin({ x: 0, y: 0 });
+    }
+    setIsPanelOpen(true);
   };
+  const closePanel = () => setIsPanelOpen(false);
 
   useEffect(() => {
     const robot = robotRef.current;
@@ -182,6 +195,7 @@ const HomePage: React.FC = () => {
                   </div>
                   {/* cloud button */}
                   <button
+                    ref={cloudRef}
                     onClick={handleCloudClick}
                     className="relative block animate-floaty focus:outline-none focus:ring-2 focus:ring-white/40"
                     aria-label="Click me"
@@ -207,6 +221,48 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </div>
+    {/* Floating large flexbox panel - genie from cloud */}
+    <AnimatePresence>
+      {isPanelOpen && (
+        <div role="dialog" aria-modal="true" className="fixed inset-0 z-[2000] pointer-events-none">
+          {/* transparent backdrop for outside click, no blur/dim */}
+          <button
+            aria-label="Close overlay"
+            onClick={closePanel}
+            className="absolute inset-0 bg-transparent"
+            style={{ pointerEvents: 'auto' }}
+          />
+          <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
+            <motion.div
+              initial={{ x: panelOrigin.x, y: panelOrigin.y, scale: 0.4, opacity: 0 }}
+              animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+              exit={{ x: panelOrigin.x, y: panelOrigin.y, scale: 0.4, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 160, damping: 18 }}
+              style={{ transformOrigin: 'center' }}
+            >
+              <div className="relative w-[92vw] max-w-6xl h-[70vh] md:h-[75vh] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] border border-black/10 overflow-hidden flex flex-col">
+                <div className="flex items-center justify-between px-5 md:px-6 py-3 md:py-4 border-b border-black/10 bg-black/5">
+                  <h3 className="text-black font-heading text-lg md:text-xl font-semibold">Interaction Panel</h3>
+                  <button
+                    onClick={closePanel}
+                    className="rounded-full px-3 py-1.5 text-sm font-semibold bg-black text-white hover:bg-gray-800 transition-colors"
+                    aria-label="Close"
+                  >
+                    Close
+                  </button>
+                </div>
+                <div className="flex-1 overflow-auto p-5 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
+                  <div className="min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
+                  <div className="min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
+                  <div className="min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      )}
+    </AnimatePresence>
     </div>
   );
 };
