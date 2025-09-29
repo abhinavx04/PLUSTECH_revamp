@@ -269,62 +269,57 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Product / Story Cards - ScrollStack */}
-      <section id="highlights" className="w-full px-6 md:px-12 lg:px-16 py-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-10 md:mb-12 text-center">
+      <section id="highlights" className="w-screen px-0 py-0">
+        <div className="w-screen">
+          <div className="pt-2 pb-1 md:pt-3 md:pb-2 text-center">
             <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">OUR CAPABILITIES</h3>
             <p className="mt-3 text-gray-600 font-body text-base md:text-lg">A quick story of how we deliver value — one card at a time.</p>
           </div>
 
           <ScrollStack
-            className=""
+            className="w-screen"
             useWindowScroll={true}
-            itemDistance={160}
-            itemScale={0.045}
-            itemStackDistance={40}
-            baseScale={0.9}
-            stackPosition={'35%'}
+            itemDistance={380}
+            itemScale={0.025}
+            itemStackDistance={90}
+            baseScale={0.98}
+            stackPosition={'55%'}
             scaleEndPosition={'18%'}
-            rotationAmount={0.25}
-            blurAmount={1.2}
+            rotationAmount={0}
+            blurAmount={0}
           >
             <ScrollStackItem>
-              <div className="flex items-center gap-4">
-                <div className="text-3xl">⚙️</div>
-                <div>
-                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Process Design</h4>
-                  <p className="text-gray-700 font-body mt-1">Cycle-time mapping, layout engineering, and spec development for surface finishing lines.</p>
+              <div className="w-full h-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
+                <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">Automated and Customised Material Handling</h4>
+                <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">
+                  Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency and optimise the plant footprint.
+                </p>
+                <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
+                  <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+                  <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+                  <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
                 </div>
               </div>
             </ScrollStackItem>
 
             <ScrollStackItem>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-screen h-screen bg-[#f7f7f9]/90 m-0">
                 <div className="text-3xl">🤖</div>
-                <div>
-                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Automation & Robotics</h4>
-                  <p className="text-gray-700 font-body mt-1">Robot handling, conveyors, vision checks, and interlocks tuned for reliability.</p>
-                </div>
+                <div className="max-w-2xl px-6"><h4 className="text-3xl md:text-4xl font-heading font-semibold text-black">Automation & Robotics</h4><p className="text-gray-700 font-body mt-3 text-lg">Robot handling, conveyors, vision checks, and interlocks tuned for reliability.</p></div>
               </div>
             </ScrollStackItem>
 
             <ScrollStackItem>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-screen h-screen bg-white/90 m-0">
                 <div className="text-3xl">🧪</div>
-                <div>
-                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Quality & Testing</h4>
-                  <p className="text-gray-700 font-body mt-1">Bath control, pretreatment checks, and end‑of‑line testing with data capture.</p>
-                </div>
+                <div className="max-w-2xl px-6"><h4 className="text-3xl md:text-4xl font-heading font-semibold text-black">Quality & Testing</h4><p className="text-gray-700 font-body mt-3 text-lg">Bath control, pretreatment checks, and end‑of‑line testing with data capture.</p></div>
               </div>
             </ScrollStackItem>
 
             <ScrollStackItem>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center w-screen h-screen bg-[#f7f7f9]/90 m-0">
                 <div className="text-3xl">🚀</div>
-                <div>
-                  <h4 className="text-xl md:text-2xl font-heading font-semibold text-black">Commissioning & Support</h4>
-                  <p className="text-gray-700 font-body mt-1">Site execution, ramp‑up assistance, and ongoing optimisation for throughput.</p>
-                </div>
+                <div className="max-w-2xl px-6"><h4 className="text-3xl md:text-4xl font-heading font-semibold text-black">Commissioning & Support</h4><p className="text-gray-700 font-body mt-3 text-lg">Site execution, ramp‑up assistance, and ongoing optimisation for throughput.</p></div>
               </div>
             </ScrollStackItem>
           </ScrollStack>

@@ -9,13 +9,25 @@ export interface ScrollStackItemProps {
 
 export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({ children, itemClassName = '' }) => (
   <div
-    className={`scroll-stack-card relative w-full h-80 my-8 p-12 rounded-[40px] shadow-[0_0_30px_rgba(0,0,0,0.1)] box-border origin-top will-change-transform ${itemClassName}`.trim()}
+    className={`scroll-stack-card relative w-full h-screen my-0 p-0 rounded-none shadow-none box-border origin-top will-change-transform ${itemClassName}`.trim()}
     style={{
       backfaceVisibility: 'hidden',
       transformStyle: 'preserve-3d'
     }}
   >
-    {children}
+    <div className="absolute inset-2 md:inset-4 rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.25)] border border-[#00aeef]/20">
+      <div
+        className="card-surface absolute inset-0"
+        style={{
+          background: 'linear-gradient(180deg, rgba(0,174,239,0.10) 0%, rgba(0,174,239,0.06) 100%)',
+          backdropFilter: 'saturate(120%) blur(2px)',
+          WebkitBackdropFilter: 'saturate(120%) blur(2px)'
+        }}
+      />
+      <div className="relative w-full h-full pointer-events-auto" style={{ backfaceVisibility: 'hidden', transform: 'translateZ(0)' }}>
+        {children}
+      </div>
+    </div>
   </div>
 );
 
@@ -171,11 +183,23 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         Math.abs(lastTransform.blur - newTransform.blur) > 0.1;
 
       if (hasChanged) {
-        const transform = `translate3d(0, ${newTransform.translateY}px, 0) scale(${newTransform.scale}) rotate(${newTransform.rotation}deg)`;
+        const translateYpx = Math.round(newTransform.translateY);
+        const transform = `translate3d(0, ${translateYpx}px, 0) scale(${newTransform.scale.toFixed(3)}) rotate(${newTransform.rotation.toFixed(2)}deg)`;
         const filter = newTransform.blur > 0 ? `blur(${newTransform.blur}px)` : '';
 
         card.style.transform = transform;
         card.style.filter = filter;
+        // Keep fully opaque during the card's pin window.
+        // Only after the pinEnd is passed do we fade it out, over a larger distance.
+        const fadeDelay = 60; // px grace after pinEnd before fading begins
+        const fadeOutRange = 320; // px after delay to fully disappear
+        let opacity = 1;
+        if (scrollTop > pinEnd + fadeDelay) {
+          const over = scrollTop - pinEnd - fadeDelay;
+          opacity = Math.max(0, 1 - over / fadeOutRange);
+        }
+        card.style.opacity = String(opacity);
+        card.style.zIndex = String(100 - i);
 
         lastTransformsRef.current.set(i, newTransform);
       }
@@ -337,7 +361,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         willChange: 'scroll-position'
       }}
     >
-      <div className={`scroll-stack-inner ${useWindowScroll ? 'pt-[30vh] pb-[60vh]' : 'pt-[20vh] pb-[50rem]'} px-6 md:px-12`}>
+      <div className={`scroll-stack-inner ${useWindowScroll ? 'pt-[3vh] pb-[36vh]' : 'pt-[7vh] pb-[32rem]'} w-screen`}>
         {children}
         {/* Spacer so the last pin can release cleanly */}
         <div className="scroll-stack-end w-full h-px" />
