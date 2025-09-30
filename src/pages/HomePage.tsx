@@ -2,13 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PillNav from '../components/PillNav';
 import Threads from '../components/Threads';
-import ScrollStack, { ScrollStackItem } from '../components/ScrollStack';
+// ScrollStack removed; capabilities now use static flex layouts
+import CompanyAnimation from '../components/ui/CompanyAnimation';
 
 const HomePage: React.FC = () => {
   const handRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const robotRef = useRef<HTMLDivElement>(null);
   const cloudRef = useRef<HTMLButtonElement>(null);
+  const roboticScrollerRef = useRef<HTMLDivElement>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [panelOrigin, setPanelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showWisp, setShowWisp] = useState(false);
@@ -268,61 +270,117 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Product / Story Cards - ScrollStack */}
-      <section id="highlights" className="w-screen px-0 py-0">
-        <div className="w-screen">
+      {/* Company logos animation */}
+      <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12">
+        <div className="max-w-7xl mx-auto w-full">
+          <CompanyAnimation />
+        </div>
+      </section>
+
+      {/* Capabilities - static flex layout (no ScrollStack) */}
+      <section id="highlights" className="w-full px-0 py-0">
+        <div className="w-full">
           <div className="pt-2 pb-1 md:pt-3 md:pb-2 text-center">
             <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">OUR CAPABILITIES</h3>
             <p className="mt-3 text-gray-600 font-body text-base md:text-lg">A quick story of how we deliver value — one card at a time.</p>
           </div>
 
-          <ScrollStack
-            className="w-screen"
-            useWindowScroll={true}
-            itemDistance={380}
-            itemScale={0.025}
-            itemStackDistance={90}
-            baseScale={0.98}
-            stackPosition={'55%'}
-            scaleEndPosition={'18%'}
-            rotationAmount={0}
-            blurAmount={0}
-          >
-            <ScrollStackItem surfaceInsetClassName="top-2 bottom-2 left-4 right-4 md:top-4 md:bottom-4 md:left-24 md:right-24 lg:left-32 lg:right-32">
-              <div className="w-full h-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
-                <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">Automated and Customised Material Handling</h4>
-                <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">
-                  Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency and optimise the plant footprint.
+          {/* Card 1: Material Handling */}
+          <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
+            <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">Automated and Customised Material Handling</h4>
+            <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">
+              Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency and optimise the plant footprint.
+            </p>
+            <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
+              <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+              <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+              <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+            </div>
+          </div>
+
+          {/* Additional capability cards - flexboxes without animation */}
+          <div className="w-full flex flex-col gap-6 md:gap-8 px-4 md:px-8 pb-10">
+            <div className="flex items-center justify-center w-full bg-[#f7f7f9]/90 m-0 rounded-2xl border border-black/10">
+              <div className="w-full max-w-6xl px-4 md:px-8 py-6 md:py-8">
+                <h4 className="text-2xl md:text-3xl font-heading font-semibold text-black">Robotic applications</h4>
+                <p className="text-gray-700 font-body mt-3 text-base md:text-lg">
+                  We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries. Our solutions are trusted for major applications such as:
                 </p>
-                <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
-                  <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
-                  <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
-                  <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+                <ul className="list-disc pl-5 mt-3 text-gray-700 font-body space-y-1 text-base md:text-lg">
+                  <li>Commercial vehicle cabins — interior and exterior painting, sealer, and underbody coating</li>
+                  <li>Two-wheeler fuel tanks</li>
+                  <li>Plastic components</li>
+                  <li>General industrial parts</li>
+                </ul>
+                <p className="text-gray-700 font-body mt-4 text-base md:text-lg">
+                  Each robotic system is expertly engineered to provide exceptional advantages: consistently superior finish quality, high-volume production capacity, and significantly reduced paint consumption. The result is a highly efficient, sustainable, and reliable painting process that meets the most demanding standards.
+                </p>
+
+                <div className="mt-6 relative">
+                  <div
+                    ref={roboticScrollerRef}
+                    className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory px-1 md:px-2 hide-scrollbar"
+                    style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  >
+                    <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
+                    <div className="snap-center flex-shrink-0 w-[88vw] sm:w-[70vw] md:w-[55vw] lg:w-[40vw]">
+                      <img src="/robotic/indoor-painting_and_door_opening.png" alt="Commercial vehicle cabin painting" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
+                    </div>
+                    <div className="snap-center flex-shrink-0 w-[88vw] sm:w-[70vw] md:w-[55vw] lg:w-[40vw]">
+                      <img src="/robotic/2-wheeler-fueltanks_plaSTIC.png" alt="Two-wheeler fuel tanks" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
+                    </div>
+                    <div className="snap-center flex-shrink-0 w-[88vw] sm:w-[70vw] md:w-[55vw] lg:w-[40vw]">
+                      <img src="/robotic/scooter-metal_plastic-part.png" alt="Plastic components" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
+                    </div>
+                    <div className="snap-center flex-shrink-0 w-[88vw] sm:w-[70vw] md:w-[55vw] lg:w-[40vw]">
+                      <img src="/robotic/sealer_application.png" alt="Sealer application" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
+                    </div>
+                    <div className="snap-center flex-shrink-0 w-[88vw] sm:w-[70vw] md:w-[55vw] lg:w-[40vw]">
+                      <img src="/robotic/underbody_application.png" alt="Underbody coating" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
+                    </div>
+                  </div>
+                  <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 md:px-3">
+                    <button
+                      type="button"
+                      aria-label="Scroll left"
+                      onClick={() => {
+                        const el = roboticScrollerRef.current;
+                        if (el) el.scrollBy({ left: -el.clientWidth * 0.8, behavior: 'smooth' });
+                      }}
+                      className="pointer-events-auto hidden sm:inline-flex h-10 w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Scroll right"
+                      onClick={() => {
+                        const el = roboticScrollerRef.current;
+                        if (el) el.scrollBy({ left: el.clientWidth * 0.8, behavior: 'smooth' });
+                      }}
+                      className="pointer-events-auto hidden sm:inline-flex h-10 w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center"
+                    >
+                      ›
+                    </button>
+                  </div>
                 </div>
               </div>
-            </ScrollStackItem>
+            </div>
 
-            <ScrollStackItem>
-              <div className="flex items-center justify-center w-screen h-screen bg-[#f7f7f9]/90 m-0">
-                <div className="text-3xl">🤖</div>
-                <div className="max-w-2xl px-6"><h4 className="text-3xl md:text-4xl font-heading font-semibold text-black">Automation & Robotics</h4><p className="text-gray-700 font-body mt-3 text-lg">Robot handling, conveyors, vision checks, and interlocks tuned for reliability.</p></div>
+            <div className="flex items-center justify-center w-full min-h-[220px] bg-white m-0 rounded-2xl">
+              <div className="max-w-3xl px-4">
+                <h4 className="text-2xl md:text-3xl font-heading font-semibold text-black">Quality & Testing</h4>
+                <p className="text-gray-700 font-body mt-2 text-base md:text-lg">Bath control, pretreatment checks, and end‑of‑line testing with data capture.</p>
               </div>
-            </ScrollStackItem>
+            </div>
 
-            <ScrollStackItem>
-              <div className="flex items-center justify-center w-screen h-screen bg-white/90 m-0">
-                <div className="text-3xl">🧪</div>
-                <div className="max-w-2xl px-6"><h4 className="text-3xl md:text-4xl font-heading font-semibold text-black">Quality & Testing</h4><p className="text-gray-700 font-body mt-3 text-lg">Bath control, pretreatment checks, and end‑of‑line testing with data capture.</p></div>
+            <div className="flex items-center justify-center w-full min-h-[220px] bg-[#f7f7f9]/90 m-0 rounded-2xl">
+              <div className="max-w-3xl px-4">
+                <h4 className="text-2xl md:text-3xl font-heading font-semibold text-black">Commissioning & Support</h4>
+                <p className="text-gray-700 font-body mt-2 text-base md:text-lg">Site execution, ramp‑up assistance, and ongoing optimisation for throughput.</p>
               </div>
-            </ScrollStackItem>
-
-            <ScrollStackItem>
-              <div className="flex items-center justify-center w-screen h-screen bg-[#f7f7f9]/90 m-0">
-                <div className="text-3xl">🚀</div>
-                <div className="max-w-2xl px-6"><h4 className="text-3xl md:text-4xl font-heading font-semibold text-black">Commissioning & Support</h4><p className="text-gray-700 font-body mt-3 text-lg">Site execution, ramp‑up assistance, and ongoing optimisation for throughput.</p></div>
-              </div>
-            </ScrollStackItem>
-          </ScrollStack>
+            </div>
+          </div>
         </div>
       </section>
 
