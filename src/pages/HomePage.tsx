@@ -11,6 +11,15 @@ const HomePage: React.FC = () => {
   const robotRef = useRef<HTMLDivElement>(null);
   const cloudRef = useRef<HTMLButtonElement>(null);
   const roboticScrollerRef = useRef<HTMLDivElement>(null);
+  // Robotic carousel images
+  const roboticImages = [
+    { src: "/robotic/indoor-painting_and_door_opening.png", alt: "Commercial vehicle cabin painting" },
+    { src: "/robotic/2-wheeler-fueltanks_plaSTIC.png", alt: "Two-wheeler fuel tanks" },
+    { src: "/robotic/scooter-metal_plastic-part.png", alt: "Plastic components" },
+    { src: "/robotic/sealer_application.png", alt: "Sealer application" },
+    { src: "/robotic/underbody_application.png", alt: "Underbody coating" }
+  ];
+  const duplicatedRoboticImages = [...roboticImages, ...roboticImages, ...roboticImages];
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [panelOrigin, setPanelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showWisp, setShowWisp] = useState(false);
@@ -87,6 +96,46 @@ const HomePage: React.FC = () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseout", onMouseOut);
       if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Setup infinite carousel behavior for robotic images
+  useEffect(() => {
+    const scroller = roboticScrollerRef.current;
+    if (!scroller) return;
+
+    const setToMiddleBlock = () => {
+      const blockWidth = scroller.scrollWidth / 3;
+      scroller.scrollTo({ left: blockWidth, behavior: 'auto' });
+    };
+
+    setToMiddleBlock();
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const blockWidth = scroller.scrollWidth / 3;
+        const left = scroller.scrollLeft;
+        // When near the start, jump forward one block; when near the end, jump back one block
+        if (left < blockWidth * 0.1) {
+          scroller.scrollTo({ left: left + blockWidth, behavior: 'auto' });
+        } else if (left > blockWidth * 2.9) {
+          scroller.scrollTo({ left: left - blockWidth, behavior: 'auto' });
+        }
+        ticking = false;
+      });
+    };
+
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+
+    const onResize = () => setToMiddleBlock();
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      scroller.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
@@ -286,12 +335,12 @@ const HomePage: React.FC = () => {
           </div>
 
           {/* Card 1: Material Handling */}
-          <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
+          <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10 bg-black rounded-2xl">
                 <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">Automated and Customised Material Handling</h4>
                 <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">
                   Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency and optimise the plant footprint.
                 </p>
-                <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
+                <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center bg-black rounded-2xl p-4">
                   <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
                   <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
                   <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
@@ -300,8 +349,7 @@ const HomePage: React.FC = () => {
 
           {/* Additional capability cards - flexboxes without animation */}
           <div className="w-full flex flex-col gap-6 md:gap-8 px-4 md:px-8 pb-10">
-            <div className="flex items-center justify-center w-full bg-[#f7f7f9]/90 m-0 rounded-2xl border border-black/10">
-              <div className="w-full max-w-7xl px-4 md:px-8 py-6 md:py-8">
+            <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10 bg-black/5 rounded-2xl">
                 <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black">Robotic applications</h4>
                 <p className="text-gray-700 font-body mt-3 text-base md:text-lg">
                   We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries. Our solutions are trusted for major applications such as:
@@ -315,30 +363,20 @@ const HomePage: React.FC = () => {
                 <p className="text-gray-700 font-body mt-4 text-base md:text-lg">
                   Each robotic system is expertly engineered to provide exceptional advantages: consistently superior finish quality, high-volume production capacity, and significantly reduced paint consumption. The result is a highly efficient, sustainable, and reliable painting process that meets the most demanding standards.
                 </p>
-                {/* All 5 images: single responsive carousel showing 1/2/3 per view like automated */}
-                <div className="mt-6 relative">
+                {/* All 5 images: infinite carousel (duplicated 3x) showing 1/3 per view like automated */}
+                <div className="mt-6 relative w-full">
                   <div
                     ref={roboticScrollerRef}
                     className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory hide-scrollbar px-4 md:px-6"
                     style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   >
                     <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
-                    {/* Each item width matches columns: 100% on small, 50% on md, 33.333% on lg */}
-                    <div className="carousel-item snap-center flex-none w-full md:w-1/2 lg:w-1/3">
-                      <img src="/robotic/indoor-painting_and_door_opening.png" alt="Commercial vehicle cabin painting" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
-                    </div>
-                    <div className="carousel-item snap-center flex-none w-full md:w-1/2 lg:w-1/3">
-                      <img src="/robotic/2-wheeler-fueltanks_plaSTIC.png" alt="Two-wheeler fuel tanks" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
-                    </div>
-                    <div className="carousel-item snap-center flex-none w-full md:w-1/2 lg:w-1/3">
-                      <img src="/robotic/scooter-metal_plastic-part.png" alt="Plastic components" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
-                    </div>
-                    <div className="carousel-item snap-center flex-none w-full md:w-1/2 lg:w-1/3">
-                      <img src="/robotic/sealer_application.png" alt="Sealer application" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
-                    </div>
-                    <div className="carousel-item snap-center flex-none w-full md:w-1/2 lg:w-1/3">
-                      <img src="/robotic/underbody_application.png" alt="Underbody coating" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
-                    </div>
+                    {/* Each item width matches columns: 100% on small, 33.333% on md+ to match automated */}
+                    {duplicatedRoboticImages.map((img, i) => (
+                      <div key={`robotic-img-${i}`} className="carousel-item snap-center flex-none w-full md:w-1/3 lg:w-1/3">
+                        <img src={img.src} alt={img.alt} className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
+                      </div>
+                    ))}
                   </div>
                   <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 md:px-3">
                     <button
@@ -373,22 +411,9 @@ const HomePage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              </div>
             </div>
 
-            <div className="flex items-center justify-center w-full min-h-[220px] bg-white m-0 rounded-2xl">
-              <div className="max-w-3xl px-4">
-                <h4 className="text-2xl md:text-3xl font-heading font-semibold text-black">Quality & Testing</h4>
-                <p className="text-gray-700 font-body mt-2 text-base md:text-lg">Bath control, pretreatment checks, and end‑of‑line testing with data capture.</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center w-full min-h-[220px] bg-[#f7f7f9]/90 m-0 rounded-2xl">
-              <div className="max-w-3xl px-4">
-                <h4 className="text-2xl md:text-3xl font-heading font-semibold text-black">Commissioning & Support</h4>
-                <p className="text-gray-700 font-body mt-2 text-base md:text-lg">Site execution, ramp‑up assistance, and ongoing optimisation for throughput.</p>
-              </div>
-            </div>
+            {/* Removed: Quality & Testing and Commissioning & Support */}
           </div>
         </div>
       </section>
