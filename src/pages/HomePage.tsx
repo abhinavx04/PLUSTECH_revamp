@@ -335,12 +335,12 @@ const HomePage: React.FC = () => {
           </div>
 
           {/* Card 1: Material Handling */}
-          <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10 bg-black rounded-2xl">
+          <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
                 <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">Automated and Customised Material Handling</h4>
                 <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">
                   Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency and optimise the plant footprint.
                 </p>
-                <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center bg-black rounded-2xl p-4">
+                <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
                   <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
                   <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
                   <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
