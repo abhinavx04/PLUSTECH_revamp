@@ -349,7 +349,7 @@ const HomePage: React.FC = () => {
 
           {/* Additional capability cards - flexboxes without animation */}
           <div className="w-full flex flex-col gap-6 md:gap-8 px-4 md:px-8 pb-10">
-            <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10 bg-black/5 rounded-2xl">
+            <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
                 <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black">Robotic applications</h4>
                 <p className="text-gray-700 font-body mt-3 text-base md:text-lg">
                   We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries. Our solutions are trusted for major applications such as:
