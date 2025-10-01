@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
     };
   }, []);
 
-  // GSAP ScrollTrigger overlap wrapper (sticky top, fixed bottom, 200vh container)
+  // GSAP ScrollTrigger overlap wrapper (overlapping sections with smooth transitions)
   function GsapCoverSection({ top, bottom }: { top: React.ReactNode; bottom: React.ReactNode }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const topRef = useRef<HTMLDivElement>(null);
@@ -114,34 +114,45 @@ const HomePage: React.FC = () => {
         // Initial states
         gsap.set(topRef.current, {
           yPercent: 0,
-          opacity: 1
+          opacity: 1,
+          scale: 1,
+          transformOrigin: "center bottom"
         });
         gsap.set(bottomRef.current, {
-          yPercent: 100, // Start at 100% below
-          opacity: 0
+          yPercent: 100, // Start fully below viewport
+          opacity: 0,
+          scale: 0.95,
+          transformOrigin: "center top"
         });
 
         // Create timeline with ScrollTrigger
-        gsap.timeline({
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
-            start: "top top",
-            end: "+=100%",
-            scrub: 0.5,
+            start: "top top", // Start when container hits top
+            end: "+=150%", // End after 150% scroll (adjust for smoother/longer transition)
+            scrub: 1, // Smooth scrubbing
+            pin: true, // Pin the container
             anticipatePin: 1,
-            markers: true,
-          }
-        })
-        .to(topRef.current, {
-          yPercent: -30, // Move up slightly and fade a bit
-          opacity: 0.85,
-          ease: "none",
-        }, 0)
-        .to(bottomRef.current, {
-          yPercent: -100, // Slide up from below
-          opacity: 1,
-          ease: "none",
-        }, "<");
+            markers: true, // For debugging
+          },
+        });
+
+        tl
+          // Move top section up and scale/fade
+          .to(topRef.current, {
+            yPercent: -50, // Move up halfway
+            scale: 0.95,
+            opacity: 0,
+            ease: "power1.inOut"
+          }, 0)
+          // Bring bottom section up with scale
+          .to(bottomRef.current, {
+            yPercent: 0,
+            scale: 1,
+            opacity: 1,
+            ease: "power1.inOut"
+          }, "<"); // Start at same time as previous animation
       }, containerRef);
 
       return () => ctx.revert();
@@ -157,7 +168,11 @@ const HomePage: React.FC = () => {
         <div
           ref={topRef}
           className="sticky top-0 h-screen w-full z-[2] will-change-transform"
-          style={{ backgroundColor: 'white', transformStyle: 'preserve-3d' }}
+          style={{ 
+            backgroundColor: 'white',
+            transformStyle: 'preserve-3d',
+            backfaceVisibility: 'hidden'
+          }}
         >
           {top}
         </div>
@@ -166,7 +181,11 @@ const HomePage: React.FC = () => {
         <div
           ref={bottomRef}
           className="fixed top-0 left-0 w-full h-screen z-[1] will-change-transform"
-          style={{ backgroundColor: '#f5fbff', transformStyle: 'preserve-3d' }}
+          style={{ 
+            backgroundColor: '#f5fbff',
+            transformStyle: 'preserve-3d',
+            backfaceVisibility: 'hidden'
+          }}
         >
           {bottom}
         </div>
