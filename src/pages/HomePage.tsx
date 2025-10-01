@@ -169,9 +169,12 @@ const HomePage: React.FC = () => {
           ref={topRef}
           className="sticky top-0 h-screen w-full z-[2] will-change-transform"
           style={{ 
-            backgroundColor: 'white',
+            // Slightly darker, glassy gradient to differentiate Automated section
+            background: 'linear-gradient(180deg, #f2f7ff 0%, #e3efff 100%)',
             transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden'
+            backfaceVisibility: 'hidden',
+            backdropFilter: 'blur(6px) saturate(120%)',
+            WebkitBackdropFilter: 'blur(6px) saturate(120%)'
           }}
         >
           {top}
@@ -182,9 +185,12 @@ const HomePage: React.FC = () => {
           ref={bottomRef}
           className="fixed top-0 left-0 w-full h-screen z-[1] will-change-transform"
           style={{ 
-            backgroundColor: '#f5fbff',
+            // Darker blue tint with glassy effect for Robotic section
+            background: 'linear-gradient(180deg, rgba(0,174,239,0.18) 0%, rgba(0,174,239,0.08) 100%), #eaf4ff',
             transformStyle: 'preserve-3d',
-            backfaceVisibility: 'hidden'
+            backfaceVisibility: 'hidden',
+            backdropFilter: 'blur(8px) saturate(130%)',
+            WebkitBackdropFilter: 'blur(8px) saturate(130%)'
           }}
         >
           {bottom}
@@ -448,7 +454,11 @@ const HomePage: React.FC = () => {
               </div>
             }
             bottom={
-              <div className="w-full h-full flex items-start justify-center bg-[#f5fbff]">
+              <div className="w-full h-full flex items-start justify-center" style={{
+                background: 'linear-gradient(180deg, rgba(0,174,239,0.20) 0%, rgba(0,174,239,0.10) 100%), #eaf4ff',
+                backdropFilter: 'blur(6px) saturate(125%)',
+                WebkitBackdropFilter: 'blur(6px) saturate(125%)'
+              }}>
                 <div className="w-full px-4 md:px-8 py-6 md:py-10">
                   <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black">
                     Robotic applications
