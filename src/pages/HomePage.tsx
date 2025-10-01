@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PillNav from '../components/PillNav';
 import Threads from '../components/Threads';
 // ScrollStack removed; capabilities now use static flex layouts
 import CompanyAnimation from '../components/ui/CompanyAnimation';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const HomePage: React.FC = () => {
   const handRef = useRef<HTMLImageElement>(null);
@@ -98,6 +100,45 @@ const HomePage: React.FC = () => {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
+
+  // GSAP ScrollTrigger overlap wrapper (Automated covers out, Robotic rises from beneath)
+  function GsapCoverSection({ top, bottom }: { top: React.ReactNode; bottom: React.ReactNode }) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const topRef = useRef<HTMLDivElement>(null);
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    useLayoutEffect(() => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      const ctx = gsap.context(() => {
+        gsap.set(topRef.current, { yPercent: 0, opacity: 1 });
+        gsap.set(bottomRef.current, { yPercent: 24, opacity: 0 });
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top top',
+              end: '+=220%',
+              scrub: true,
+              pin: true,
+              anticipatePin: 1,
+            },
+          })
+          .to(topRef.current, { yPercent: -15, opacity: 0.85, ease: 'none' }, 0)
+          .to(bottomRef.current, { yPercent: 0, opacity: 1, ease: 'none' }, 0);
+      }, containerRef);
+
+      return () => ctx.revert();
+    }, []);
+
+    return (
+      <section ref={containerRef} className="relative h-screen">
+        <div ref={topRef} className="absolute inset-0 z-[2]">{top}</div>
+        <div ref={bottomRef} className="absolute inset-0 z-[1]">{bottom}</div>
+      </section>
+    );
+  }
 
   // Setup infinite carousel behavior for robotic images
   useEffect(() => {
@@ -326,7 +367,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Capabilities - static flex layout (no ScrollStack) */}
+      {/* Capabilities - GSAP overlapped structure */}
       <section id="highlights" className="w-full px-0 py-0">
         <div className="w-full">
           <div className="pt-2 pb-1 md:pt-3 md:pb-2 text-center">
@@ -334,87 +375,96 @@ const HomePage: React.FC = () => {
             <p className="mt-3 text-gray-600 font-body text-base md:text-lg">A quick story of how we deliver value — one card at a time.</p>
           </div>
 
-          {/* Card 1: Material Handling */}
-          <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
-                <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">Automated and Customised Material Handling</h4>
-                <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">
-                  Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency and optimise the plant footprint.
-                </p>
-                <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
-                  <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
-                  <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
-                  <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+          {/* Automated (A) ⇄ Robotic applications (B) with ScrollTrigger pin + scrub */}
+          <GsapCoverSection
+            top={
+              <div className="w-full h-full flex items-start justify-center bg-white">
+                <div className="w-full px-4 md:px-8 py-6 md:py-10">
+                  <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">
+                    Automated and Customised Material Handling
+                  </h4>
+                  <p className="text-gray-700 font-body mt-4 text-lg md:text-xl antialiased max-w-5xl">
+                    Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency and optimise the plant footprint.
+                  </p>
+                  <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
+                    <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+                    <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+                    <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" />
+                  </div>
                 </div>
               </div>
+            }
+            bottom={
+              <div className="w-full h-full flex items-start justify-center bg-[#f5fbff]">
+                <div className="w-full px-4 md:px-8 py-6 md:py-10">
+                  <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black">
+                    Robotic applications
+                  </h4>
+                  <p className="text-gray-700 font-body mt-3 text-base md:text-lg">
+                    We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries. Our solutions are trusted for major applications such as:
+                  </p>
+                  <ul className="list-disc pl-5 mt-3 text-gray-700 font-body space-y-1 text-base md:text-lg">
+                    <li>Commercial vehicle cabins — interior and exterior painting, sealer, and underbody coating</li>
+                    <li>Two-wheeler fuel tanks</li>
+                    <li>Plastic components</li>
+                    <li>General industrial parts</li>
+                  </ul>
+                  <p className="text-gray-700 font-body mt-4 text-base md:text-lg">
+                    Each robotic system is expertly engineered to provide exceptional advantages: consistently superior finish quality, high-volume production capacity, and significantly reduced paint consumption. The result is a highly efficient, sustainable, and reliable painting process that meets the most demanding standards.
+                  </p>
 
-          {/* Additional capability cards - flexboxes without animation */}
-          <div className="w-full flex flex-col gap-6 md:gap-8 px-4 md:px-8 pb-10">
-            <div className="w-full m-0 flex flex-col items-start justify-start px-4 md:px-8 py-6 md:py-10">
-                <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black">Robotic applications</h4>
-                <p className="text-gray-700 font-body mt-3 text-base md:text-lg">
-                  We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries. Our solutions are trusted for major applications such as:
-                </p>
-                <ul className="list-disc pl-5 mt-3 text-gray-700 font-body space-y-1 text-base md:text-lg">
-                  <li>Commercial vehicle cabins — interior and exterior painting, sealer, and underbody coating</li>
-                  <li>Two-wheeler fuel tanks</li>
-                  <li>Plastic components</li>
-                  <li>General industrial parts</li>
-                </ul>
-                <p className="text-gray-700 font-body mt-4 text-base md:text-lg">
-                  Each robotic system is expertly engineered to provide exceptional advantages: consistently superior finish quality, high-volume production capacity, and significantly reduced paint consumption. The result is a highly efficient, sustainable, and reliable painting process that meets the most demanding standards.
-                </p>
-                {/* All 5 images: infinite carousel (duplicated 3x) showing 1/3 per view like automated */}
-                <div className="mt-6 relative w-full">
-                  <div
-                    ref={roboticScrollerRef}
-                    className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory hide-scrollbar px-4 md:px-6"
-                    style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                  >
-                    <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
-                    {/* Each item width matches columns: 100% on small, 33.333% on md+ to match automated */}
-                    {duplicatedRoboticImages.map((img, i) => (
-                      <div key={`robotic-img-${i}`} className="carousel-item snap-center flex-none w-full md:w-1/3 lg:w-1/3">
-                        <img src={img.src} alt={img.alt} className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 md:px-3">
-                    <button
-                      type="button"
-                      aria-label="Scroll left"
-                      onClick={() => {
-                        const el = roboticScrollerRef.current;
-                        if (el) {
-                          const item = el.querySelector('.carousel-item') as HTMLElement | null;
-                          const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
-                          el.scrollBy({ left: -delta, behavior: 'smooth' });
-                        }
-                      }}
-                      className="pointer-events-auto hidden sm:inline-flex h-10 w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center"
+                  {/* All 5 images: infinite carousel (duplicated 3x) showing 1/3 per view like automated */}
+                  <div className="mt-6 relative w-full">
+                    <div
+                      ref={roboticScrollerRef}
+                      className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory hide-scrollbar px-4 md:px-6"
+                      style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
-                      ‹
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Scroll right"
-                      onClick={() => {
-                        const el = roboticScrollerRef.current;
-                        if (el) {
-                          const item = el.querySelector('.carousel-item') as HTMLElement | null;
-                          const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
-                          el.scrollBy({ left: delta, behavior: 'smooth' });
-                        }
-                      }}
-                      className="pointer-events-auto hidden sm:inline-flex h-10 w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center"
-                    >
-                      ›
-                    </button>
+                      <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
+                      {/* Each item width matches columns: 100% on small, 33.333% on md+ to match automated */}
+                      {duplicatedRoboticImages.map((img, i) => (
+                        <div key={`robotic-img-${i}`} className="carousel-item snap-center flex-none w-full md:w-1/3 lg:w-1/3">
+                          <img src={img.src} alt={img.alt} className="w-full h-auto object-contain max-h-[56vh] md:max-h-[60vh] rounded-2xl shadow-xl" loading="lazy" />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 md:px-3">
+                      <button
+                        type="button"
+                        aria-label="Scroll left"
+                        onClick={() => {
+                          const el = roboticScrollerRef.current;
+                          if (el) {
+                            const item = el.querySelector('.carousel-item') as HTMLElement | null;
+                            const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
+                            el.scrollBy({ left: -delta, behavior: 'smooth' });
+                          }
+                        }}
+                        className="pointer-events-auto hidden sm:inline-flex h-10 w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center"
+                      >
+                        ‹
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Scroll right"
+                        onClick={() => {
+                          const el = roboticScrollerRef.current;
+                          if (el) {
+                            const item = el.querySelector('.carousel-item') as HTMLElement | null;
+                            const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
+                            el.scrollBy({ left: delta, behavior: 'smooth' });
+                          }
+                        }}
+                        className="pointer-events-auto hidden sm:inline-flex h-10 w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center"
+                      >
+                        ›
+                      </button>
+                    </div>
                   </div>
                 </div>
-            </div>
-
-            {/* Removed: Quality & Testing and Commissioning & Support */}
-          </div>
+              </div>
+            }
+          />
         </div>
       </section>
 
