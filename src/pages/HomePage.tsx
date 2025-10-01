@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
     };
   }, []);
 
-  // GSAP ScrollTrigger overlap wrapper (Automated covers out, Robotic rises from beneath)
+  // GSAP ScrollTrigger overlap wrapper (page-flip: top 0→-100%, bottom 100%→0)
   function GsapCoverSection({ top, bottom }: { top: React.ReactNode; bottom: React.ReactNode }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const topRef = useRef<HTMLDivElement>(null);
@@ -111,31 +111,63 @@ const HomePage: React.FC = () => {
       gsap.registerPlugin(ScrollTrigger);
 
       const ctx = gsap.context(() => {
-        gsap.set(topRef.current, { yPercent: 0, opacity: 1 });
-        gsap.set(bottomRef.current, { yPercent: 24, opacity: 0 });
+        // Initial states
+        gsap.set(topRef.current, {
+          y: "0%",
+          opacity: 1
+        });
+        gsap.set(bottomRef.current, {
+          y: "100%", // Start fully below viewport
+          opacity: 0
+        });
 
-        gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top top',
-              end: '+=220%',
-              scrub: true,
-              pin: true,
-              anticipatePin: 1,
-            },
-          })
-          .to(topRef.current, { yPercent: -15, opacity: 0.85, ease: 'none' }, 0)
-          .to(bottomRef.current, { yPercent: 0, opacity: 1, ease: 'none' }, 0);
+        // Create timeline with ScrollTrigger
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "+=100%", // One full viewport height of scrolling
+            scrub: 1, // Smooth scrubbing
+            pin: true,
+            anticipatePin: 1,
+            markers: false, // Set to true for debugging
+          },
+        });
+
+        tl
+          // Move top section up and fade
+          .to(topRef.current, {
+            y: "-100%",
+            opacity: 0.2,
+            ease: "none"
+          }, 0)
+          // Bring bottom section up
+          .to(bottomRef.current, {
+            y: "0%",
+            opacity: 1,
+            ease: "none"
+          }, 0);
       }, containerRef);
 
       return () => ctx.revert();
     }, []);
 
     return (
-      <section ref={containerRef} className="relative h-screen">
-        <div ref={topRef} className="absolute inset-0 z-[2]">{top}</div>
-        <div ref={bottomRef} className="absolute inset-0 z-[1]">{bottom}</div>
+      <section ref={containerRef} className="relative h-screen overflow-hidden">
+        <div
+          ref={topRef}
+          className="absolute inset-0 z-[2] will-change-transform"
+          style={{ backgroundColor: 'white' }}
+        >
+          {top}
+        </div>
+        <div
+          ref={bottomRef}
+          className="absolute inset-0 z-[1] will-change-transform"
+          style={{ backgroundColor: '#f5fbff' }}
+        >
+          {bottom}
+        </div>
       </section>
     );
   }
@@ -368,17 +400,17 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Capabilities - GSAP overlapped structure */}
-      <section id="highlights" className="w-full px-0 py-0">
+      <section id="highlights" className="w-full">
         <div className="w-full">
           <div className="pt-2 pb-1 md:pt-3 md:pb-2 text-center">
             <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">OUR CAPABILITIES</h3>
             <p className="mt-3 text-gray-600 font-body text-base md:text-lg">A quick story of how we deliver value — one card at a time.</p>
           </div>
 
-          {/* Automated (A) ⇄ Robotic applications (B) with ScrollTrigger pin + scrub */}
+          {/* Automated (A) ⇄ Robotic applications (B) with ScrollTrigger */}
           <GsapCoverSection
             top={
-              <div className="w-full h-full flex items-start justify-center bg-white">
+              <div className="w-full h-full flex items-start justify-center">
                 <div className="w-full px-4 md:px-8 py-6 md:py-10">
                   <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black antialiased">
                     Automated and Customised Material Handling
