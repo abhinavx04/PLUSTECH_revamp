@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
     };
   }, []);
 
-  // GSAP ScrollTrigger overlap wrapper (page-flip: top 0→-100%, bottom 100%→0)
+  // GSAP ScrollTrigger overlap wrapper (sticky top, fixed bottom, 200vh container)
   function GsapCoverSection({ top, bottom }: { top: React.ReactNode; bottom: React.ReactNode }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const topRef = useRef<HTMLDivElement>(null);
@@ -113,58 +113,60 @@ const HomePage: React.FC = () => {
       const ctx = gsap.context(() => {
         // Initial states
         gsap.set(topRef.current, {
-          y: "0%",
+          yPercent: 0,
           opacity: 1
         });
         gsap.set(bottomRef.current, {
-          y: "100%", // Start fully below viewport
+          yPercent: 100, // Start at 100% below
           opacity: 0
         });
 
         // Create timeline with ScrollTrigger
-        const tl = gsap.timeline({
+        gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top top",
-            end: "+=100%", // One full viewport height of scrolling
-            scrub: 1, // Smooth scrubbing
-            pin: true,
+            end: "+=100%",
+            scrub: 0.5,
             anticipatePin: 1,
-            markers: false, // Set to true for debugging
-          },
-        });
-
-        tl
-          // Move top section up and fade
-          .to(topRef.current, {
-            y: "-100%",
-            opacity: 0.2,
-            ease: "none"
-          }, 0)
-          // Bring bottom section up
-          .to(bottomRef.current, {
-            y: "0%",
-            opacity: 1,
-            ease: "none"
-          }, 0);
+            markers: true,
+          }
+        })
+        .to(topRef.current, {
+          yPercent: -30, // Move up slightly and fade a bit
+          opacity: 0.85,
+          ease: "none",
+        }, 0)
+        .to(bottomRef.current, {
+          yPercent: -100, // Slide up from below
+          opacity: 1,
+          ease: "none",
+        }, "<");
       }, containerRef);
 
       return () => ctx.revert();
     }, []);
 
     return (
-      <section ref={containerRef} className="relative h-screen overflow-hidden">
+      <section
+        ref={containerRef}
+        className="relative h-[200vh] overflow-hidden"
+        style={{ perspective: '1000px' }}
+      >
+        {/* Top section (sticky) */}
         <div
           ref={topRef}
-          className="absolute inset-0 z-[2] will-change-transform"
-          style={{ backgroundColor: 'white' }}
+          className="sticky top-0 h-screen w-full z-[2] will-change-transform"
+          style={{ backgroundColor: 'white', transformStyle: 'preserve-3d' }}
         >
           {top}
         </div>
+
+        {/* Bottom section (fixed) */}
         <div
           ref={bottomRef}
-          className="absolute inset-0 z-[1] will-change-transform"
-          style={{ backgroundColor: '#f5fbff' }}
+          className="fixed top-0 left-0 w-full h-screen z-[1] will-change-transform"
+          style={{ backgroundColor: '#f5fbff', transformStyle: 'preserve-3d' }}
         >
           {bottom}
         </div>
@@ -400,7 +402,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Capabilities - GSAP overlapped structure */}
-      <section id="highlights" className="w-full">
+      <section id="highlights" className="w-full relative overflow-hidden">
         <div className="w-full">
           <div className="pt-2 pb-1 md:pt-3 md:pb-2 text-center">
             <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">OUR CAPABILITIES</h3>
