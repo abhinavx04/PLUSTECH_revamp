@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');

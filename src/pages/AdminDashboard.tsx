@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard: React.FC = () => {
