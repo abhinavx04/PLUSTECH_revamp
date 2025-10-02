@@ -7,6 +7,9 @@ export default {
   ],
   theme: {
   	extend: {
+  		screens: {
+  			'xs': '475px',
+  		},
   		colors: {
   			charcoal: '#36454F',
   			'custom-dark': '#0C0C0C',

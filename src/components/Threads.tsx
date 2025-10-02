@@ -142,7 +142,22 @@ const Threads: React.FC<ThreadsProps> = ({
     if (!containerRef.current) return;
     const container = containerRef.current;
 
-    const renderer = new Renderer({ alpha: true });
+    // Check for reduced motion preference and device capabilities
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth < 768;
+    const isLowEndDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
+    
+    // Skip animation for reduced motion preference
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const renderer = new Renderer({ 
+      alpha: true,
+      // Optimize for mobile devices
+      powerPreference: isMobile ? 'low-power' : 'high-performance',
+      antialias: !isMobile && !isLowEndDevice
+    });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
@@ -150,6 +165,10 @@ const Threads: React.FC<ThreadsProps> = ({
     container.appendChild(gl.canvas);
 
     const geometry = new Triangle(gl);
+    
+    // Adjust amplitude for mobile devices
+    const responsiveAmplitude = isMobile ? amplitude * 0.7 : amplitude;
+    
     const program = new Program(gl, {
       vertex: vertexShader,
       fragment: fragmentShader,
@@ -159,7 +178,7 @@ const Threads: React.FC<ThreadsProps> = ({
           value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
         },
         uColor: { value: new Color(...color) },
-        uAmplitude: { value: amplitude },
+        uAmplitude: { value: responsiveAmplitude },
         uDistance: { value: distance },
         uMouse: { value: new Float32Array([0.5, 0.5]) }
       }
@@ -169,16 +188,23 @@ const Threads: React.FC<ThreadsProps> = ({
 
     function resize() {
       const { clientWidth, clientHeight } = container;
-      renderer.setSize(clientWidth, clientHeight);
-      program.uniforms.iResolution.value.r = clientWidth;
-      program.uniforms.iResolution.value.g = clientHeight;
-      program.uniforms.iResolution.value.b = clientWidth / clientHeight;
+      // Limit resolution on mobile for better performance
+      const maxWidth = isMobile ? 800 : clientWidth;
+      const maxHeight = isMobile ? 600 : clientHeight;
+      
+      renderer.setSize(maxWidth, maxHeight);
+      program.uniforms.iResolution.value.r = maxWidth;
+      program.uniforms.iResolution.value.g = maxHeight;
+      program.uniforms.iResolution.value.b = maxWidth / maxHeight;
     }
     window.addEventListener('resize', resize);
     resize();
 
     let currentMouse = [0.5, 0.5];
     let targetMouse = [0.5, 0.5];
+    let lastUpdateTime = 0;
+    const targetFPS = isMobile ? 30 : 60; // Reduce FPS on mobile
+    const frameInterval = 1000 / targetFPS;
 
     function handleMouseMove(e: MouseEvent) {
       const rect = container.getBoundingClientRect();
@@ -186,17 +212,42 @@ const Threads: React.FC<ThreadsProps> = ({
       const y = 1.0 - (e.clientY - rect.top) / rect.height;
       targetMouse = [x, y];
     }
+    
+    function handleTouchMove(e: TouchEvent) {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const rect = container.getBoundingClientRect();
+        const x = (touch.clientX - rect.left) / rect.width;
+        const y = 1.0 - (touch.clientY - rect.top) / rect.height;
+        targetMouse = [x, y];
+      }
+    }
+    
     function handleMouseLeave() {
       targetMouse = [0.5, 0.5];
     }
+    
+    function handleTouchEnd() {
+      targetMouse = [0.5, 0.5];
+    }
+    
     if (enableMouseInteraction) {
       container.addEventListener('mousemove', handleMouseMove);
       container.addEventListener('mouseleave', handleMouseLeave);
+      container.addEventListener('touchmove', handleTouchMove, { passive: true });
+      container.addEventListener('touchend', handleTouchEnd);
     }
 
     function update(t: number) {
+      // Throttle updates on mobile for better performance
+      if (t - lastUpdateTime < frameInterval) {
+        animationFrameId.current = requestAnimationFrame(update);
+        return;
+      }
+      lastUpdateTime = t;
+
       if (enableMouseInteraction) {
-        const smoothing = 0.05;
+        const smoothing = isMobile ? 0.08 : 0.05; // Faster smoothing on mobile
         currentMouse[0] += smoothing * (targetMouse[0] - currentMouse[0]);
         currentMouse[1] += smoothing * (targetMouse[1] - currentMouse[1]);
         program.uniforms.uMouse.value[0] = currentMouse[0];
@@ -219,6 +270,8 @@ const Threads: React.FC<ThreadsProps> = ({
       if (enableMouseInteraction) {
         container.removeEventListener('mousemove', handleMouseMove);
         container.removeEventListener('mouseleave', handleMouseLeave);
+        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener('touchend', handleTouchEnd);
       }
       if (container.contains(gl.canvas)) container.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();

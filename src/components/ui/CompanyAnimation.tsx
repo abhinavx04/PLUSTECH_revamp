@@ -16,6 +16,21 @@ const AnimationStyles = () => {
         /* The w-max class is important to allow the container to be wider than its parent. */
         animation: scroll 45s linear infinite;
       }
+      .animate-scroll-mobile {
+        /* Slower animation on mobile for better performance */
+        animation: scroll 60s linear infinite;
+      }
+      .animate-scroll-tablet {
+        /* Medium speed for tablets */
+        animation: scroll 50s linear infinite;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .animate-scroll,
+        .animate-scroll-mobile,
+        .animate-scroll-tablet {
+          animation: none;
+        }
+      }
     `;
     document.head.appendChild(style);
     return () => {
@@ -70,9 +85,9 @@ const CompanyAnimation: React.FC = () => {
         </h2>
         <div className="w-full mx-auto relative overflow-hidden rounded-2xl border border-black/10 bg-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
              style={{ maskImage: 'linear-gradient(to right, transparent, white 8%, white 92%, transparent)' }}>
-          <div className="flex w-max animate-scroll py-4">
+          <div className="flex w-max animate-scroll sm:animate-scroll-tablet md:animate-scroll py-4">
             {duplicatedLogos.map((logo, index) => (
-              <div key={index} className="flex-shrink-0 w-40 sm:w-52 md:w-64 h-20 sm:h-24 md:h-28 mx-6 sm:mx-8 md:mx-12 flex items-center justify-center">
+              <div key={index} className="flex-shrink-0 w-32 xs:w-40 sm:w-52 md:w-64 h-16 xs:h-20 sm:h-24 md:h-28 mx-4 xs:mx-6 sm:mx-8 md:mx-12 flex items-center justify-center">
                 <img
                   src={logo.src}
                   alt={logo.alt}

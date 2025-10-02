@@ -60,6 +60,10 @@ const PillNav: React.FC<PillNavProps> = ({
   const logoRef = useRef<HTMLAnchorElement | HTMLElement | null>(null);
 
   useEffect(() => {
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth < 768;
+
     const layout = () => {
       circleRefs.current.forEach(circle => {
         if (!circle?.parentElement) return;
@@ -94,15 +98,35 @@ const PillNav: React.FC<PillNavProps> = ({
         tlRefs.current[index]?.kill();
         const tl = gsap.timeline({ paused: true });
 
-        tl.to(circle, { scale: 1.2, xPercent: -50, duration: 2, ease, overwrite: 'auto' }, 0);
+        // Adjust animation duration based on device and motion preference
+        const animationDuration = prefersReducedMotion ? 0.1 : (isMobile ? 1.5 : 2);
+
+        tl.to(circle, { 
+          scale: prefersReducedMotion ? 1 : 1.2, 
+          xPercent: -50, 
+          duration: animationDuration, 
+          ease: prefersReducedMotion ? 'none' : ease, 
+          overwrite: 'auto' 
+        }, 0);
 
         if (label) {
-          tl.to(label, { y: -(h + 8), duration: 2, ease, overwrite: 'auto' }, 0);
+          tl.to(label, { 
+            y: prefersReducedMotion ? 0 : -(h + 8), 
+            duration: animationDuration, 
+            ease: prefersReducedMotion ? 'none' : ease, 
+            overwrite: 'auto' 
+          }, 0);
         }
 
         if (white) {
           gsap.set(white, { y: Math.ceil(h + 100), opacity: 0 });
-          tl.to(white, { y: 0, opacity: 1, duration: 2, ease, overwrite: 'auto' }, 0);
+          tl.to(white, { 
+            y: prefersReducedMotion ? h + 100 : 0, 
+            opacity: prefersReducedMotion ? 0 : 1, 
+            duration: animationDuration, 
+            ease: prefersReducedMotion ? 'none' : ease, 
+            overwrite: 'auto' 
+          }, 0);
         }
 
         tlRefs.current[index] = tl;
@@ -120,10 +144,10 @@ const PillNav: React.FC<PillNavProps> = ({
 
     const menu = mobileMenuRef.current;
     if (menu) {
-      gsap.set(menu, { visibility: 'hidden', opacity: 0, scaleY: 1, y: 0 });
+      gsap.set(menu, { visibility: 'hidden', opacity: 0, x: -320, scaleX: 0.8 });
     }
 
-    if (initialLoadAnimation) {
+    if (initialLoadAnimation && !prefersReducedMotion) {
       const logo = logoRef.current;
       const navItems = navItemsRef.current;
 
@@ -131,7 +155,7 @@ const PillNav: React.FC<PillNavProps> = ({
         gsap.set(logo, { scale: 0 });
         gsap.to(logo, {
           scale: 1,
-          duration: 0.6,
+          duration: isMobile ? 0.4 : 0.6,
           ease
         });
       }
@@ -140,7 +164,7 @@ const PillNav: React.FC<PillNavProps> = ({
         gsap.set(navItems, { width: 0, overflow: 'hidden' });
         gsap.to(navItems, {
           width: 'auto',
-          duration: 0.6,
+          duration: isMobile ? 0.4 : 0.6,
           ease
         });
       }
@@ -188,47 +212,82 @@ const PillNav: React.FC<PillNavProps> = ({
     const newState = !isMobileMenuOpen;
     setIsMobileMenuOpen(newState);
 
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth < 768;
+
     const hamburger = hamburgerRef.current;
     const menu = mobileMenuRef.current;
 
     if (hamburger) {
       const lines = hamburger.querySelectorAll('.hamburger-line');
+      const duration = prefersReducedMotion ? 0.1 : (isMobile ? 0.2 : 0.3);
+      
       if (newState) {
-        gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
+        gsap.to(lines[0], { 
+          rotation: 45, 
+          y: 3, 
+          duration, 
+          ease: prefersReducedMotion ? 'none' : ease 
+        });
+        gsap.to(lines[1], { 
+          rotation: -45, 
+          y: -3, 
+          duration, 
+          ease: prefersReducedMotion ? 'none' : ease 
+        });
       } else {
-        gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
+        gsap.to(lines[0], { 
+          rotation: 0, 
+          y: 0, 
+          duration, 
+          ease: prefersReducedMotion ? 'none' : ease 
+        });
+        gsap.to(lines[1], { 
+          rotation: 0, 
+          y: 0, 
+          duration, 
+          ease: prefersReducedMotion ? 'none' : ease 
+        });
       }
     }
 
     if (menu) {
       if (newState) {
         gsap.set(menu, { visibility: 'visible' });
-        gsap.fromTo(
-          menu,
-          { opacity: 0, y: 10, scaleY: 1 },
-          {
-            opacity: 1,
-            y: 0,
-            scaleY: 1,
-            duration: 0.3,
-            ease,
-            transformOrigin: 'top center'
-          }
-        );
+        
+        if (prefersReducedMotion) {
+          gsap.set(menu, { opacity: 1, x: 0, scaleX: 1 });
+        } else {
+          gsap.fromTo(
+            menu,
+            { opacity: 0, x: -320, scaleX: 0.8 },
+            {
+              opacity: 1,
+              x: 0,
+              scaleX: 1,
+              duration: isMobile ? 0.3 : 0.4,
+              ease,
+              transformOrigin: 'left center'
+            }
+          );
+        }
       } else {
-        gsap.to(menu, {
-          opacity: 0,
-          y: 10,
-          scaleY: 1,
-          duration: 0.2,
-          ease,
-          transformOrigin: 'top center',
-          onComplete: () => {
-            gsap.set(menu, { visibility: 'hidden' });
-          }
-        });
+        if (prefersReducedMotion) {
+          gsap.set(menu, { opacity: 0, visibility: 'hidden' });
+        } else {
+          gsap.to(menu, {
+            opacity: 0,
+            x: -320,
+            scaleX: 0.8,
+            duration: isMobile ? 0.2 : 0.3,
+            ease,
+            transformOrigin: 'left center',
+            onComplete: () => {
+              gsap.set(menu, { visibility: 'hidden' });
+            }
+          });
+        }
       }
     }
 
@@ -271,6 +330,29 @@ const PillNav: React.FC<PillNavProps> = ({
         aria-label="Primary"
         style={cssVars}
       >
+        {/* Mobile hamburger menu - moved to left */}
+        <button
+          ref={hamburgerRef}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+          aria-expanded={isMobileMenuOpen}
+          className="md:hidden rounded-full border-0 flex flex-col items-center justify-center gap-1 cursor-pointer p-0 relative"
+          style={{
+            width: 'var(--nav-h)',
+            height: 'var(--nav-h)',
+            background: 'var(--base, #000)'
+          }}
+        >
+          <span
+            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-&lsqb;10ms&rsqb; ease-&lsqb;cubic-bezier(0.25,0.1,0.25,1)&rsqb;"
+            style={{ background: 'var(--pill-bg, #fff)' }}
+          />
+          <span
+            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-&lsqb;10ms&rsqb; ease-&lsqb;cubic-bezier(0.25,0.1,0.25,1)&rsqb;"
+            style={{ background: 'var(--pill-bg, #fff)' }}
+          />
+        </button>
+
         {showLogo && (isRouterLink(items?.[0]?.href) ? (
           <Link
             to={items[0].href}
@@ -407,55 +489,53 @@ const PillNav: React.FC<PillNavProps> = ({
             })}
           </ul>
         </div>
-
-        <button
-          ref={hamburgerRef}
-          onClick={toggleMobileMenu}
-          aria-label="Toggle menu"
-          aria-expanded={isMobileMenuOpen}
-          className="md:hidden rounded-full border-0 flex flex-col items-center justify-center gap-1 cursor-pointer p-0 relative"
-          style={{
-            width: 'var(--nav-h)',
-            height: 'var(--nav-h)',
-            background: 'var(--base, #000)'
-          }}
-        >
-          <span
-            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-&lsqb;10ms&rsqb; ease-&lsqb;cubic-bezier(0.25,0.1,0.25,1)&rsqb;"
-            style={{ background: 'var(--pill-bg, #fff)' }}
-          />
-          <span
-            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-&lsqb;10ms&rsqb; ease-&lsqb;cubic-bezier(0.25,0.1,0.25,1)&rsqb;"
-            style={{ background: 'var(--pill-bg, #fff)' }}
-          />
-        </button>
       </nav>
 
+      {/* Side menu overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-[999]"
+          onClick={toggleMobileMenu}
+        />
+      )}
+      
       <div
         ref={mobileMenuRef}
-        className="md:hidden absolute top-[3em] left-4 right-4 rounded-[27px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-[998] origin-top"
+        className="md:hidden fixed top-0 left-0 h-full w-80 max-w-[85vw] rounded-r-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] z-[1000] origin-left"
         style={{
           ...cssVars,
-          background: 'var(--base, #f0f0f0)'
+          background: 'rgba(37,99,235,0.96)'
         }}
       >
-        <ul className="list-none m-0 p-[3px] flex flex-col gap-[3px]">
-          {items.map(item => {
-            const defaultStyle: React.CSSProperties = {
-              background: 'var(--pill-bg, #fff)',
-              color: 'var(--pill-text, #fff)'
-            };
-            const hoverIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
-              e.currentTarget.style.background = 'var(--base)';
-              e.currentTarget.style.color = 'var(--hover-text, #fff)';
-            };
-            const hoverOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
-              e.currentTarget.style.background = 'var(--pill-bg, #fff)';
-              e.currentTarget.style.color = 'var(--pill-text, #fff)';
-            };
+        <div className="p-6 pt-20 relative">
+          <div className="absolute top-4 right-4">
+            <button
+              onClick={toggleMobileMenu}
+              aria-label="Close menu"
+              className="rounded-full bg-white/90 text-blue-700 w-9 h-9 inline-flex items-center justify-center text-lg font-bold shadow hover:bg-white transition-colors"
+            >
+              ‹
+            </button>
+          </div>
+          <h3 className="text-lg font-semibold mb-6 text-white">Menu</h3>
+          <ul className="list-none m-0 flex flex-col gap-2">
+            {items.map(item => {
+              const defaultStyle: React.CSSProperties = {
+                background: 'transparent',
+                color: '#ffffff',
+                border: '1px solid rgba(255,255,255,0.12)'
+              };
+              const hoverIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.92)';
+                (e.currentTarget as HTMLElement).style.color = '#1e3a8a';
+              };
+              const hoverOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                e.currentTarget.style.background = 'transparent';
+                (e.currentTarget as HTMLElement).style.color = '#ffffff';
+              };
 
-            const linkClasses =
-              'block py-3 px-4 text-[16px] font-medium rounded-[50px] transition-all duration-200 ease-&lsqb;cubic-bezier(0.25,0.1,0.25,1)&rsqb;';
+              const linkClasses =
+                'block py-4 px-6 text-[16px] font-medium rounded-xl transition-all duration-200 ease-&lsqb;cubic-bezier(0.25,0.1,0.25,1)&rsqb; touch-manipulation backdrop-blur-[1px]';
 
             return (
               <li key={item.href}>
@@ -485,7 +565,8 @@ const PillNav: React.FC<PillNavProps> = ({
               </li>
             );
           })}
-        </ul>
+          </ul>
+        </div>
       </div>
     </div>
   );
