@@ -16,16 +16,38 @@ interface NewsArticle {
 
 const SimpleNewsSection: React.FC = () => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
-  const { news, loading } = useNewsFirestore();
+  const { news, loading, error } = useNewsFirestore();
 
-  // Now using real data from Firestore via useNewsFirestore hook
+  // Debug logging
+  console.log('[SimpleNewsSection] News data:', { news: news.length, loading, error });
 
-  const publishedNews = news.filter(article => article.published);
+  // Temporarily show all articles (both published and unpublished) for debugging
+  const publishedNews = news; // Changed from: news.filter(article => article.published);
+  console.log('[SimpleNewsSection] Published news:', publishedNews.length);
+  console.log('[SimpleNewsSection] All articles:', news.map(a => ({ title: a.title, published: a.published })));
+
+  // Show error state
+  if (error) {
+    return (
+      <section className="w-full px-6 md:px-12 lg:px-16 py-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <h2 className="text-4xl md:text-5xl font-bold font-heading text-black">
+              Latest News & Updates
+            </h2>
+            <div className="mt-8 p-4 bg-red-100 border border-red-300 rounded-lg">
+              <p className="text-red-700">Error loading news: {error}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   // Show loading state
   if (loading) {
     return (
-      <section className="w-full px-6 md:px-12 lg:px-16 py-12 bg-gray-50">
+      <section className="w-full px-6 md:px-12 lg:px-16 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00aeef] mx-auto"></div>
@@ -37,7 +59,7 @@ const SimpleNewsSection: React.FC = () => {
   }
 
   return (
-    <section className="w-full px-6 md:px-12 lg:px-16 py-12 bg-gray-50">
+    <section className="w-full px-6 md:px-12 lg:px-16 py-12">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold font-heading text-black">

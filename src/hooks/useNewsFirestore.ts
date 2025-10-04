@@ -55,12 +55,19 @@ export const useNewsFirestore = () => {
         const newsData: NewsArticle[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          newsData.push({
+          const article = {
             id: doc.id,
             ...data,
             createdAt: data.createdAt?.toDate() || new Date(),
             updatedAt: data.updatedAt?.toDate() || new Date(),
-          } as NewsArticle);
+          } as NewsArticle;
+          newsData.push(article);
+          console.log('[News] Article details:', {
+            id: article.id,
+            title: article.title,
+            published: article.published,
+            featured: article.featured
+          });
         });
         
         setNews(newsData);

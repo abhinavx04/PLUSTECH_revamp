@@ -9,4 +9,10 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  server: {
+    historyApiFallback: true,
+  },
+  preview: {
+    historyApiFallback: true,
+  },
 })
