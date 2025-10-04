@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNewsSimple } from '../hooks/useNewsSimple';
+import { useNewsFirestore } from '../hooks/useNewsFirestore';
 
 interface NewsArticle {
   id: string;
@@ -31,7 +31,7 @@ interface UpdateNewsData extends Partial<CreateNewsData> {
 }
 
 const NewsManagerSimple: React.FC = () => {
-  const { news, loading, error, createNews, updateNews, deleteNews } = useNewsSimple();
+  const { news, loading, error, createNews, updateNews, deleteNews } = useNewsFirestore();
   const [showForm, setShowForm] = useState(false);
   const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
   const [formData, setFormData] = useState<CreateNewsData>({
