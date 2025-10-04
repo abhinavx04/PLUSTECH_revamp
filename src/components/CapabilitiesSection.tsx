@@ -196,56 +196,63 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
       variants={variants}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
+        <div className="space-y-16">
+          {/* Content Section */}
           <motion.div 
-            className="space-y-6"
+            className="text-center max-w-5xl mx-auto"
             variants={variants}
           >
-            <h3 className={`text-3xl md:text-4xl font-bold font-heading ${capability.textColor}`}>
-              {capability.title}
-            </h3>
-            <p className={`text-lg md:text-xl font-body ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>
-              {capability.description}
-            </p>
+            <div className="space-y-6">
+              <h3 className={`text-4xl md:text-6xl font-bold font-heading leading-tight ${capability.textColor}`}>
+                {capability.title}
+              </h3>
+              <p className={`text-xl md:text-2xl font-body leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>
+                {capability.description}
+              </p>
+            </div>
             
             {capability.features.length > 0 && (
-              <ul className={`space-y-3 ${capability.textColor === 'text-white' ? 'text-gray-300' : 'text-gray-600'}`}>
-                {capability.features.map((feature, featureIndex) => (
-                  <motion.li 
-                    key={featureIndex}
-                    className="flex items-start space-x-3"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isItemInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                    transition={{ 
-                      delay: isItemInView ? 0.3 + (featureIndex * 0.1) : 0,
-                      duration: 0.5,
-                      ease: isItemInView ? "easeOut" : "easeIn"
-                    }}
-                  >
-                    <div className={`w-2 h-2 rounded-full mt-2 ${capability.textColor === 'text-white' ? 'bg-blue-400' : 'bg-[#00aeef]'}`} />
-                    <span className="text-base md:text-lg">{feature}</span>
-                  </motion.li>
-                ))}
-              </ul>
+              <div className="mt-12 space-y-6">
+                <h4 className={`text-2xl font-semibold ${capability.textColor === 'text-white' ? 'text-white' : 'text-gray-800'}`}>
+                  Key Features
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {capability.features.map((feature, featureIndex) => (
+                    <motion.div
+                      key={featureIndex}
+                      className={`flex items-start space-x-4 p-4 rounded-xl ${capability.textColor === 'text-white' ? 'bg-white/10' : 'bg-gray-100'}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={isItemInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                      transition={{ 
+                        delay: isItemInView ? 0.3 + (featureIndex * 0.1) : 0,
+                        duration: 0.5,
+                        ease: isItemInView ? "easeOut" : "easeIn"
+                      }}
+                    >
+                      <div className={`w-3 h-3 rounded-full mt-2 flex-shrink-0 ${capability.textColor === 'text-white' ? 'bg-blue-400' : 'bg-[#00aeef]'}`} />
+                      <span className={`text-lg leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>{feature}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             )}
           </motion.div>
 
-          {/* Images */}
+          {/* Images Section */}
           <motion.div 
-            className="space-y-4"
+            className="relative"
             variants={imageVariants}
           >
             {capability.id === 'robotic-applications' ? (
-              // Horizontal scroll for robotic applications
+              // Horizontal scroll for robotic applications (5 images)
               <RoboticImageCarousel images={capability.images} />
-            ) : (
-              // Grid layout for other capabilities
-              <div className={`grid gap-4 ${capability.images.length === 2 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
+            ) : capability.id === 'material-handling' ? (
+              // 3-column grid for material handling (3 images)
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {capability.images.map((image, imageIndex) => (
                   <motion.div
                     key={imageIndex}
-                    className="relative overflow-hidden rounded-2xl shadow-xl"
+                    className="relative overflow-hidden rounded-2xl shadow-2xl group"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={isItemInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                     transition={{ 
@@ -257,9 +264,35 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-auto max-h-[300px] object-cover hover:scale-105 transition-transform duration-300"
+                      className="w-full h-[350px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              // Large 2-column grid for digitization (2 images)
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {capability.images.map((image, imageIndex) => (
+                  <motion.div
+                    key={imageIndex}
+                    className="relative overflow-hidden rounded-2xl shadow-2xl group"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={isItemInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                    transition={{ 
+                      delay: isItemInView ? 0.2 + (imageIndex * 0.1) : 0,
+                      duration: 0.6,
+                      ease: isItemInView ? "easeOut" : "easeIn"
+                    }}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`${capability.title} ${imageIndex + 1}`}
+                      className="w-full h-[400px] md:h-[500px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </motion.div>
                 ))}
               </div>
@@ -304,18 +337,21 @@ const RoboticImageCarousel: React.FC<{ images: string[] }> = ({ images }) => {
     <div className="relative">
       <div
         ref={scrollerRef}
-        className="flex overflow-x-auto gap-4 snap-x snap-mandatory hide-scrollbar"
+        className="flex overflow-x-auto gap-6 snap-x snap-mandatory hide-scrollbar"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
         {images.map((image, i) => (
-          <div key={i} className="snap-center flex-none w-full md:w-1/3">
-            <img 
-              src={image} 
-              alt={`Robotic application ${i + 1}`}
-              className="w-full h-auto max-h-[300px] object-cover rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300"
-              loading="lazy"
-            />
+          <div key={i} className="snap-center flex-none w-[280px] md:w-[320px]">
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl group">
+              <img 
+                src={image} 
+                alt={`Robotic application ${i + 1}`}
+                className="w-full h-[350px] md:h-[400px] object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
           </div>
         ))}
       </div>
