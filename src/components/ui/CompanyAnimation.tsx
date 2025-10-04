@@ -83,7 +83,7 @@ const CompanyAnimation: React.FC = () => {
         <h2 className="text-black/70 text-center text-xl sm:text-2xl md:text-3xl font-semibold" style={{ fontFamily: 'Roboto Flex, sans-serif' }}>
           Trusted by leading companies
         </h2>
-        <div className="w-full mx-auto relative overflow-hidden rounded-2xl border border-black/10 bg-black/5 shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+        <div className="w-full mx-auto relative overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-r from-white via-blue-50 to-white shadow-[0_8px_24px_rgba(59,130,246,0.15)]"
              style={{ maskImage: 'linear-gradient(to right, transparent, white 8%, white 92%, transparent)' }}>
           <div className="flex w-max animate-scroll sm:animate-scroll-tablet md:animate-scroll py-4">
             {duplicatedLogos.map((logo, index) => (

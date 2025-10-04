@@ -23,7 +23,7 @@ const capabilitiesData: CapabilityItem[] = [
       '/automated-customised-materialhandling/2.png',
       '/automated-customised-materialhandling/3.png'
     ],
-    bgColor: 'bg-gray-50',
+    bgColor: 'bg-white',
     textColor: 'text-black',
     animationDirection: 'left'
   },
@@ -44,7 +44,7 @@ const capabilitiesData: CapabilityItem[] = [
       '/robotic/sealer_application.png',
       '/robotic/underbody_application.png'
     ],
-    bgColor: 'bg-white',
+    bgColor: 'bg-gradient-to-r from-blue-50 to-blue-100',
     textColor: 'text-black',
     animationDirection: 'right'
   },
@@ -63,8 +63,8 @@ const capabilitiesData: CapabilityItem[] = [
       '/digitization-smartfactory/1.jpg',
       '/digitization-smartfactory/2.jpg'
     ],
-    bgColor: 'bg-gray-900',
-    textColor: 'text-white',
+    bgColor: 'bg-white',
+    textColor: 'text-black',
     animationDirection: 'up'
   }
 ];
@@ -144,7 +144,7 @@ const CapabilitiesSection: React.FC = () => {
   };
 
   return (
-    <section ref={sectionRef} id="capabilities" className="w-full relative overflow-hidden">
+    <div ref={sectionRef} id="capabilities" className="w-full relative overflow-hidden">
       {/* Section Header */}
       <motion.div 
         className="text-center py-12 px-6"
@@ -169,7 +169,7 @@ const CapabilitiesSection: React.FC = () => {
           imageVariants={imageVariants}
         />
       ))}
-    </section>
+    </div>
   );
 };
 
@@ -199,7 +199,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
         <div className="space-y-16">
           {/* Content Section */}
           <motion.div 
-            className="text-center max-w-5xl mx-auto"
+            className="text-left max-w-5xl mx-auto"
             variants={variants}
           >
             <div className="space-y-6">

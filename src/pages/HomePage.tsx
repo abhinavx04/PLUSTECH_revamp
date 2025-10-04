@@ -130,7 +130,7 @@ const HomePage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden">
+    <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-gradient-to-b from-white via-blue-50 to-white">
       {/* Header */}
       <header className="w-full border-b" style={{
         background: 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 35%, rgba(255,255,255,0.02) 100%), rgba(0,0,0,0.82)',
@@ -221,17 +221,17 @@ const HomePage: React.FC = () => {
       {/* CTAs */}
       <div className="w-full flex items-center justify-center mt-8 md:mt-12">
         <div className="flex items-center justify-center gap-6">
-          <a href="#contact" className="px-8 md:px-10 py-4 rounded-full bg-white text-black font-semibold shadow-[0_8px_24px_rgba(0,0,0,0.2)] hover:bg-white/90 transition-colors text-lg">
+          <a href="#contact" className="px-8 md:px-10 py-4 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_8px_24px_rgba(0,174,239,0.3)] hover:bg-[#0099d4] transition-all duration-300 text-lg transform hover:scale-105">
             Get Started
           </a>
-          <a href="#about" className="px-8 md:px-10 py-4 rounded-full bg-black text-white font-semibold hover:bg-gray-800 transition-colors text-lg shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
+          <a href="#about" className="px-8 md:px-10 py-4 rounded-full bg-white text-[#00aeef] font-semibold hover:bg-gray-50 transition-all duration-300 text-lg shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-[#00aeef]/20 transform hover:scale-105">
             Learn More
           </a>
         </div>
       </div>
 
       {/* Welcome Section */}
-      <div className="w-full px-6 md:px-12 lg:px-16 py-12">
+      <div className="w-full px-6 md:px-12 lg:px-16 py-12 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div className="space-y-6">
@@ -279,7 +279,7 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* About Section */}
-      <section id="about" className="w-full px-6 md:px-12 lg:px-16 py-12">
+      <section id="about" className="w-full px-6 md:px-12 lg:px-16 py-12 bg-white">
         <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div className="w-full">
@@ -304,17 +304,21 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Company Logos Animation */}
-      <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12">
+      <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-r from-blue-50 to-blue-100">
         <div className="max-w-7xl mx-auto w-full">
           <CompanyAnimation />
         </div>
       </section>
 
       {/* News Section */}
-      <SimpleNewsSection />
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100">
+        <SimpleNewsSection />
+      </div>
 
       {/* Capabilities Section */}
-      <CapabilitiesSection />
+      <div className="bg-white">
+        <CapabilitiesSection />
+      </div>
 
       <Footer />
 
