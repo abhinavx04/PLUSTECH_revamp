@@ -21,8 +21,6 @@ const SimpleNewsSection: React.FC = () => {
   // Now using real data from Firestore via useNewsFirestore hook
 
   const publishedNews = news.filter(article => article.published);
-  const featuredNews = publishedNews.filter(article => article.featured);
-  const regularNews = publishedNews.filter(article => !article.featured);
 
   // Show loading state
   if (loading) {

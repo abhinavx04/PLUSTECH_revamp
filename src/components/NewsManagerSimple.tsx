@@ -26,9 +26,6 @@ interface CreateNewsData {
   tags: string[];
 }
 
-interface UpdateNewsData extends Partial<CreateNewsData> {
-  id: string;
-}
 
 const NewsManagerSimple: React.FC = () => {
   const { news, loading, error, createNews, updateNews, deleteNews } = useNewsFirestore();
