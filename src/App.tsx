@@ -1,45 +1,107 @@
-import React, { Component } from 'react';
-import type { ReactNode } from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoutes';
 
-class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; message: string }> {
-  state: { hasError: boolean; message: string } = { hasError: false, message: '' };
-  static getDerivedStateFromError(error: unknown) {
-    const message = error && typeof error === 'object' && 'message' in error ? String((error as { message?: string }).message) : String(error);
-    return { hasError: true, message };
-  }
-  componentDidCatch(error: unknown, info: unknown) {
-    console.error('App crashed:', error, info);
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-white p-6">
-          <div className="text-center max-w-xl">
-            <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
-            <p className="text-gray-600 mb-4">{this.state.message}</p>
-            <button className="px-4 py-2 rounded bg-black text-white" onClick={() => window.location.reload()}>Reload</button>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
+const TestHome = () => (
+  <div style={{ 
+    minHeight: '100vh', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
+    fontFamily: 'Arial, sans-serif'
+  }}>
+    <div style={{ 
+      textAlign: 'center',
+      padding: '20px',
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+    }}>
+      <h1 style={{ color: '#333', marginBottom: '20px' }}>
+        PlusTech - Homepage
+      </h1>
+      <p style={{ color: '#666', marginBottom: '20px' }}>
+        Routing is working! This is the homepage.
+      </p>
+      <a 
+        href="/test" 
+        style={{
+          display: 'inline-block',
+          backgroundColor: '#007bff',
+          color: 'white',
+          textDecoration: 'none',
+          padding: '10px 20px',
+          borderRadius: '4px',
+          marginRight: '10px'
+        }}
+      >
+        Go to Test Page
+      </a>
+      <a 
+        href="/admin/login" 
+        style={{
+          display: 'inline-block',
+          backgroundColor: '#28a745',
+          color: 'white',
+          textDecoration: 'none',
+          padding: '10px 20px',
+          borderRadius: '4px'
+        }}
+      >
+        Admin Login
+      </a>
+    </div>
+  </div>
+);
+
+const TestPage = () => (
+  <div style={{ 
+    minHeight: '100vh', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    backgroundColor: '#e8f5e8',
+    fontFamily: 'Arial, sans-serif'
+  }}>
+    <div style={{ 
+      textAlign: 'center',
+      padding: '20px',
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+    }}>
+      <h1 style={{ color: '#333', marginBottom: '20px' }}>
+        Test Page Works!
+      </h1>
+      <p style={{ color: '#666', marginBottom: '20px' }}>
+        If you can see this, routing is working perfectly.
+      </p>
+      <a 
+        href="/" 
+        style={{
+          display: 'inline-block',
+          backgroundColor: '#007bff',
+          color: 'white',
+          textDecoration: 'none',
+          padding: '10px 20px',
+          borderRadius: '4px'
+        }}
+      >
+        Back to Home
+      </a>
+    </div>
+  </div>
+);
 
 function App() {
   return (
-    <ErrorBoundary>
-      <Routes>
-      {/* Public Routes */}
+    <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
-      
-      {/* Protected Admin Routes */}
       <Route 
         path="/admin/dashboard" 
         element={
@@ -48,8 +110,7 @@ function App() {
           </ProtectedRoute>
         } 
       />
-      </Routes>
-    </ErrorBoundary>
+    </Routes>
   );
 }
 

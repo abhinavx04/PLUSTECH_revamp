@@ -731,10 +731,9 @@ const HomePage: React.FC = () => {
                       </ul>
                     </div>
                   </div>
-                  <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
-                    <img src="/digitization/control-systems.png" alt="Digital Control Systems" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                    <img src="/digitization/analytics-dashboard.png" alt="Data Analytics Dashboard" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                    <img src="/digitization/iot-integration.png" alt="IoT Integration" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
+                  <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-center">
+                    <img src="/digitization-smartfactory/1.jpg" alt="Digital Control Systems" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
+                    <img src="/digitization-smartfactory/2.jpg" alt="Data Analytics Dashboard" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
                   </div>
                 </div>
               </div>

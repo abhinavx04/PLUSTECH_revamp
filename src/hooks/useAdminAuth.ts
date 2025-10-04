@@ -26,25 +26,31 @@ export const useAdminAuth = () => {
     };
 
     if (isAuthDisabled(auth)) {
+      console.warn('[Auth] Firebase authentication is disabled - running in demo mode');
       setLoading(false);
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth as unknown as import('firebase/auth').Auth, (firebaseUser: User | null) => {
-      if (firebaseUser) {
-        const isAdmin = ADMIN_EMAILS.includes(firebaseUser.email || '');
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          isAdmin,
-        });
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
+    try {
+      const unsubscribe = onAuthStateChanged(auth as unknown as import('firebase/auth').Auth, (firebaseUser: User | null) => {
+        if (firebaseUser) {
+          const isAdmin = ADMIN_EMAILS.includes(firebaseUser.email || '');
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            isAdmin,
+          });
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('[Auth] Error setting up auth state listener:', error);
+      setLoading(false);
+    }
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -53,7 +59,7 @@ export const useAdminAuth = () => {
       setLoading(true);
       const isAuthDisabled = (a: unknown): a is { __disabled: true } => Boolean((a as { __disabled?: boolean })?.__disabled);
       if (isAuthDisabled(auth)) {
-        throw new Error('Authentication not configured');
+        throw new Error('Firebase authentication is not configured. Please set up your Firebase credentials in environment variables.');
       }
       await signInWithEmailAndPassword(auth as unknown as import('firebase/auth').Auth, email, password);
     } catch (err: unknown) {
@@ -67,6 +73,12 @@ export const useAdminAuth = () => {
 
   const logout = async () => {
     try {
+      const isAuthDisabled = (a: unknown): a is { __disabled: true } => Boolean((a as { __disabled?: boolean })?.__disabled);
+      if (isAuthDisabled(auth)) {
+        console.warn('[Auth] Firebase authentication is disabled - skipping logout');
+        setUser(null);
+        return;
+      }
       await signOut(auth);
       setUser(null);
     } catch (err: unknown) {

@@ -1,18 +1,13 @@
 import React from 'react';
-import { useAdminAuth } from '../hooks/useAdminAuth';
 import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard: React.FC = () => {
-  const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+  const handleLogout = () => {
+    // Simple logout for demo mode
+    localStorage.removeItem('demo-logged-in');
+    navigate('/');
   };
 
   return (
@@ -37,7 +32,7 @@ const AdminDashboard: React.FC = () => {
             
             <div className="flex items-center space-x-4">
               <span className="text-white text-sm">
-                Welcome, {user?.email}
+                Welcome, admin@plustech.com (Demo Mode)
               </span>
               <button
                 onClick={handleLogout}

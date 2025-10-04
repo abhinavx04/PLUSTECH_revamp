@@ -1,22 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdminAuth } from '../hooks/useAdminAuth';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, error } = useAdminAuth();
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
     try {
-      await login(email, password);
-      navigate('/admin/dashboard');
+      // Simulate login for now (replace with actual Firebase when configured)
+      if (email === 'admin@plustech.com' && password === 'admin123') {
+        localStorage.setItem('demo-logged-in', 'true');
+        navigate('/admin/dashboard');
+      } else {
+        setError('Invalid credentials. Use admin@plustech.com / admin123 for demo');
+      }
     } catch (err) {
+      setError('Login failed. Please try again.');
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);
