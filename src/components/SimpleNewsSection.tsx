@@ -21,10 +21,8 @@ const SimpleNewsSection: React.FC = () => {
   // Debug logging
   console.log('[SimpleNewsSection] News data:', { news: news.length, loading, error });
 
-  // Temporarily show all articles (both published and unpublished) for debugging
-  const publishedNews = news; // Changed from: news.filter(article => article.published);
+  const publishedNews = news.filter(article => article.published);
   console.log('[SimpleNewsSection] Published news:', publishedNews.length);
-  console.log('[SimpleNewsSection] All articles:', news.map(a => ({ title: a.title, published: a.published })));
 
   // Show error state
   if (error) {
