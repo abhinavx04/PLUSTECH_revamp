@@ -4,6 +4,7 @@ import PillNav from '../components/PillNav';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import SimpleNewsSection from '../components/SimpleNewsSection';
+import CapabilitiesSection from '../components/CapabilitiesSection';
 import Footer from '../components/Footer';
 // import FirebaseStatus from '../components/FirebaseStatus';
 
@@ -13,16 +14,6 @@ const HomePage: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const robotRef = useRef<HTMLDivElement | null>(null);
   const cloudRef = useRef<HTMLButtonElement | null>(null);
-  const roboticScrollerRef = useRef<HTMLDivElement | null>(null);
-
-  const roboticImages = [
-    { src: "/robotic/indoor-painting_and_door_opening.png", alt: "Commercial vehicle cabin painting" },
-    { src: "/robotic/2-wheeler-fueltanks_plaSTIC.png", alt: "Two-wheeler fuel tanks" },
-    { src: "/robotic/scooter-metal_plastic-part.png", alt: "Plastic components" },
-    { src: "/robotic/sealer_application.png", alt: "Sealer application" },
-    { src: "/robotic/underbody_application.png", alt: "Underbody coating" },
-  ];
-  const duplicatedRoboticImages = [...roboticImages, ...roboticImages, ...roboticImages];
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [panelOrigin, setPanelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showWisp, setShowWisp] = useState(false);
@@ -137,95 +128,6 @@ const HomePage: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const scroller = roboticScrollerRef.current;
-    if (!scroller) return;
-
-    const isMobile = window.innerWidth < 768;
-    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
-
-    const setToMiddleBlock = () => {
-      const blockWidth = scroller.scrollWidth / 3;
-      scroller.scrollTo({ left: blockWidth, behavior: 'auto' });
-    };
-
-    setToMiddleBlock();
-
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const blockWidth = scroller.scrollWidth / 3;
-        const left = scroller.scrollLeft;
-        if (left < blockWidth * 0.1) {
-          scroller.scrollTo({ left: left + blockWidth, behavior: 'auto' });
-        } else if (left > blockWidth * 2.9) {
-          scroller.scrollTo({ left: left - blockWidth, behavior: 'auto' });
-        }
-        ticking = false;
-      });
-    };
-
-    scroller.addEventListener('scroll', onScroll as EventListener, { passive: true } as AddEventListenerOptions);
-
-    // Allow vertical wheel/trackpad to move the horizontal carousel while section is pinned
-    const onWheel = (e: WheelEvent) => {
-      if (!scroller) return;
-      const vertical = Math.abs(e.deltaY) > Math.abs(e.deltaX);
-      if (vertical) {
-        e.preventDefault();
-        // Adjust scroll sensitivity based on device
-        const sensitivity = isMobile ? 0.5 : isTablet ? 0.7 : 1;
-        scroller.scrollLeft += e.deltaY * sensitivity;
-      }
-    };
-    scroller.addEventListener('wheel', onWheel, { passive: false } as AddEventListenerOptions);
-
-    // Enhanced touch support for mobile devices
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    const onTouchStart = (e: TouchEvent) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      if (!e.touches[0]) return;
-      
-      const touchCurrentX = e.touches[0].clientX;
-      const touchCurrentY = e.touches[0].clientY;
-      const diffX = Math.abs(touchCurrentX - touchStartX);
-      const diffY = Math.abs(touchCurrentY - touchStartY);
-
-      // Determine if this is a horizontal scroll
-      if (diffX > diffY && diffX > 10) {
-        e.preventDefault();
-      }
-    };
-
-    const onTouchEnd = () => {
-      // Touch end handler - can be used for cleanup if needed
-    };
-
-    // Add touch event listeners for better mobile experience
-    scroller.addEventListener('touchstart', onTouchStart, { passive: true });
-    scroller.addEventListener('touchmove', onTouchMove, { passive: false });
-    scroller.addEventListener('touchend', onTouchEnd, { passive: true });
-
-    const onResize = () => setToMiddleBlock();
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      scroller.removeEventListener('scroll', onScroll as EventListener);
-      scroller.removeEventListener('wheel', onWheel as EventListener);
-      scroller.removeEventListener('touchstart', onTouchStart);
-      scroller.removeEventListener('touchmove', onTouchMove);
-      scroller.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
 
   return (
     <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden">
@@ -412,138 +314,7 @@ const HomePage: React.FC = () => {
       <SimpleNewsSection />
 
       {/* Capabilities Section */}
-      <section id="highlights" className="w-full relative overflow-hidden">
-        <div className="w-full">
-          <div className="pt-2 pb-1 md:pt-3 md:pb-2 text-center">
-            <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">
-              OUR CAPABILITIES
-            </h3>
-            <p className="mt-3 text-gray-600 font-body text-base md:text-lg">
-              A quick story of how we deliver value — one card at a time.
-            </p>
-          </div>
-
-          {/* Automated Material Handling */}
-          <div className="w-full py-8 md:py-12 bg-gray-50">
-            <div className="w-full px-4 md:px-8 py-6 md:py-10">
-              <h4 className="text-3xl md:text-5xl font-heading font-semibold text-black mb-6">
-                Automated and Customised Material Handling
-              </h4>
-              <p className="text-gray-700 font-body mb-8 text-lg md:text-xl max-w-5xl">
-                Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency, and optimize the plant footprint.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-center">
-                <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-              </div>
-            </div>
-          </div>
-
-          {/* Robotic Applications */}
-          <div className="w-full py-8 md:py-12 bg-white">
-            <div className="w-full px-4 md:px-8 py-6 md:py-10">
-              <h4 className="text-3xl md:text-5xl font-heading font-semibold text-black mb-6">
-                Robotic Applications
-              </h4>
-              <p className="text-gray-700 font-body mb-4 text-lg md:text-xl max-w-5xl">
-                We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries.
-              </p>
-              <ul className="list-disc pl-5 mb-4 text-gray-700 font-body space-y-2 text-base md:text-lg">
-                <li>Commercial vehicle cabins — interior and exterior painting, sealer, and underbody coating</li>
-                <li>Two-wheeler fuel tanks</li>
-                <li>Plastic components</li>
-                <li>General industrial parts</li>
-              </ul>
-              <p className="text-gray-700 font-body mb-8 text-base md:text-lg">
-                Each robotic system is expertly engineered to provide exceptional advantages: consistently superior finish quality, high-volume production capacity, and significantly reduced paint consumption.
-              </p>
-              <div className="relative w-full">
-                <div
-                  ref={roboticScrollerRef}
-                  className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory hide-scrollbar px-4 md:px-6"
-                  style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                  <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
-                  {duplicatedRoboticImages.map((img, i) => (
-                    <div key={`robotic-img-${i}`} className="carousel-item snap-center flex-none w-full md:w-1/3 lg:w-1/3">
-                      <img src={img.src} alt={img.alt} className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                    </div>
-                  ))}
-                </div>
-                <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 md:px-3">
-                  <button
-                    type="button"
-                    aria-label="Scroll left"
-                    onClick={() => {
-                      const el = roboticScrollerRef.current;
-                      if (el) {
-                         const item = el.querySelector('.carousel-item') as HTMLElement | null;
-                         const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
-                        el.scrollBy({ left: -delta, behavior: 'smooth' });
-                      }
-                    }}
-                    className="pointer-events-auto hidden sm:inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center touch-manipulation hover:bg-white transition-colors"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Scroll right"
-                    onClick={() => {
-                      const el = roboticScrollerRef.current;
-                      if (el) {
-                         const item = el.querySelector('.carousel-item') as HTMLElement | null;
-                         const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
-                        el.scrollBy({ left: delta, behavior: 'smooth' });
-                      }
-                    }}
-                    className="pointer-events-auto hidden sm:inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center touch-manipulation hover:bg-white transition-colors"
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Digitization & Industry 4.0 */}
-          <div className="w-full py-8 md:py-12 bg-gray-900 text-white">
-            <div className="w-full px-4 md:px-8 py-6 md:py-10">
-              <h4 className="text-3xl md:text-5xl font-heading font-semibold text-white mb-6">
-                Digitization and Smart Factory
-              </h4>
-              <p className="text-gray-200 font-body mb-8 text-lg md:text-xl max-w-5xl">
-                Empowering industry transformation through advanced digital solutions and Industry 4.0 technologies. Our smart factory implementations deliver real-time insights, optimize processes, and enable data-driven decision making.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div className="space-y-4">
-                  <h5 className="text-xl font-semibold text-white/90">Real-time Monitoring & Control</h5>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-300 text-base md:text-lg">
-                    <li>Advanced process visualization and control systems</li>
-                    <li>Real-time performance analytics and KPI tracking</li>
-                    <li>Quality monitoring and traceability solutions</li>
-                    <li>Energy consumption optimization</li>
-                  </ul>
-                </div>
-                <div className="space-y-4">
-                  <h5 className="text-xl font-semibold text-white/90">Smart Integration</h5>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-300 text-base md:text-lg">
-                    <li>IoT sensor networks and data collection</li>
-                    <li>Predictive maintenance systems</li>
-                    <li>Automated reporting and analytics</li>
-                    <li>Machine learning optimization</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
-                <img src="/digitization-smartfactory/1.jpg" alt="Digital Control Systems" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                <img src="/digitization-smartfactory/2.jpg" alt="Data Analytics Dashboard" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CapabilitiesSection />
 
       <Footer />
 
