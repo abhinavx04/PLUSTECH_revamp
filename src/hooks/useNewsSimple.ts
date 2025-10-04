@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export interface NewsArticle {
+interface NewsArticle {
   id: string;
   title: string;
   content: string;
@@ -19,11 +19,11 @@ export const useNewsSimple = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data for testing
+  // Mock data for testing - no Firebase dependencies
   const mockNews: NewsArticle[] = [
     {
       id: '1',
-      title: 'PlusTech Launches New Automation Solutions',
+      title: 'PlusTech Launches Revolutionary Automation Solutions',
       content: `We are excited to announce the launch of our revolutionary automation solutions that are set to transform the manufacturing industry.
 
 Our new suite of automation technologies combines artificial intelligence, machine learning, and advanced robotics to create unprecedented efficiency in production processes. This breakthrough represents years of research and development by our dedicated engineering team.
@@ -51,7 +51,7 @@ The solutions are now available for deployment across various industries includi
     },
     {
       id: '2',
-      title: 'Digital Transformation Initiative Reaches Milestone',
+      title: 'Digital Transformation Initiative Reaches Major Milestone',
       content: `Our comprehensive digital transformation initiative has reached a significant milestone, marking a new era for PlusTech and our clients.
 
 Over the past 18 months, we have successfully migrated over 200 legacy systems to cloud-based infrastructure, resulting in improved scalability, security, and operational efficiency. This transformation has positioned our clients at the forefront of digital innovation.
@@ -79,7 +79,7 @@ The next phase of our digital transformation initiative will focus on AI-powered
     },
     {
       id: '3',
-      title: 'Partnership with Leading Tech Giants Announced',
+      title: 'Strategic Partnerships with Leading Tech Giants Announced',
       content: `PlusTech is proud to announce strategic partnerships with several leading technology companies, marking a significant step forward in our mission to deliver cutting-edge solutions.
 
 These partnerships will enable us to leverage the latest technologies and best practices from industry leaders, ensuring that our clients always have access to the most advanced and reliable solutions available in the market.

@@ -1,192 +1,12 @@
-import React, { useRef, useLayoutEffect, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import PillNav from '../components/PillNav';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
-import NewsSectionSimple from '../components/NewsSectionSimple';
+import SimpleNewsSection from '../components/SimpleNewsSection';
 import Footer from '../components/Footer';
+// import FirebaseStatus from '../components/FirebaseStatus';
 
-// Modified GsapCoverSection to handle three sections
-type ThreeSectionProps = {
-  automated: React.ReactNode;
-  robotic: React.ReactNode;
-  digitization: React.ReactNode;
-};
-
-const GsapCoverSection: React.FC<ThreeSectionProps> = ({ automated, robotic, digitization }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const automatedRef = useRef<HTMLDivElement | null>(null);
-  const roboticRef = useRef<HTMLDivElement | null>(null);
-  const digitizationRef = useRef<HTMLDivElement | null>(null);
-
-  useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile = window.innerWidth < 768;
-    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
-
-    const ctx = gsap.context(() => {
-      // Initial states
-      gsap.set(automatedRef.current, { yPercent: 0, opacity: 1, scale: 1, zIndex: 3, pointerEvents: 'auto' });
-      gsap.set(roboticRef.current, { yPercent: 100, opacity: 0, scale: 0.95, zIndex: 2, pointerEvents: 'none' });
-      gsap.set(digitizationRef.current, { yPercent: 100, opacity: 0, scale: 0.95, zIndex: 1, pointerEvents: 'none' });
-
-      // Responsive scroll trigger settings
-      const scrollSettings = {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: isMobile ? '+=200%' : isTablet ? '+=250%' : '+=300%',
-        scrub: prefersReducedMotion ? false : (isMobile ? 1.5 : isTablet ? 2 : 2.5),
-        pin: true,
-        anticipatePin: 1,
-        markers: false,
-        // Add touch support for mobile
-        onUpdate: (self: { isActive: boolean; progress: number }) => {
-          if (isMobile && self.isActive) {
-            // Reduce animation intensity on mobile
-            const progress = self.progress;
-            if (progress < 0.5) {
-              // First transition
-              const localProgress = progress * 2;
-              gsap.set(automatedRef.current, { 
-                yPercent: -30 * localProgress, 
-                scale: 1 - (0.05 * localProgress), 
-                opacity: 1 - localProgress 
-              });
-              gsap.set(roboticRef.current, { 
-                yPercent: 100 - (100 * localProgress), 
-                scale: 0.95 + (0.05 * localProgress), 
-                opacity: localProgress 
-              });
-            } else {
-              // Second transition
-              const localProgress = (progress - 0.5) * 2;
-              gsap.set(roboticRef.current, { 
-                yPercent: -30 * localProgress, 
-                scale: 1 - (0.05 * localProgress), 
-                opacity: 1 - localProgress 
-              });
-              gsap.set(digitizationRef.current, { 
-                yPercent: 100 - (100 * localProgress), 
-                scale: 0.95 + (0.05 * localProgress), 
-                opacity: localProgress 
-              });
-            }
-          }
-        }
-      };
-
-      // Skip complex animations for reduced motion
-      if (prefersReducedMotion) {
-        // Simple fade transitions for reduced motion
-        const tl = gsap.timeline({
-          scrollTrigger: scrollSettings,
-        });
-
-        tl
-          .to(automatedRef.current, {
-            opacity: 0,
-            duration: 0.5,
-            ease: 'none',
-          }, 0)
-          .to(roboticRef.current, {
-            opacity: 1,
-            duration: 0.5,
-            ease: 'none',
-          }, 0)
-          .set(roboticRef.current, { pointerEvents: 'auto' }, 0.1)
-          .set(automatedRef.current, { pointerEvents: 'none' }, 0.1)
-          .to(roboticRef.current, {
-            opacity: 0,
-            duration: 0.5,
-            ease: 'none',
-          }, 0.5)
-          .to(digitizationRef.current, {
-            opacity: 1,
-            duration: 0.5,
-            ease: 'none',
-          }, 0.5)
-          .set(digitizationRef.current, { pointerEvents: 'auto' }, 0.6)
-          .set(roboticRef.current, { pointerEvents: 'none' }, 0.6);
-      } else {
-        // Full animations for normal motion preference
-        const tl = gsap.timeline({
-          scrollTrigger: scrollSettings,
-        });
-
-        tl
-          // Stage 1: Automated fades out, Robotic fades in
-          .to(automatedRef.current, {
-            yPercent: isMobile ? -20 : -30,
-            scale: isMobile ? 0.98 : 0.95,
-            opacity: 0,
-            ease: 'power1.inOut',
-            duration: 1,
-          }, 0)
-          .to(roboticRef.current, {
-            yPercent: 0,
-            scale: 1,
-            opacity: 1,
-            ease: 'power1.inOut',
-            duration: 1,
-          }, 0)
-          // Enable interactions on Robotic once it is visible
-          .set(roboticRef.current, { pointerEvents: 'auto' }, 0.2)
-          .set(automatedRef.current, { pointerEvents: 'none' }, 0.2)
-          // Stage 2: Robotic fades out, Digitization fades in
-          .to(roboticRef.current, {
-            yPercent: isMobile ? -20 : -30,
-            scale: isMobile ? 0.98 : 0.95,
-            opacity: 0,
-            ease: 'power1.inOut',
-            duration: 1,
-          }, 1)
-          .to(digitizationRef.current, {
-            yPercent: 0,
-            scale: 1,
-            opacity: 1,
-            ease: 'power1.inOut',
-            duration: 1,
-          }, 1)
-          // Swap interactions to Digitization layer
-          .set(digitizationRef.current, { pointerEvents: 'auto' }, 1.2)
-          .set(roboticRef.current, { pointerEvents: 'none' }, 1.2);
-      }
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-      <section ref={containerRef} className="relative h-[200vh] sm:h-[250vh] lg:h-[300vh] overflow-hidden" style={{ perspective: '1000px' }}>
-      <div
-        ref={automatedRef}
-        className="sticky top-0 h-screen w-full will-change-transform"
-          style={{ backgroundColor: 'transparent', transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
-      >
-        {automated}
-      </div>
-      <div
-        ref={roboticRef}
-        className="fixed top-0 left-0 w-full h-screen will-change-transform"
-          style={{ backgroundColor: 'transparent', transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
-      >
-        {robotic}
-      </div>
-      <div
-        ref={digitizationRef}
-        className="fixed top-0 left-0 w-full h-screen will-change-transform"
-          style={{ backgroundColor: 'transparent', transformStyle: 'preserve-3d', backfaceVisibility: 'hidden' }}
-      >
-        {digitization}
-      </div>
-    </section>
-  );
-};
 
 const HomePage: React.FC = () => {
   const handRef = useRef<HTMLImageElement | null>(null);
@@ -589,7 +409,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* News Section */}
-      <NewsSectionSimple />
+      <SimpleNewsSection />
 
       {/* Capabilities Section */}
       <section id="highlights" className="w-full relative overflow-hidden">
@@ -603,148 +423,129 @@ const HomePage: React.FC = () => {
             </p>
           </div>
 
-           <GsapCoverSection
-             automated={
-               <div className="w-full h-full flex items-start justify-center" style={{
-                 background: 'linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
-                 backdropFilter: 'blur(10px) saturate(120%)',
-                 WebkitBackdropFilter: 'blur(10px) saturate(120%)',
-                 border: '1px solid rgba(255,255,255,0.2)',
-                 boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-               }}>
-                <div className="w-full px-4 md:px-8 py-6 md:py-10">
-                  <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black">
-                    Automated and Customised Material Handling
-                  </h4>
-                  <p className="text-gray-700 font-body mt-4 text-lg md:text-xl max-w-5xl">
-                    Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency, and optimize the plant footprint.
-                  </p>
-                  <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-center">
-                    <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                    <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                    <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                  </div>
+          {/* Automated Material Handling */}
+          <div className="w-full py-8 md:py-12 bg-gray-50">
+            <div className="w-full px-4 md:px-8 py-6 md:py-10">
+              <h4 className="text-3xl md:text-5xl font-heading font-semibold text-black mb-6">
+                Automated and Customised Material Handling
+              </h4>
+              <p className="text-gray-700 font-body mb-8 text-lg md:text-xl max-w-5xl">
+                Plustech deploys fully or partially automated Handling solutions across various sections and operations of Paint shops to boost productivity, efficiency, and optimize the plant footprint.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-center">
+                <img src="/automated-customised-materialhandling/1.png" alt="Material handling 1" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
+                <img src="/automated-customised-materialhandling/2.png" alt="Material handling 2" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
+                <img src="/automated-customised-materialhandling/3.png" alt="Material handling 3" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
+              </div>
+            </div>
+          </div>
+
+          {/* Robotic Applications */}
+          <div className="w-full py-8 md:py-12 bg-white">
+            <div className="w-full px-4 md:px-8 py-6 md:py-10">
+              <h4 className="text-3xl md:text-5xl font-heading font-semibold text-black mb-6">
+                Robotic Applications
+              </h4>
+              <p className="text-gray-700 font-body mb-4 text-lg md:text-xl max-w-5xl">
+                We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries.
+              </p>
+              <ul className="list-disc pl-5 mb-4 text-gray-700 font-body space-y-2 text-base md:text-lg">
+                <li>Commercial vehicle cabins — interior and exterior painting, sealer, and underbody coating</li>
+                <li>Two-wheeler fuel tanks</li>
+                <li>Plastic components</li>
+                <li>General industrial parts</li>
+              </ul>
+              <p className="text-gray-700 font-body mb-8 text-base md:text-lg">
+                Each robotic system is expertly engineered to provide exceptional advantages: consistently superior finish quality, high-volume production capacity, and significantly reduced paint consumption.
+              </p>
+              <div className="relative w-full">
+                <div
+                  ref={roboticScrollerRef}
+                  className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory hide-scrollbar px-4 md:px-6"
+                  style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                  <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
+                  {duplicatedRoboticImages.map((img, i) => (
+                    <div key={`robotic-img-${i}`} className="carousel-item snap-center flex-none w-full md:w-1/3 lg:w-1/3">
+                      <img src={img.src} alt={img.alt} className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
+                    </div>
+                  ))}
+                </div>
+                <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 md:px-3">
+                  <button
+                    type="button"
+                    aria-label="Scroll left"
+                    onClick={() => {
+                      const el = roboticScrollerRef.current;
+                      if (el) {
+                         const item = el.querySelector('.carousel-item') as HTMLElement | null;
+                         const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
+                        el.scrollBy({ left: -delta, behavior: 'smooth' });
+                      }
+                    }}
+                    className="pointer-events-auto hidden sm:inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center touch-manipulation hover:bg-white transition-colors"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Scroll right"
+                    onClick={() => {
+                      const el = roboticScrollerRef.current;
+                      if (el) {
+                         const item = el.querySelector('.carousel-item') as HTMLElement | null;
+                         const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
+                        el.scrollBy({ left: delta, behavior: 'smooth' });
+                      }
+                    }}
+                    className="pointer-events-auto hidden sm:inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center touch-manipulation hover:bg-white transition-colors"
+                  >
+                    ›
+                  </button>
                 </div>
               </div>
-            }
-             robotic={
-               <div className="w-full h-full flex items-start justify-center" style={{
-                 background: 'linear-gradient(180deg, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.1) 100%)',
-                 backdropFilter: 'blur(10px) saturate(120%)',
-                 WebkitBackdropFilter: 'blur(10px) saturate(120%)',
-                 border: '1px solid rgba(59,130,246,0.2)',
-                 boxShadow: '0 8px 32px rgba(59,130,246,0.1)'
-               }}>
-                <div className="w-full px-4 md:px-8 py-6 md:py-10">
-                  <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-black">
-                    Robotic Applications
-                  </h4>
-                  <p className="text-gray-700 font-body mt-3 text-base md:text-lg">
-                    We deliver state-of-the-art, high-precision robotic painting systems designed for blue-chip customers across a wide range of industries.
-                  </p>
-                  <ul className="list-disc pl-5 mt-3 text-gray-700 font-body space-y-1 text-base md:text-lg">
-                    <li>Commercial vehicle cabins — interior and exterior painting, sealer, and underbody coating</li>
-                    <li>Two-wheeler fuel tanks</li>
-                    <li>Plastic components</li>
-                    <li>General industrial parts</li>
+            </div>
+          </div>
+
+          {/* Digitization & Industry 4.0 */}
+          <div className="w-full py-8 md:py-12 bg-gray-900 text-white">
+            <div className="w-full px-4 md:px-8 py-6 md:py-10">
+              <h4 className="text-3xl md:text-5xl font-heading font-semibold text-white mb-6">
+                Digitization and Smart Factory
+              </h4>
+              <p className="text-gray-200 font-body mb-8 text-lg md:text-xl max-w-5xl">
+                Empowering industry transformation through advanced digital solutions and Industry 4.0 technologies. Our smart factory implementations deliver real-time insights, optimize processes, and enable data-driven decision making.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div className="space-y-4">
+                  <h5 className="text-xl font-semibold text-white/90">Real-time Monitoring & Control</h5>
+                  <ul className="list-disc pl-5 space-y-2 text-gray-300 text-base md:text-lg">
+                    <li>Advanced process visualization and control systems</li>
+                    <li>Real-time performance analytics and KPI tracking</li>
+                    <li>Quality monitoring and traceability solutions</li>
+                    <li>Energy consumption optimization</li>
                   </ul>
-                  <p className="text-gray-700 font-body mt-4 text-base md:text-lg">
-                    Each robotic system is expertly engineered to provide exceptional advantages: consistently superior finish quality, high-volume production capacity, and significantly reduced paint consumption.
-                  </p>
-                  <div className="mt-6 relative w-full">
-                    <div
-                      ref={roboticScrollerRef}
-                      className="flex overflow-x-auto gap-4 md:gap-6 snap-x snap-mandatory hide-scrollbar px-4 md:px-6"
-                      style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                    >
-                      <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
-                      {duplicatedRoboticImages.map((img, i) => (
-                        <div key={`robotic-img-${i}`} className="carousel-item snap-center flex-none w-full md:w-1/3 lg:w-1/3">
-                          <img src={img.src} alt={img.alt} className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1 md:px-3">
-                      <button
-                        type="button"
-                        aria-label="Scroll left"
-                        onClick={() => {
-                          const el = roboticScrollerRef.current;
-                          if (el) {
-                             const item = el.querySelector('.carousel-item') as HTMLElement | null;
-                             const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
-                            el.scrollBy({ left: -delta, behavior: 'smooth' });
-                          }
-                        }}
-                        className="pointer-events-auto hidden sm:inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center touch-manipulation hover:bg-white transition-colors"
-                      >
-                        ‹
-                      </button>
-                      <button
-                        type="button"
-                        aria-label="Scroll right"
-                        onClick={() => {
-                          const el = roboticScrollerRef.current;
-                          if (el) {
-                             const item = el.querySelector('.carousel-item') as HTMLElement | null;
-                             const delta = item ? item.offsetWidth + 16 : el.clientWidth / 3;
-                            el.scrollBy({ left: delta, behavior: 'smooth' });
-                          }
-                        }}
-                        className="pointer-events-auto hidden sm:inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/90 border border-black/10 shadow-md text-black items-center justify-center touch-manipulation hover:bg-white transition-colors"
-                      >
-                        ›
-                      </button>
-                    </div>
-                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h5 className="text-xl font-semibold text-white/90">Smart Integration</h5>
+                  <ul className="list-disc pl-5 space-y-2 text-gray-300 text-base md:text-lg">
+                    <li>IoT sensor networks and data collection</li>
+                    <li>Predictive maintenance systems</li>
+                    <li>Automated reporting and analytics</li>
+                    <li>Machine learning optimization</li>
+                  </ul>
                 </div>
               </div>
-            }
-             digitization={
-               <div className="w-full h-full flex items-start justify-center" style={{
-                 background: 'linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.7) 100%)',
-                 backdropFilter: 'blur(10px) saturate(120%)',
-                 WebkitBackdropFilter: 'blur(10px) saturate(120%)',
-                 border: '1px solid rgba(255,255,255,0.1)',
-                 boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
-               }}>
-                <div className="w-full px-4 md:px-8 py-6 md:py-10">
-                  <h4 className="mt-1 md:mt-2 text-3xl md:text-5xl font-heading font-semibold text-white">
-                    Digitization and Smart Factory
-                  </h4>
-                  <p className="text-gray-200 font-body mt-4 text-lg md:text-xl max-w-5xl">
-                    Empowering industry transformation through advanced digital solutions and Industry 4.0 technologies. Our smart factory implementations deliver real-time insights, optimize processes, and enable data-driven decision making.
-                  </p>
-                  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                    <div className="space-y-4">
-                      <h5 className="text-xl font-semibold text-white/90">Real-time Monitoring & Control</h5>
-                      <ul className="list-disc pl-5 space-y-2 text-gray-300 text-base md:text-lg">
-                        <li>Advanced process visualization and control systems</li>
-                        <li>Real-time performance analytics and KPI tracking</li>
-                        <li>Quality monitoring and traceability solutions</li>
-                        <li>Energy consumption optimization</li>
-                      </ul>
-                    </div>
-                    <div className="space-y-4">
-                      <h5 className="text-xl font-semibold text-white/90">Smart Integration</h5>
-                      <ul className="list-disc pl-5 space-y-2 text-gray-300 text-base md:text-lg">
-                        <li>IoT sensor networks and data collection</li>
-                        <li>Predictive maintenance systems</li>
-                        <li>Automated reporting and analytics</li>
-                        <li>Machine learning optimization</li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className="mt-6 w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-center">
-                    <img src="/digitization-smartfactory/1.jpg" alt="Digital Control Systems" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                    <img src="/digitization-smartfactory/2.jpg" alt="Data Analytics Dashboard" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
+                <img src="/digitization-smartfactory/1.jpg" alt="Digital Control Systems" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
+                <img src="/digitization-smartfactory/2.jpg" alt="Data Analytics Dashboard" className="w-full h-auto object-contain max-h-[40vh] md:max-h-[50vh] rounded-2xl shadow-xl" loading="lazy" />
               </div>
-            }
-          />
+            </div>
+          </div>
         </div>
       </section>
+
+      <Footer />
 
       {/* Floating Panel */}
       <AnimatePresence>
@@ -815,7 +616,7 @@ const HomePage: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
-      <Footer />
+      {/* <FirebaseStatus /> */}
     </div>
   );
 };

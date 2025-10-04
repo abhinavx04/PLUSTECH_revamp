@@ -17,6 +17,7 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
       {/* Header */}
@@ -100,14 +101,19 @@ const AdminDashboard: React.FC = () => {
             </button>
           </div>
 
-          {/* News Card */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-            <h3 className="text-xl font-semibold text-white mb-4">News & Updates</h3>
-            <p className="text-gray-300 mb-4">Add company news and announcements</p>
-            <button className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200">
-              Manage News
-            </button>
-          </div>
+                      {/* News Card */}
+                      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                        <h3 className="text-xl font-semibold text-white mb-4">News & Updates</h3>
+                        <p className="text-gray-300 mb-4">Add company news and announcements</p>
+                        <div className="space-y-2">
+                          <button
+                            onClick={() => setActiveTab('news')}
+                            className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+                          >
+                            Manage News
+                          </button>
+                        </div>
+                      </div>
 
           {/* Analytics Card */}
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">

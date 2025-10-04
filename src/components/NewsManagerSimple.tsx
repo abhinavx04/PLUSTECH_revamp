@@ -1,11 +1,40 @@
 import React, { useState } from 'react';
 import { useNewsSimple } from '../hooks/useNewsSimple';
 
+interface NewsArticle {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  author: string;
+  createdAt: Date;
+  updatedAt: Date;
+  published: boolean;
+  featured: boolean;
+  imageUrl?: string;
+  tags: string[];
+}
+
+interface CreateNewsData {
+  title: string;
+  content: string;
+  excerpt: string;
+  author: string;
+  published: boolean;
+  featured: boolean;
+  imageUrl?: string;
+  tags: string[];
+}
+
+interface UpdateNewsData extends Partial<CreateNewsData> {
+  id: string;
+}
+
 const NewsManagerSimple: React.FC = () => {
   const { news, loading, error, createNews, updateNews, deleteNews } = useNewsSimple();
   const [showForm, setShowForm] = useState(false);
-  const [editingNews, setEditingNews] = useState<any>(null);
-  const [formData, setFormData] = useState({
+  const [editingNews, setEditingNews] = useState<NewsArticle | null>(null);
+  const [formData, setFormData] = useState<CreateNewsData>({
     title: '',
     content: '',
     excerpt: '',
@@ -41,7 +70,7 @@ const NewsManagerSimple: React.FC = () => {
     }
   };
 
-  const handleEdit = (article: any) => {
+  const handleEdit = (article: NewsArticle) => {
     setEditingNews(article);
     setFormData({
       title: article.title,
