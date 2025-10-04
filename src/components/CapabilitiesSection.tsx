@@ -71,11 +71,14 @@ const capabilitiesData: CapabilityItem[] = [
 
 const CapabilitiesSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
 
   const getAnimationVariants = (direction: 'left' | 'right' | 'up') => {
     const baseVariants = {
-      hidden: { opacity: 0 },
+      hidden: { 
+        opacity: 0,
+        transition: { duration: 0.6, ease: "easeIn" }
+      },
       visible: { 
         opacity: 1,
         transition: { duration: 0.8, ease: "easeOut" }
@@ -85,21 +88,42 @@ const CapabilitiesSection: React.FC = () => {
     switch (direction) {
       case 'left':
         return {
-          ...baseVariants,
-          hidden: { ...baseVariants.hidden, x: -100, rotateY: -15 },
-          visible: { ...baseVariants.visible, x: 0, rotateY: 0 }
+          hidden: { 
+            ...baseVariants.hidden, 
+            x: -100, 
+            rotateY: -15 
+          },
+          visible: { 
+            ...baseVariants.visible, 
+            x: 0, 
+            rotateY: 0 
+          }
         };
       case 'right':
         return {
-          ...baseVariants,
-          hidden: { ...baseVariants.hidden, x: 100, rotateY: 15 },
-          visible: { ...baseVariants.visible, x: 0, rotateY: 0 }
+          hidden: { 
+            ...baseVariants.hidden, 
+            x: 100, 
+            rotateY: 15 
+          },
+          visible: { 
+            ...baseVariants.visible, 
+            x: 0, 
+            rotateY: 0 
+          }
         };
       case 'up':
         return {
-          ...baseVariants,
-          hidden: { ...baseVariants.hidden, y: 50, rotateX: 10 },
-          visible: { ...baseVariants.visible, y: 0, rotateX: 0 }
+          hidden: { 
+            ...baseVariants.hidden, 
+            y: 50, 
+            rotateX: 10 
+          },
+          visible: { 
+            ...baseVariants.visible, 
+            y: 0, 
+            rotateX: 0 
+          }
         };
       default:
         return baseVariants;
@@ -107,7 +131,11 @@ const CapabilitiesSection: React.FC = () => {
   };
 
   const imageVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: { 
+      opacity: 0, 
+      scale: 0.8,
+      transition: { duration: 0.5, ease: "easeIn" }
+    },
     visible: { 
       opacity: 1, 
       scale: 1,
@@ -157,7 +185,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
   imageVariants
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
-  const isItemInView = useInView(itemRef, { once: true, margin: "-50px" });
+  const isItemInView = useInView(itemRef, { once: false, margin: "-50px" });
 
   return (
     <motion.div
@@ -189,7 +217,11 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                     className="flex items-start space-x-3"
                     initial={{ opacity: 0, x: -20 }}
                     animate={isItemInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                    transition={{ delay: 0.3 + (featureIndex * 0.1), duration: 0.5 }}
+                    transition={{ 
+                      delay: isItemInView ? 0.3 + (featureIndex * 0.1) : 0,
+                      duration: 0.5,
+                      ease: isItemInView ? "easeOut" : "easeIn"
+                    }}
                   >
                     <div className={`w-2 h-2 rounded-full mt-2 ${capability.textColor === 'text-white' ? 'bg-blue-400' : 'bg-[#00aeef]'}`} />
                     <span className="text-base md:text-lg">{feature}</span>
@@ -216,7 +248,11 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                     className="relative overflow-hidden rounded-2xl shadow-xl"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={isItemInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-                    transition={{ delay: 0.2 + (imageIndex * 0.1), duration: 0.6 }}
+                    transition={{ 
+                      delay: isItemInView ? 0.2 + (imageIndex * 0.1) : 0,
+                      duration: 0.6,
+                      ease: isItemInView ? "easeOut" : "easeIn"
+                    }}
                   >
                     <img 
                       src={image} 
