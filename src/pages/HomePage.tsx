@@ -1,6 +1,15 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import PillNav from '../components/PillNav';
+import {
+  Navbar,
+  NavBody,
+  NavItems,
+  MobileNav,
+  NavbarLogo,
+  MobileNavHeader,
+  MobileNavToggle,
+  MobileNavMenu,
+} from '../components/ui/resizable-navbar';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import SimpleNewsSection from '../components/SimpleNewsSection';
@@ -18,6 +27,14 @@ const HomePage: React.FC = () => {
   const [panelOrigin, setPanelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showWisp, setShowWisp] = useState(false);
   const [wispDirection, setWispDirection] = useState<'open' | 'close' | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { name: "Home", link: "/" },
+    { name: "About", link: "/about" },
+    { name: "Services", link: "/services" },
+    { name: "Contact", link: "/contact" },
+  ];
 
   const getWispPath = (origin: { x: number; y: number }) => {
     const startX = window.innerWidth / 2 + origin.x;
@@ -131,77 +148,51 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-gradient-to-b from-white via-blue-50 to-white">
-      {/* Header */}
-      <header className="w-full border-b" style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 35%, rgba(255,255,255,0.02) 100%), rgba(0,0,0,0.82)',
-        borderColor: 'rgba(255,255,255,0.16)',
-        backdropFilter: 'saturate(140%) blur(20px)',
-        WebkitBackdropFilter: 'saturate(140%) blur(20px)',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.06)'
-      }}>
-        <div className="w-full h-16 flex items-center justify-between px-4 md:px-0">
-          {/* Left side - Mobile hamburger + Logo */}
-          <div className="flex items-center gap-3">
-            <div className="md:hidden">
-              <PillNav
-              logo={'/newlogo.png'}
-              logoAlt="Company Logo"
-              items={[
-                { label: 'Home', href: '/' },
-                { label: 'About', href: '/about' },
-                { label: 'Services', href: '/services' },
-                { label: 'Contact', href: '/contact' }
-              ]}
-              activeHref="/"
-              className="shadow-md ring-1 ring-white/10 rounded-full"
-              placement="center"
-              position="static"
-              showLogo={false}
-              ease="power2.easeOut"
-              baseColor="#000000"
-              pillColor="#ffffff"
-              hoveredPillTextColor="#ffffff"
-              pillTextColor="#000000"
-              pillGap={28}
-              pillPaddingX={26}
+      {/* Resizable Navbar */}
+      <div className="relative w-full">
+        <Navbar>
+          {/* Desktop Navigation */}
+          <NavBody>
+            <NavbarLogo />
+            <div className="flex-1 flex justify-center">
+              <NavItems items={navItems} />
+            </div>
+            <div className="w-24"></div>
+          </NavBody>
+
+          {/* Mobile Navigation */}
+          <MobileNav>
+            <MobileNavHeader>
+              <NavbarLogo />
+              <MobileNavToggle
+                isOpen={isMobileMenuOpen}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               />
-            </div>
-            <div className="flex items-center gap-3 ml-2">
-              <img src="/newlogo.png" alt="PlusTech Logo" className="h-12 w-auto brightness-110 contrast-110 block" />
-              <img src="/PLUSTECH.png" alt="PLUSTECH Wordmark" className="h-6 md:h-8 w-auto block" />
-            </div>
-          </div>
-          
-          {/* Right side - Desktop navigation */}
-          <div className="hidden md:flex items-center">
-            <PillNav
-              logo={'/newlogo.png'}
-              logoAlt="Company Logo"
-              items={[
-                { label: 'Home', href: '/' },
-                { label: 'About', href: '/about' },
-                { label: 'Services', href: '/services' },
-                { label: 'Contact', href: '/contact' }
-              ]}
-              activeHref="/"
-              className="shadow-md ring-1 ring-white/10 rounded-full"
-              placement="center"
-              position="static"
-              showLogo={false}
-              ease="power2.easeOut"
-              baseColor="#000000"
-              pillColor="#ffffff"
-              hoveredPillTextColor="#ffffff"
-              pillTextColor="#000000"
-              pillGap={28}
-              pillPaddingX={26}
-            />
-          </div>
+            </MobileNavHeader>
+
+            <MobileNavMenu
+              isOpen={isMobileMenuOpen}
+              onClose={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="space-y-4">
+                {navItems.map((item, idx) => (
+                  <a
+                    key={`mobile-link-${idx}`}
+                    href={item.link}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block text-white hover:text-[#00aeef] transition-colors py-4 px-4 rounded-lg hover:bg-white/10 font-semibold text-lg border-b border-white/10 last:border-b-0"
+                  >
+                    {item.name}
+                  </a>
+                ))}
+              </div>
+            </MobileNavMenu>
+          </MobileNav>
+        </Navbar>
         </div>
-      </header>
 
       {/* Threads Hero */}
-      <div className="w-full flex items-center justify-center">
+      <div className="w-full flex items-center justify-center pt-20">
         <div className="w-full h-[50vh] md:h-[60vh] relative">
           <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
             <div className="text-center px-4 md:px-6 lg:px-8 max-w-5xl">
@@ -318,7 +309,7 @@ const HomePage: React.FC = () => {
       {/* Capabilities Section */}
       <div className="bg-white">
         <CapabilitiesSection />
-      </div>
+          </div>
 
       <Footer />
 

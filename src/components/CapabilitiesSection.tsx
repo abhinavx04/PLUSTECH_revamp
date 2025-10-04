@@ -70,7 +70,7 @@ const capabilitiesData: CapabilityItem[] = [
 ];
 
 const CapabilitiesSection: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
 
   const getAnimationVariants = (direction: 'left' | 'right' | 'up') => {
