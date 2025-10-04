@@ -5,13 +5,13 @@ import { getAuth } from 'firebase/auth';
 
 // Firebase configuration for PlusTech project
 const firebaseConfig = {
-  apiKey: "AIzaSyADxqym8in2Y7gNGNOkc6AtV1ycWvnQul0",
-  authDomain: "plustech-revamp.firebaseapp.com",
-  projectId: "plustech-revamp",
-  storageBucket: "plustech-revamp.firebasestorage.app",
-  messagingSenderId: "932191631941",
-  appId: "1:932191631941:web:facd0e321ad6879a60412c",
-  measurementId: "G-ZS1RHVLDR7"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 let app = null;
