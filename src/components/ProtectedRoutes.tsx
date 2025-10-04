@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { useAdminAuth } from '../hooks/useAdminAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,14 +11,21 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   requireAdmin = false 
 }) => {
+  const { user, loading, isAdmin } = useAdminAuth();
   const location = useLocation();
 
-  // Simple demo authentication check
-  // In a real app, this would check actual authentication state
-  const isAuthenticated = localStorage.getItem('demo-logged-in') === 'true';
-  const isAdmin = true; // Demo mode - always admin
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#00aeef]"></div>
+          <p className="mt-4 text-white">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
 

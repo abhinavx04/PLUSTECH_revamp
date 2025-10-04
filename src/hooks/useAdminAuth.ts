@@ -15,6 +15,9 @@ const ADMIN_EMAILS: string[] = [
   'abhinavpillai92@gmail.com'
 ];
 
+// For development/testing: Allow any authenticated user to be admin
+const ALLOW_ALL_AS_ADMIN = true;
+
 export const useAdminAuth = () => {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,9 +35,18 @@ export const useAdminAuth = () => {
     }
 
     try {
+      console.log('[Auth] Setting up auth state listener...');
+      console.log('[Auth] Auth object:', auth);
+      
       const unsubscribe = onAuthStateChanged(auth as unknown as import('firebase/auth').Auth, (firebaseUser: User | null) => {
+        console.log('[Auth] Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
+        
         if (firebaseUser) {
-          const isAdmin = ADMIN_EMAILS.includes(firebaseUser.email || '');
+          // Check if user is admin: either in the admin list OR if we're allowing all users as admin (for development)
+          const isAdmin = ALLOW_ALL_AS_ADMIN || ADMIN_EMAILS.includes(firebaseUser.email || '');
+          console.log('[Auth] User email:', firebaseUser.email);
+          console.log('[Auth] Is admin:', isAdmin);
+          
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,

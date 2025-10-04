@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAdminAuth } from '../hooks/useAdminAuth';
+import NewsManagerSimple from '../components/NewsManagerSimple';
 
 const AdminDashboard: React.FC = () => {
+  const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'news'>('dashboard');
 
-  const handleLogout = () => {
-    // Simple logout for demo mode
-    localStorage.removeItem('demo-logged-in');
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -32,7 +39,7 @@ const AdminDashboard: React.FC = () => {
             
             <div className="flex items-center space-x-4">
               <span className="text-white text-sm">
-                Welcome, admin@plustech.com (Demo Mode)
+                Welcome, {user?.email || 'Admin'}
               </span>
               <button
                 onClick={handleLogout}
@@ -45,12 +52,42 @@ const AdminDashboard: React.FC = () => {
         </div>
       </header>
 
+      {/* Navigation Tabs */}
+      <div className="bg-black/20 backdrop-blur-lg border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'dashboard'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('news')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'news'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              News Management
+            </button>
+          </nav>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-gray-300">Manage your PlusTech website content</p>
-        </div>
+        {activeTab === 'dashboard' ? (
+          <>
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+              <p className="text-gray-300">Manage your PlusTech website content</p>
+            </div>
 
         {/* Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -82,28 +119,32 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="mt-8 bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-          <h2 className="text-2xl font-bold text-white mb-6">Quick Stats</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-[#00aeef]">12</div>
-              <div className="text-gray-300">Active Projects</div>
+            {/* Quick Stats */}
+            <div className="mt-8 bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+              <h2 className="text-2xl font-bold text-white mb-6">Quick Stats</h2>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#00aeef]">12</div>
+                  <div className="text-gray-300">Active Projects</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#00aeef]">245</div>
+                  <div className="text-gray-300">Website Visits</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#00aeef]">8</div>
+                  <div className="text-gray-300">News Articles</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#00aeef]">98%</div>
+                  <div className="text-gray-300">Uptime</div>
+                </div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-[#00aeef]">245</div>
-              <div className="text-gray-300">Website Visits</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-[#00aeef]">8</div>
-              <div className="text-gray-300">News Articles</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-[#00aeef]">98%</div>
-              <div className="text-gray-300">Uptime</div>
-            </div>
-          </div>
-        </div>
+          </>
+        ) : (
+          <NewsManagerSimple />
+        )}
       </main>
     </div>
   );

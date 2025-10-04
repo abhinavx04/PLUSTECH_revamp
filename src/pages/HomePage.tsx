@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import PillNav from '../components/PillNav';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
+import NewsSectionSimple from '../components/NewsSectionSimple';
 import Footer from '../components/Footer';
 
 // Modified GsapCoverSection to handle three sections
@@ -586,6 +587,9 @@ const HomePage: React.FC = () => {
           <CompanyAnimation />
         </div>
       </section>
+
+      {/* News Section */}
+      <NewsSectionSimple />
 
       {/* Capabilities Section */}
       <section id="highlights" className="w-full relative overflow-hidden">
