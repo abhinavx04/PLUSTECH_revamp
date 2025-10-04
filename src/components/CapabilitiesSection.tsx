@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 
 interface CapabilityItem {
@@ -152,7 +152,7 @@ const CapabilitiesSection: React.FC = () => {
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <h2 className="text-4xl md:text-5xl font-bold font-heading text-black mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold font-heading text-black mb-4">
           OUR CAPABILITIES
         </h2>
         <p className="text-lg md:text-xl text-gray-600 font-body max-w-3xl mx-auto">
@@ -203,17 +203,17 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
             variants={variants}
           >
             <div className="space-y-6">
-              <h3 className={`text-4xl md:text-6xl font-bold font-heading leading-tight ${capability.textColor}`}>
+              <h3 className={`text-3xl md:text-4xl font-bold font-heading leading-tight ${capability.textColor}`}>
                 {capability.title}
               </h3>
-              <p className={`text-xl md:text-2xl font-body leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>
+              <p className={`text-lg md:text-xl font-body leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>
                 {capability.description}
               </p>
             </div>
             
             {capability.features.length > 0 && (
               <div className="mt-12 space-y-6">
-                <h4 className={`text-2xl font-semibold ${capability.textColor === 'text-white' ? 'text-white' : 'text-gray-800'}`}>
+                <h4 className={`text-xl font-semibold ${capability.textColor === 'text-white' ? 'text-white' : 'text-gray-800'}`}>
                   Key Features
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -230,7 +230,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                       }}
                     >
                       <div className={`w-3 h-3 rounded-full mt-2 flex-shrink-0 ${capability.textColor === 'text-white' ? 'bg-blue-400' : 'bg-[#00aeef]'}`} />
-                      <span className={`text-lg leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>{feature}</span>
+                      <span className={`text-base leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>{feature}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -248,7 +248,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
               <RoboticImageCarousel images={capability.images} />
             ) : capability.id === 'material-handling' ? (
               // 3-column grid for material handling (3 images)
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="flex flex-col md:flex-row gap-4 overflow-x-auto pb-4">
                 {capability.images.map((image, imageIndex) => (
                   <motion.div
                     key={imageIndex}
@@ -260,11 +260,12 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                       duration: 0.6,
                       ease: isItemInView ? "easeOut" : "easeIn"
                     }}
+                    style={{ width: '450px', minWidth: '450px' }}
                   >
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[350px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -273,7 +274,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
               </div>
             ) : (
               // Large 2-column grid for digitization (2 images)
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {capability.images.map((image, imageIndex) => (
                   <motion.div
                     key={imageIndex}
@@ -289,7 +290,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[400px] md:h-[500px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -306,43 +307,70 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
 
 const RoboticImageCarousel: React.FC<{ images: string[] }> = ({ images }) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
+  const scrollToImage = (index: number) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
+    
+    const imageWidth = 450; // w-[450px] on mobile
+    const gap = 24; // gap-6 = 24px
+    const scrollPosition = index * (imageWidth + gap);
+    
+    scroller.scrollTo({
+      left: scrollPosition,
+      behavior: 'smooth'
+    });
+    setCurrentIndex(index);
+  };
 
-    const setToMiddleBlock = () => {
-      const blockWidth = scroller.scrollWidth / 3;
-      scroller.scrollTo({ left: blockWidth, behavior: 'auto' });
-    };
+  const nextImage = () => {
+    const nextIndex = (currentIndex + 1) % images.length;
+    scrollToImage(nextIndex);
+  };
 
-    setToMiddleBlock();
-
-    const onWheel = (e: WheelEvent) => {
-      if (scroller) {
-        e.preventDefault();
-        const sensitivity = 0.5;
-        scroller.scrollLeft += e.deltaY * sensitivity;
-      }
-    };
-
-    scroller.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      scroller.removeEventListener('wheel', onWheel);
-    };
-  }, []);
+  const prevImage = () => {
+    const prevIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+    scrollToImage(prevIndex);
+  };
 
   return (
     <div className="relative">
+      {/* Navigation Buttons */}
+      <button
+        onClick={prevImage}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/70 hover:bg-black/90 text-white rounded-full p-3 transition-all duration-200"
+        aria-label="Previous image"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      
+      <button
+        onClick={nextImage}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/70 hover:bg-black/90 text-white rounded-full p-3 transition-all duration-200"
+        aria-label="Next image"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Image Counter */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+        {currentIndex + 1} / {images.length}
+      </div>
+
+      {/* Carousel Container */}
       <div
         ref={scrollerRef}
-        className="flex overflow-x-auto gap-6 snap-x snap-mandatory hide-scrollbar"
+        className="flex overflow-hidden gap-6"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
         {images.map((image, i) => (
-          <div key={i} className="snap-center flex-none w-[280px] md:w-[320px]">
+          <div key={i} className="flex-none w-[450px] md:w-[550px]">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl group">
               <img 
                 src={image} 
