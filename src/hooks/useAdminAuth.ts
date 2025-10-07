@@ -11,7 +11,7 @@ interface AdminUser {
 
 // List of admin emails from environment variables
 const ADMIN_EMAILS: string[] = import.meta.env.VITE_ADMIN_EMAILS 
-  ? import.meta.env.VITE_ADMIN_EMAILS.split(',').map(email => email.trim())
+  ? import.meta.env.VITE_ADMIN_EMAILS.split(',').map((email: string) => email.trim())
   : [];
 
 export const useAdminAuth = () => {
