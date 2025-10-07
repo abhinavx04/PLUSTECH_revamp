@@ -123,7 +123,7 @@ const AboutUsPage: React.FC = () => {
             className="text-white text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight font-heading mb-6"
             style={{ textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
           >
-            About PlusTech
+            
             <span className="block text-[#00aeef] mt-2">Dashboard</span>
           </motion.h1>
           
