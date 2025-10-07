@@ -62,7 +62,7 @@ const AboutPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full text-black font-body overflow-x-hidden relative">
+        <div className="min-h-screen w-full text-black font-body overflow-x-hidden relative bg-gray-50">
       {/* Resizable Navbar */}
       <div className="relative w-full z-50">
         <Navbar>
@@ -209,31 +209,26 @@ const AboutPage: React.FC = () => {
       <section 
         ref={beliefsRef} 
         className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url("/aboutus/13673863-removebg-preview.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
       >
-        {/* Glassy Overlay */}
-        <div className="absolute inset-0 bg-white/85 backdrop-blur-[1px]"></div>
+        {/* Subtle Overlay */}
+        <div className="absolute inset-0 bg-gray-50/50"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
-              Corporate Beliefs
-            </h2>
-            <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
-              The fundamental principles that guide our actions and define our commitment to excellence
-            </p>
-          </motion.div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-blue-200/30">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
+                Corporate Beliefs
+              </h2>
+              <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
+                The fundamental principles that guide our actions and define our commitment to excellence
+              </p>
+            </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
@@ -268,54 +263,50 @@ const AboutPage: React.FC = () => {
                 number: "06"
               }
             ].map((belief, index) => (
-              <motion.div
-                key={belief.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-[0_12px_36px_rgba(0,0,0,0.15)] border border-gray-100"
-              >
+               <motion.div
+                 key={belief.title}
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.6, delay: index * 0.1 }}
+                 viewport={{ once: true }}
+                 className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-[0_12px_36px_rgba(0,174,239,0.2)] border border-blue-200/30"
+               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-black text-xl font-bold font-heading">{belief.title}</h3>
                   <span className="text-[#00aeef] text-2xl font-bold font-heading">{belief.number}</span>
                 </div>
                 <p className="text-gray-700 leading-relaxed">{belief.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+               </motion.div>
+             ))}
+           </div>
+           </div>
+         </div>
+       </section>
 
-      {/* Industry Focus Section - Full Screen */}
+       {/* Industry Focus Section - Full Screen */}
       <section 
         ref={industryRef} 
         className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url("/aboutus/13673863-removebg-preview.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
       >
-        {/* Glassy Overlay */}
-        <div className="absolute inset-0 bg-white/85 backdrop-blur-[1px]"></div>
+        {/* Subtle Overlay */}
+        <div className="absolute inset-0 bg-gray-50/50"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
-              Industry Focus
-            </h2>
-            <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
-              Specialized expertise across diverse manufacturing sectors
-            </p>
-          </motion.div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-blue-200/30">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
+                Industry Focus
+              </h2>
+              <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
+                Specialized expertise across diverse manufacturing sectors
+              </p>
+            </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
@@ -341,14 +332,14 @@ const AboutPage: React.FC = () => {
                     stats: "75+ Projects"
                   }
               ].map((industry, index) => (
-                <motion.div
-                  key={industry.industry}
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 border border-gray-100 shadow-sm"
-                >
+                 <motion.div
+                   key={industry.industry}
+                   initial={{ opacity: 0, x: -50 }}
+                   whileInView={{ opacity: 1, x: 0 }}
+                   transition={{ duration: 0.6, delay: index * 0.1 }}
+                   viewport={{ once: true }}
+                   className="bg-white/80 backdrop-blur-sm rounded-xl p-6 hover:shadow-lg transition-all duration-300 border border-blue-200/30 shadow-sm"
+                 >
                   <div className="flex items-start justify-between mb-4">
                     <h3 className="text-black text-xl font-bold font-heading">{industry.industry}</h3>
                     <span className="px-3 py-1 rounded-full text-sm font-semibold bg-[#00aeef] text-white">
@@ -367,7 +358,7 @@ const AboutPage: React.FC = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg">
+               <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-blue-200/30 shadow-lg">
                 <h4 className="text-black text-2xl font-bold font-heading mb-6">Our Expertise</h4>
                 <div className="space-y-4">
                   {[
@@ -395,40 +386,36 @@ const AboutPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+             </motion.div>
+           </div>
+           </div>
+         </div>
+       </section>
 
-      {/* Certifications Section - Full Screen */}
+       {/* Certifications Section - Full Screen */}
       <section 
         ref={certificationsRef} 
         className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url("/aboutus/13673863-removebg-preview.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
       >
-        {/* Glassy Overlay */}
-        <div className="absolute inset-0 bg-white/85 backdrop-blur-[1px]"></div>
+        {/* Subtle Overlay */}
+        <div className="absolute inset-0 bg-gray-50/50"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
-              Our Certifications
-            </h2>
-            <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
-              Recognized excellence through industry certifications and quality standards
-            </p>
-          </motion.div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-blue-200/30">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
+                Our Certifications
+              </h2>
+              <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
+                Recognized excellence through industry certifications and quality standards
+              </p>
+            </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
@@ -469,14 +456,14 @@ const AboutPage: React.FC = () => {
                 validity: "Valid until 2025"
               }
             ].map((cert, index) => (
-              <motion.div
-                key={cert.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-[0_12px_36px_rgba(0,0,0,0.15)] border border-gray-100 group"
-              >
+               <motion.div
+                 key={cert.title}
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 0.6, delay: index * 0.1 }}
+                 viewport={{ once: true }}
+                 className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-[0_12px_36px_rgba(0,174,239,0.2)] border border-blue-200/30 group"
+               >
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-br from-[#00aeef] to-blue-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-white text-xl font-bold font-heading">{index + 1}</span>
@@ -501,46 +488,42 @@ const AboutPage: React.FC = () => {
             viewport={{ once: true }}
             className="text-center mt-16"
           >
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-lg max-w-4xl mx-auto">
+             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-blue-200/30 shadow-lg max-w-4xl mx-auto">
               <h4 className="text-black text-2xl font-bold font-heading mb-4">Certification Excellence</h4>
               <p className="text-gray-700 text-lg leading-relaxed">
                 Our comprehensive certification portfolio demonstrates our commitment to maintaining the highest 
                 standards in quality, environmental responsibility, and workplace safety across all our operations.
               </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+             </div>
+           </motion.div>
+           </div>
+         </div>
+       </section>
 
-      {/* History & Milestones Section - Full Screen */}
+       {/* History & Milestones Section - Full Screen */}
       <section 
         ref={historyRef} 
         className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url("/aboutus/13673863-removebg-preview.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
       >
-        {/* Glassy Overlay */}
-        <div className="absolute inset-0 bg-white/85 backdrop-blur-[1px]"></div>
+        {/* Subtle Overlay */}
+        <div className="absolute inset-0 bg-gray-50/50"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
-              History & Milestones
-            </h2>
-            <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
-              A journey of innovation, growth, and industry leadership
-            </p>
-          </motion.div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-blue-200/30">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
+                History & Milestones
+              </h2>
+              <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
+                A journey of innovation, growth, and industry leadership
+              </p>
+            </motion.div>
 
           <div className="relative">
             {/* Timeline Line */}
@@ -599,7 +582,7 @@ const AboutPage: React.FC = () => {
 
                 {/* Content */}
                 <div className={`ml-16 md:ml-0 md:w-5/12 ${index % 2 === 0 ? 'md:mr-auto md:pr-8' : 'md:ml-auto md:pl-8'}`}>
-                  <div className="bg-white rounded-2xl p-6 hover:shadow-lg transition-all duration-300 border border-gray-100 shadow-sm">
+                   <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg transition-all duration-300 border border-blue-200/30 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-[#00aeef] text-2xl font-bold font-heading">{milestone.year}</span>
                       <span className="px-3 py-1 bg-[#00aeef]/20 text-[#00aeef] text-sm font-semibold rounded-full">
@@ -612,39 +595,35 @@ const AboutPage: React.FC = () => {
                 </div>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
+           </div>
+           </div>
+         </div>
+       </section>
 
-      {/* Annual Returns Section - Full Screen */}
+       {/* Annual Returns Section - Full Screen */}
       <section 
         ref={returnsRef} 
         className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url("/aboutus/13673863-removebg-preview.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
       >
-        {/* Glassy Overlay */}
-        <div className="absolute inset-0 bg-white/85 backdrop-blur-[1px]"></div>
+        {/* Subtle Overlay */}
+        <div className="absolute inset-0 bg-gray-50/50"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
-              Annual Returns
-            </h2>
-            <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
-              Sustainable growth and financial excellence over the years
-            </p>
-          </motion.div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-blue-200/30">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
+                Annual Returns
+              </h2>
+              <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
+                Sustainable growth and financial excellence over the years
+              </p>
+            </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -690,7 +669,7 @@ const AboutPage: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 border border-gray-100 shadow-sm"
+                   className="bg-white/80 backdrop-blur-sm rounded-xl p-6 hover:shadow-lg transition-all duration-300 border border-blue-200/30 shadow-sm"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-black text-xl font-bold font-heading">{year.year}</h3>
@@ -717,7 +696,7 @@ const AboutPage: React.FC = () => {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg"
+               className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-blue-200/30 shadow-lg"
             >
               <h4 className="text-black text-2xl font-bold font-heading mb-6">Key Performance Indicators</h4>
              <div className="space-y-6">
@@ -745,39 +724,35 @@ const AboutPage: React.FC = () => {
                 ))}
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
+           </div>
+           </div>
+         </div>
+       </section>
 
-      {/* CSR Activities Section - Full Screen */}
+       {/* CSR Activities Section - Full Screen */}
       <section 
         ref={csrRef} 
         className="min-h-screen w-full relative flex items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: 'url("/aboutus/13673863-removebg-preview.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
       >
-        {/* Glassy Overlay */}
-        <div className="absolute inset-0 bg-white/85 backdrop-blur-[1px]"></div>
+        {/* Subtle Overlay */}
+        <div className="absolute inset-0 bg-gray-50/50"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
-              CSR Activities
-            </h2>
-            <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
-              Making a positive impact on communities and the environment
-            </p>
-          </motion.div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-blue-200/30">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-black text-4xl md:text-6xl font-bold font-heading mb-6">
+                CSR Activities
+              </h2>
+              <p className="text-gray-700 text-lg md:text-xl max-w-3xl mx-auto">
+                Making a positive impact on communities and the environment
+              </p>
+            </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {[
@@ -824,7 +799,7 @@ const AboutPage: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-[0_12px_36px_rgba(0,0,0,0.15)] border border-gray-100"
+                 className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 hover:shadow-lg transition-all duration-300 transform hover:scale-105 shadow-[0_12px_36px_rgba(0,174,239,0.2)] border border-blue-200/30"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-black text-xl font-bold font-heading">{activity.title}</h3>
@@ -845,7 +820,7 @@ const AboutPage: React.FC = () => {
             viewport={{ once: true }}
             className="text-center"
           >
-            <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg max-w-4xl mx-auto">
+             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-blue-200/30 shadow-lg max-w-4xl mx-auto">
               <h4 className="text-black text-2xl font-bold font-heading mb-4">Our Commitment to Society</h4>
               <p className="text-gray-700 text-lg leading-relaxed mb-6">
                 At PlusTech, we believe in giving back to society and creating sustainable value for all stakeholders. 
@@ -870,11 +845,12 @@ const AboutPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
-        </div>
-      </section>
+           </motion.div>
+           </div>
+         </div>
+       </section>
 
-      <Footer />
+       <Footer />
     </div>
   );
 };
