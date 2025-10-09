@@ -21,7 +21,7 @@ const certificationsData: Certification[] = [
     description: 'CRISIL rated organization from 2019-20 for good financial strength, demonstrating our robust financial position and creditworthiness.',
     validUntil: '2024-12-31',
     category: 'financial',
-    icon: '📊',
+    icon: '',
     color: 'from-blue-500 to-blue-700',
     status: 'active'
   },
@@ -32,7 +32,7 @@ const certificationsData: Certification[] = [
     description: 'Certified for Quality Management Systems, ensuring consistent quality in all our processes and deliverables across all operations.',
     validUntil: '2025-12-15',
     category: 'quality',
-    icon: '🏆',
+    icon: '',
     color: 'from-green-500 to-green-700',
     status: 'active'
   },
@@ -43,7 +43,7 @@ const certificationsData: Certification[] = [
     description: 'Dun and Bradstreet certification for credit rating of 4A3, reflecting our strong financial credibility and business reliability.',
     validUntil: '2024-12-31',
     category: 'compliance',
-    icon: '📈',
+    icon: '',
     color: 'from-purple-500 to-purple-700',
     status: 'active'
   }
@@ -229,8 +229,7 @@ const CertificationsSection: React.FC = () => {
             <div className="relative h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100">
               {/* Header */}
               <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-3xl">{certification.icon}</div>
+                <div className="flex items-center justify-end mb-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[certification.status]}`}>
                     {certification.status}
                   </span>

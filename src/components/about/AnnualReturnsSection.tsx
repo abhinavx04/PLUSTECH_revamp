@@ -165,9 +165,9 @@ const AnnualReturnsSection: React.FC = () => {
 
   const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
     switch (trend) {
-      case 'up': return '↗️';
-      case 'down': return '↘️';
-      case 'stable': return '➡️';
+      case 'up': return '↗';
+      case 'down': return '↘';
+      case 'stable': return '→';
     }
   };
 
@@ -239,10 +239,10 @@ const AnnualReturnsSection: React.FC = () => {
         animate={isInView ? "visible" : "hidden"}
       >
         {[
-          { label: 'Revenue', value: currentYear.revenue, icon: '💰', color: 'bg-blue-500' },
-          { label: 'Growth', value: currentYear.growth, icon: '📈', color: 'bg-green-500' },
-          { label: 'Projects', value: currentYear.projects, icon: '🏗️', color: 'bg-purple-500' },
-          { label: 'Clients', value: currentYear.clients, icon: '👥', color: 'bg-orange-500' }
+          { label: 'Revenue', value: currentYear.revenue, color: 'bg-blue-500' },
+          { label: 'Growth', value: currentYear.growth, color: 'bg-green-500' },
+          { label: 'Projects', value: currentYear.projects, color: 'bg-purple-500' },
+          { label: 'Clients', value: currentYear.clients, color: 'bg-orange-500' }
         ].map((metric, index) => (
           <motion.div
             key={index}
@@ -250,9 +250,6 @@ const AnnualReturnsSection: React.FC = () => {
             className="bg-white rounded-2xl shadow-lg p-6 text-center"
             whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
           >
-            <div className={`w-16 h-16 ${metric.color} rounded-full mx-auto mb-4 flex items-center justify-center`}>
-              <span className="text-white text-2xl">{metric.icon}</span>
-            </div>
             <div className="text-3xl font-bold text-[#00aeef] mb-2">
               {metric.value}
             </div>

@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import '../../styles/animatedBorder.css';
 
 interface BeliefCard {
   id: string;
@@ -15,7 +16,7 @@ const beliefsData: BeliefCard[] = [
     id: 'customer-satisfaction',
     title: 'Customer Satisfaction',
     description: 'Since inception, Plustech has made "customer satisfaction" and "relationships" as the foundation of our business principle. We derive immense satisfaction when customers recall our brand and entrust us with successive projects.',
-    icon: '👥',
+    icon: '',
     color: 'from-blue-500 to-blue-700',
     stats: ['Foundation Principle', 'Brand Recognition', 'Successive Projects']
   },
@@ -23,7 +24,7 @@ const beliefsData: BeliefCard[] = [
     id: 'vision',
     title: 'Our Vision',
     description: 'To become a dominant and internationally acknowledged player in surface finishing plant and equipment by adopting greener technologies and best business practices.',
-    icon: '🎯',
+    icon: '',
     color: 'from-green-500 to-green-700',
     stats: ['International Recognition', 'Green Technologies', 'Best Practices']
   },
@@ -31,7 +32,7 @@ const beliefsData: BeliefCard[] = [
     id: 'mission',
     title: 'Our Mission',
     description: 'To be the most preferred supplier for surface finishing plant by offering customized solutions in setting up energy efficient plants with consistently good quality. We believe in not just meeting customer expectations but exceeding them.',
-    icon: '🚀',
+    icon: '',
     color: 'from-purple-500 to-purple-700',
     stats: ['Preferred Supplier', 'Energy Efficient', 'Exceed Expectations']
   },
@@ -39,7 +40,7 @@ const beliefsData: BeliefCard[] = [
     id: 'quality-policy',
     title: 'Quality Policy',
     description: 'To provide professional & efficient service to customers by delivering high quality surface finishing process plants on time and at optimum price. We are committed to continual improvement and ISO 9001:2015 standards.',
-    icon: '⭐',
+    icon: '',
     color: 'from-orange-500 to-orange-700',
     stats: ['Professional Service', 'ISO 9001:2015', 'Continual Improvement']
   },
@@ -47,7 +48,7 @@ const beliefsData: BeliefCard[] = [
     id: 'peace-usp',
     title: 'PEACE USP',
     description: 'Our USP outlined under the acronym PEACE (Productivity, Efficiency, Affordability, Cost and Environment) focuses on delivering best value proposition to customers for long lasting relationships.',
-    icon: '🌱',
+    icon: '',
     color: 'from-indigo-500 to-indigo-700',
     stats: ['Productivity', 'Efficiency', 'Affordability']
   },
@@ -55,7 +56,7 @@ const beliefsData: BeliefCard[] = [
     id: 'future-plans',
     title: 'Future Plans',
     description: 'Plustech is steering geographical expansion drive to serve global industry with greener technologies and best engineering practices. We are coming up with a Technical Center and elegant office in a new business district.',
-    icon: '🏢',
+    icon: '',
     color: 'from-teal-500 to-teal-700',
     stats: ['Global Expansion', 'Technical Center', 'Green Technologies']
   }
@@ -133,34 +134,30 @@ const CorporateBeliefsSection: React.FC = () => {
           <motion.div
             key={belief.id}
             variants={cardVariants}
-            className="group cursor-pointer"
+            className="group cursor-pointer h-full"
             whileHover={{ 
               y: -10,
               transition: { duration: 0.3 }
             }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="relative h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100">
+            <div className="animated-border rounded-2xl h-full">
+              <div className="animated-inner relative rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-transparent bg-white flex flex-col h-full min-h-[340px]">
               {/* Gradient Background */}
               <div className={`absolute inset-0 bg-gradient-to-br ${belief.color} opacity-5 group-hover:opacity-10 transition-opacity duration-500`} />
               
-              {/* Icon Header */}
+              {/* Header */}
               <div className="relative p-6 bg-gradient-to-r from-gray-50 to-gray-100">
-                <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-white rounded-xl shadow-md flex items-center justify-center text-3xl">
-                    {belief.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold font-heading text-black">
-                      {belief.title}
-                    </h3>
-                    <div className={`h-1 w-16 bg-gradient-to-r ${belief.color} rounded-full mt-2`} />
-                  </div>
+                <div>
+                  <h3 className="text-xl font-bold font-heading text-black">
+                    {belief.title}
+                  </h3>
+                  <div className={`h-1 w-16 bg-gradient-to-r ${belief.color} rounded-full mt-2`} />
                 </div>
               </div>
               
               {/* Content */}
-              <div className="p-6">
+              <div className="p-6 flex-1">
                 <p className="text-gray-600 leading-relaxed mb-6">
                   {belief.description}
                 </p>
@@ -189,6 +186,7 @@ const CorporateBeliefsSection: React.FC = () => {
                 whileHover={{ width: "100%" }}
                 transition={{ duration: 0.3 }}
               />
+              </div>
             </div>
           </motion.div>
         ))}

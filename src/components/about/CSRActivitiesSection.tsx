@@ -27,7 +27,7 @@ const csrData: CSRActivity[] = [
     image: '/aboutus/2.png',
     impact: '500+ students benefited',
     year: '2023',
-    icon: '🎓',
+    icon: '',
     color: 'from-blue-500 to-blue-700',
     metrics: [
       { label: 'Students Helped', value: '500+' },
@@ -44,7 +44,7 @@ const csrData: CSRActivity[] = [
     image: '/automated-customised-materialhandling/3.png',
     impact: '30% carbon reduction',
     year: '2023',
-    icon: '🌱',
+    icon: '',
     color: 'from-green-500 to-green-700',
     metrics: [
       { label: 'Carbon Reduction', value: '30%' },
@@ -61,7 +61,7 @@ const csrData: CSRActivity[] = [
     image: '/digitization-smartfactory/1.jpg',
     impact: '1000+ families supported',
     year: '2022',
-    icon: '🏘️',
+    icon: '',
     color: 'from-purple-500 to-purple-700',
     metrics: [
       { label: 'Families Supported', value: '1000+' },
@@ -78,7 +78,7 @@ const csrData: CSRActivity[] = [
     image: '/digitization-smartfactory/2.jpg',
     impact: '5000+ people benefited',
     year: '2023',
-    icon: '🏥',
+    icon: '',
     color: 'from-red-500 to-red-700',
     metrics: [
       { label: 'People Benefited', value: '5000+' },
@@ -95,7 +95,7 @@ const csrData: CSRActivity[] = [
     image: '/robotic/2-wheeler-fueltanks_plaSTIC.png',
     impact: '300+ trained individuals',
     year: '2022',
-    icon: '🔧',
+    icon: '',
     color: 'from-orange-500 to-orange-700',
     metrics: [
       { label: 'Trained Individuals', value: '300+' },
@@ -112,7 +112,7 @@ const csrData: CSRActivity[] = [
     image: '/robotic/scooter-metal_plastic-part.png',
     impact: '2000+ families helped',
     year: '2021',
-    icon: '🚑',
+    icon: '',
     color: 'from-yellow-500 to-yellow-700',
     metrics: [
       { label: 'Families Helped', value: '2000+' },
@@ -216,10 +216,10 @@ const CSRActivitiesSection: React.FC = () => {
         transition={{ duration: 0.8, delay: 0.6 }}
       >
         {[
-          { label: 'Total Beneficiaries', value: '10,000+', icon: '👥', color: 'bg-blue-500' },
-          { label: 'Communities Served', value: '50+', icon: '🏘️', color: 'bg-green-500' },
-          { label: 'Programs Active', value: '15+', icon: '📋', color: 'bg-purple-500' },
-          { label: 'Investment (₹ Cr)', value: '2.5+', icon: '💰', color: 'bg-orange-500' }
+          { label: 'Total Beneficiaries', value: '10,000+', color: 'bg-blue-500' },
+          { label: 'Communities Served', value: '50+', color: 'bg-green-500' },
+          { label: 'Programs Active', value: '15+', color: 'bg-purple-500' },
+          { label: 'Investment (₹ Cr)', value: '2.5+', color: 'bg-orange-500' }
         ].map((metric, index) => (
           <motion.div
             key={index}
@@ -229,9 +229,6 @@ const CSRActivitiesSection: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.8 + (index * 0.1) }}
           >
-            <div className={`w-16 h-16 ${metric.color} rounded-full mx-auto mb-4 flex items-center justify-center`}>
-              <span className="text-white text-2xl">{metric.icon}</span>
-            </div>
             <div className="text-3xl font-bold text-[#00aeef] mb-2">
               {metric.value}
             </div>
@@ -343,9 +340,8 @@ const CSRActivitiesSection: React.FC = () => {
 
               {/* Content */}
               <div className="p-6">
-                {/* Icon and Title */}
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="text-2xl">{activity.icon}</div>
+                {/* Title */}
+                <div className="mb-4">
                   <h3 className="text-xl font-bold font-heading text-black">
                     {activity.title}
                   </h3>
