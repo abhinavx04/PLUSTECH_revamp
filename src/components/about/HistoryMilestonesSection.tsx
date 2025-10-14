@@ -312,7 +312,7 @@ const TimelineMilestone: React.FC<{
       {/* Timeline Node */}
       <motion.div
         className={`relative z-10 flex-shrink-0 ${
-          isLeftSide ? 'lg:order-1' : 'lg:order-2'
+          isLeftSide ? 'lg:order-1 lg:-translate-x-10' : 'lg:order-2 lg:translate-x-10'
         }`}
         initial={{ opacity: 0, scale: 0, rotate: -90 }}
         animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0, scale: 0, rotate: -90 }}
@@ -341,10 +341,10 @@ const TimelineMilestone: React.FC<{
 
       {/* Milestone Card */}
       <motion.div
-        className={`bg-white rounded-2xl shadow-lg border border-gray-100 p-6 max-w-lg mx-auto lg:mx-0 ${
+        className={`bg-white rounded-2xl shadow-lg border border-gray-100 p-6 max-w-md mx-auto lg:mx-0 ${
           isLeftSide 
-            ? 'lg:order-2 lg:mr-24'  // create safe gutter from center line on left side
-            : 'lg:order-1 lg:ml-24'  // create safe gutter from center line on right side
+            ? 'lg:order-2 lg:mr-56'  // even wider gutter from center line on left side
+            : 'lg:order-1 lg:ml-56'  // even wider gutter from center line on right side
         }`}
         initial={{ opacity: 0, x: isLeftSide ? -100 : 100, scale: 0.9 }}
         animate={isInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: isLeftSide ? -100 : 100, scale: 0.9 }}
@@ -549,8 +549,8 @@ const HistoryMilestonesSection: React.FC = () => {
           />
           
           {/* Central Timeline Line - Mobile */}
-              <motion.div
-            className="lg:hidden absolute left-8 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
+          <motion.div 
+            className="lg:hidden absolute left-10 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
             style={{ 
               scaleY: timelineHeight,
               originY: 0
@@ -558,7 +558,7 @@ const HistoryMilestonesSection: React.FC = () => {
           />
 
           {/* Timeline Items */}
-          <div className="space-y-12 lg:space-y-16">
+          <div className="space-y-12 lg:space-y-24">
             {groupedMilestones.map((yearGroup, yearIndex) => {
               const isEvenYear = yearIndex % 2 === 0;
               const hasMultipleMilestones = yearGroup.milestones.length > 1;

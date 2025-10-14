@@ -58,7 +58,6 @@ export const Navbar = ({ children, className }: NavbarProps) => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 w-full",
         "border-b",
-        "shadow-sm",
         className
       )}
       style={{
@@ -69,7 +68,9 @@ export const Navbar = ({ children, className }: NavbarProps) => {
         boxShadow: '0 10px 30px rgba(0,0,0,0.10)'
       }}
     >
-      {children}
+      <div className="max-w-7xl mx-auto">
+        {children}
+      </div>
     </nav>
   );
 };

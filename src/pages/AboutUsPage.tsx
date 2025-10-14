@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   Navbar,
   NavBody,
@@ -11,23 +11,16 @@ import {
   MobileNavMenu,
 } from '../components/ui/resizable-navbar';
 import Footer from '../components/Footer';
-import CorporateBeliefsSection from '../components/about/CorporateBeliefsSection';
-import IndustryFocusSection from '../components/about/IndustryFocusSection';
-import CertificationsSection from '../components/about/CertificationsSection';
-import HistoryMilestonesSection from '../components/about/HistoryMilestonesSection';
-import AnnualReturnsSection from '../components/about/AnnualReturnsSection';
-import CSRActivitiesSection from '../components/about/CSRActivitiesSection';
+import AboutSubNav from '../components/about/AboutSubNav';
+import { Outlet } from 'react-router-dom';
+import CountUp from '../components/ui/CountUp';
 
 const AboutUsPage: React.FC = () => {
-  const [activeSection, setActiveSection] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const heroRef = useRef<HTMLDivElement>(null);
-  const sectionsRef = useRef<HTMLElement[]>([]);
-  const timelineRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll();
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+  // Parallax removed to avoid overlay issues with fixed navbar
 
   const navItems = [
     { name: "Home", link: "/" },
@@ -37,52 +30,8 @@ const AboutUsPage: React.FC = () => {
   ];
 
 
-  const sectionTitles = [
-    'Corporate Beliefs',
-    'Industry Focus',
-    'Certifications',
-    'History & Milestones',
-    'Annual Returns',
-    'CSR Activities'
-  ];
-
-  // Add section refs
-  const addToRefs = (el: HTMLElement | null, index: number) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current[index] = el;
-    }
-  };
-
-  // Handle scroll to update active section
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 2;
-      
-      sectionsRef.current.forEach((section, index) => {
-        if (section) {
-          const sectionTop = section.offsetTop;
-          const sectionBottom = sectionTop + section.offsetHeight;
-          
-          if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-            setActiveSection(index);
-          }
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToSection = (index: number) => {
-    const section = sectionsRef.current[index];
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
-    <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-white">
+    <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-white pt-16">
       {/* Enhanced Navbar with Timeline Progress */}
       <div className="relative w-full">
         <Navbar>
@@ -124,60 +73,12 @@ const AboutUsPage: React.FC = () => {
         </Navbar>
       </div>
 
-      {/* Timeline Navigation Sidebar */}
-      <motion.div 
-        ref={timelineRef}
-        className="fixed left-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block"
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.5 }}
-      >
-        <div className="flex flex-col space-y-4">
-          {sectionTitles.map((title, index) => (
-            <motion.button
-              key={index}
-              onClick={() => scrollToSection(index)}
-              className={`relative group flex items-center space-x-3 transition-all duration-300 ${
-                activeSection === index ? 'text-[#00aeef]' : 'text-gray-500 hover:text-gray-700'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {/* Progress Line */}
-              <div className="w-12 h-0.5 bg-gray-300 relative overflow-hidden">
-                <motion.div
-                  className="absolute top-0 left-0 h-full bg-[#00aeef]"
-                  initial={{ width: 0 }}
-                  animate={{ 
-                    width: activeSection >= index ? '100%' : '0%' 
-                  }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-              
-              {/* Section Number */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-                activeSection === index 
-                  ? 'bg-[#00aeef] text-white shadow-lg' 
-                  : 'bg-gray-200 text-gray-600 group-hover:bg-gray-300'
-              }`}>
-                {index + 1}
-              </div>
-              
-              {/* Section Title */}
-              <span className="text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/80 text-white px-3 py-1 rounded-lg">
-                {title}
-              </span>
-            </motion.button>
-          ))}
-        </div>
-      </motion.div>
+      {/* Timeline sidebar removed to match requested design */}
 
       {/* Hero Section with Background Image */}
       <motion.section 
         ref={heroRef}
         className="relative w-full h-screen flex items-center justify-center overflow-hidden"
-        style={{ y: backgroundY }}
       >
         {/* Background Image */}
         <div 
@@ -214,110 +115,56 @@ const AboutUsPage: React.FC = () => {
             in building intelligent solutions for modern manufacturing.
           </motion.p>
 
-          {/* Scroll Indicator */}
-          <motion.div 
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1 }}
-          >
+          {/* Glass Stats Boxes */}
+          <div className="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             <motion.div
-              className="w-6 h-10 border-2 border-white/60 rounded-full flex justify-center"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="relative rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-6 text-white shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
             >
-              <motion.div 
-                className="w-1 h-3 bg-white/80 rounded-full mt-2"
-                animate={{ opacity: [0.4, 1, 0.4] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
+              <div className="text-3xl md:text-4xl font-extrabold">
+                <CountUp to={18} durationMs={1400} />
+                <span className="ml-1 align-top">+</span>
+              </div>
+              <div className="mt-1 text-sm md:text-base text-white/80">Years of Excellence</div>
             </motion.div>
-          </motion.div>
+            <motion.div
+              className="relative rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-6 text-white shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.95 }}
+            >
+              <div className="text-3xl md:text-4xl font-extrabold">
+                <CountUp to={50} durationMs={1400} delayMs={120} />
+                <span className="ml-1 align-top">+</span>
+              </div>
+              <div className="mt-1 text-sm md:text-base text-white/80">Blue-chip Clients</div>
+            </motion.div>
+            <motion.div
+              className="relative rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-6 text-white shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.1 }}
+            >
+              <div className="text-3xl md:text-4xl font-extrabold">
+                <CountUp to={2} durationMs={1400} delayMs={240} />
+                <span className="ml-1 align-top">+</span>
+              </div>
+              <div className="mt-1 text-sm md:text-base text-white/80">Countries Served</div>
+            </motion.div>
+          </div>
+
+          
         </motion.div>
       </motion.section>
 
-      {/* Timeline Sections */}
-      <div className="relative">
-        {/* Connecting Line */}
-        <div className="hidden lg:block absolute left-[4.5rem] top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#00aeef] via-gray-300 to-gray-300 z-0" />
-        
-        {/* Section 1: Corporate Beliefs */}
-        <section 
-          ref={(el) => addToRefs(el, 0)}
-          id="corporate-beliefs"
-          className="relative py-20 px-6 md:px-12 lg:px-16"
-          style={{ backgroundImage: 'url(/aboutus/bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
-        >
-          <div className="absolute inset-0 bg-white/95" />
-          <div className="relative z-10">
-            <CorporateBeliefsSection />
-          </div>
-        </section>
+      {/* Sub-Navigation (route-based) placed below hero, non-sticky) */}
+      <AboutSubNav />
 
-        {/* Section 2: Industry Focus */}
-        <section 
-          ref={(el) => addToRefs(el, 1)}
-          id="industry-focus"
-          className="relative py-20 px-6 md:px-12 lg:px-16"
-          style={{ backgroundImage: 'url(/aboutus/bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
-        >
-          <div className="absolute inset-0 bg-white/90" />
-          <div className="relative z-10">
-            <IndustryFocusSection />
-          </div>
-        </section>
-
-        {/* Section 3: Certifications */}
-        <section 
-          ref={(el) => addToRefs(el, 2)}
-          id="certifications"
-          className="relative py-20 px-6 md:px-12 lg:px-16"
-          style={{ backgroundImage: 'url(/aboutus/bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
-        >
-          <div className="absolute inset-0 bg-blue-50/95" />
-          <div className="relative z-10">
-            <CertificationsSection />
-          </div>
-        </section>
-
-        {/* Section 4: History & Milestones */}
-        <section 
-          ref={(el) => addToRefs(el, 3)}
-          id="history-milestones"
-          className="relative py-20 px-6 md:px-12 lg:px-16"
-          style={{ backgroundImage: 'url(/aboutus/bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
-        >
-          <div className="absolute inset-0 bg-white/90" />
-          <div className="relative z-10">
-            <HistoryMilestonesSection />
-          </div>
-        </section>
-
-        {/* Section 5: Annual Returns */}
-        <section 
-          ref={(el) => addToRefs(el, 4)}
-          id="annual-returns"
-          className="relative py-20 px-6 md:px-12 lg:px-16"
-          style={{ backgroundImage: 'url(/aboutus/bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
-        >
-          <div className="absolute inset-0 bg-blue-50/95" />
-          <div className="relative z-10">
-            <AnnualReturnsSection />
-          </div>
-        </section>
-
-        {/* Section 6: CSR Activities */}
-        <section 
-          ref={(el) => addToRefs(el, 5)}
-          id="csr-activities"
-          className="relative py-20 px-6 md:px-12 lg:px-16"
-          style={{ backgroundImage: 'url(/aboutus/bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}
-        >
-          <div className="absolute inset-0 bg-white/90" />
-          <div className="relative z-10">
-            <CSRActivitiesSection />
-          </div>
-        </section>
+      {/* Routed Section Content */}
+      <div className="relative py-16 px-6 md:px-12 lg:px-16">
+        <Outlet />
       </div>
 
       {/* Footer */}
