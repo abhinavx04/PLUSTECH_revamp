@@ -22,9 +22,9 @@ const HomePage: React.FC = () => {
   const handRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const robotRef = useRef<HTMLDivElement | null>(null);
-  const cloudRef = useRef<HTMLButtonElement | null>(null);
+  // Cloud removed
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [panelOrigin, setPanelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [panelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [showWisp, setShowWisp] = useState(false);
   const [wispDirection, setWispDirection] = useState<'open' | 'close' | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -46,23 +46,7 @@ const HomePage: React.FC = () => {
     return `M ${startX},${startY} Q ${midX},${midY} ${endX},${endY}`;
   };
 
-  const handleCloudClick = () => {
-    const rect = cloudRef.current?.getBoundingClientRect();
-    const isMobile = window.innerWidth < 768;
-    
-    if (rect) {
-      // Adjust origin calculation for mobile devices
-      const margin = isMobile ? 20 : 50;
-      const startX = Math.max(-window.innerWidth / 2 + margin, Math.min(rect.left + rect.width / 2 - window.innerWidth / 2, window.innerWidth / 2 - margin));
-      const startY = Math.max(-window.innerHeight / 2 + margin, Math.min(rect.top + rect.height / 2 - window.innerHeight / 2, window.innerHeight / 2 - margin));
-      setPanelOrigin({ x: startX, y: startY });
-    } else {
-      setPanelOrigin({ x: 0, y: 0 });
-    }
-    setShowWisp(true);
-    setWispDirection('open');
-    setIsPanelOpen(true);
-  };
+  // Cloud removed; interaction handler no longer needed
 
   const closePanel = () => {
     setWispDirection('close');
@@ -164,10 +148,12 @@ const HomePage: React.FC = () => {
           <MobileNav>
             <MobileNavHeader>
               <NavbarLogo />
-              <MobileNavToggle
-                isOpen={isMobileMenuOpen}
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
+              {!isMobileMenuOpen && (
+                <MobileNavToggle
+                  isOpen={isMobileMenuOpen}
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                />
+              )}
             </MobileNavHeader>
 
             <MobileNavMenu
@@ -180,7 +166,8 @@ const HomePage: React.FC = () => {
                     key={`mobile-link-${idx}`}
                     href={item.link}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-white hover:text-[#00aeef] transition-colors py-4 px-4 rounded-lg hover:bg-white/10 font-semibold text-lg border-b border-white/10 last:border-b-0"
+                    className="block text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b last:border-b-0"
+                    style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
                   >
                     {item.name}
                   </a>
@@ -235,34 +222,9 @@ const HomePage: React.FC = () => {
                 <strong> customized solutions</strong> that combine innovation, efficiency, and quality.
               </p>
             </div>
-            <div ref={containerRef} className="flex justify-center items-start relative z-[1] pt-2">
+            <div ref={containerRef} className="flex justify-center items-start relative z-[0] pt-4 md:pt-2">
               <div ref={robotRef} className="will-change-transform relative">
-                <img ref={handRef} src="/home/file.svg" alt="Robotic Hand" className="w-64 md:w-80" style={{ filter: 'brightness(1.1) contrast(1.1)' }} />
-                <div className="absolute -top-20 -right-28 md:-top-28 md:-right-40 z-[2] select-none">
-                  <div className="absolute left-8 top-[72px] flex gap-1.5 items-center">
-                    <span className="w-1.5 h-1.5 rounded-full bg-black opacity-70"></span>
-                    <span className="w-2 h-2 rounded-full bg-black opacity-70"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-black opacity-70"></span>
-                  </div>
-                  <button
-                    ref={cloudRef}
-                    onClick={handleCloudClick}
-                    className="relative block animate-floaty focus:outline-none focus:ring-2 focus:ring-white/40"
-                    aria-label="Click me"
-                  >
-                    <div className="relative w-36 h-16 md:w-48 md:h-20">
-                      <span className="absolute left-2 top-6 w-8 h-8 rounded-full bg-black"></span>
-                      <span className="absolute left-7 top-2 w-10 h-10 rounded-full bg-black"></span>
-                      <span className="absolute left-16 top-0 w-12 h-12 rounded-full bg-black"></span>
-                      <span className="absolute left-26 top-4 w-10 h-10 rounded-full bg-black"></span>
-                      <span className="absolute left-10 top-7 w-16 h-8 rounded-full bg-black"></span>
-                      <span className="absolute left-10 top-3 w-10 h-4 rounded-full bg-white/10"></span>
-                      <span className="absolute inset-0 flex items-center justify-center text-white text-xs md:text-sm font-semibold tracking-wide">
-                        click me
-                      </span>
-                    </div>
-                  </button>
-                </div>
+                <img ref={handRef} src="/home/file.svg" alt="Robotic Hand" className="w-52 md:w-80" style={{ filter: 'brightness(1.1) contrast(1.1)' }} />
               </div>
             </div>
           </div>
