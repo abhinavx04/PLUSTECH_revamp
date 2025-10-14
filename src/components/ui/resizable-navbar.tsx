@@ -62,11 +62,9 @@ export const Navbar = ({ children, className }: NavbarProps) => {
         className
       )}
       style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 35%, rgba(255,255,255,0.02) 100%), rgba(0,0,0,0.82)',
-        borderColor: 'rgba(255,255,255,0.16)',
-        backdropFilter: 'saturate(140%) blur(20px)',
-        WebkitBackdropFilter: 'saturate(140%) blur(20px)',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.06)'
+        background: '#222222',
+        borderColor: '#333333',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.25)'
       }}
     >
       {children}
@@ -91,7 +89,7 @@ export const NavItems = ({ items, className }: NavItemsProps) => {
         <li key={`nav-item-${idx}`}>
           <a
             href={item.link}
-            className="relative text-white hover:text-[#00aeef] transition-colors duration-200 font-medium transform hover:scale-105 inline-block"
+            className="relative text-[#E0E0E0] hover:text-[#F5F5F5] transition-colors duration-200 font-medium transform hover:scale-105 inline-block"
           >
             {item.name}
           </a>
@@ -173,19 +171,19 @@ export const MobileNavToggle = ({ isOpen, onClick }: MobileNavToggleProps) => {
       <div className="w-6 h-6 flex flex-col justify-center space-y-1">
         <span
           className={cn(
-            "block h-0.5 w-6 bg-white transition-all duration-300",
+            "block h-0.5 w-6 bg-[#E0E0E0] transition-all duration-300",
             isOpen && "rotate-45 translate-y-1.5"
           )}
         />
         <span
           className={cn(
-            "block h-0.5 w-6 bg-white transition-all duration-300",
+            "block h-0.5 w-6 bg-[#E0E0E0] transition-all duration-300",
             isOpen && "opacity-0"
           )}
         />
         <span
           className={cn(
-            "block h-0.5 w-6 bg-white transition-all duration-300",
+            "block h-0.5 w-6 bg-[#E0E0E0] transition-all duration-300",
             isOpen && "-rotate-45 -translate-y-1.5"
           )}
         />
@@ -221,21 +219,21 @@ export const MobileNavMenu = ({ children, isOpen, onClose }: MobileNavMenuProps)
       {/* Menu */}
       <div
         className={cn(
-          "fixed top-0 left-0 h-screen w-80 shadow-xl z-50 transform transition-transform duration-300 ease-in-out border-r border-white/20 bg-black",
+          "fixed top-0 left-0 h-screen w-80 shadow-xl z-50 transform transition-transform duration-300 ease-in-out border-r border-[#333333] bg-[#222222]",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
         style={{
-          background: 'rgba(0,0,0,1)',
+          background: '#222222',
           boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
         }}
       >
         <div className="flex flex-col h-screen">
-          <div className="p-6 border-b border-white/10">
+          <div className="p-6 border-b border-[#333333]">
             <div className="flex items-center justify-between">
               <NavbarLogo />
               <button
                 onClick={onClose}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[#E0E0E0]"
                 aria-label="Close menu"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

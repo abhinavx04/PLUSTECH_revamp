@@ -54,14 +54,14 @@ export default {
   				'5': 'hsl(var(--chart-5))'
   			}
   		},
-  		fontFamily: {
-  			sans: [
-  				'Poppins',
-  				'ui-sans-serif',
-  				'system-ui',
-  				'sans-serif'
-  			]
-  		},
+			fontFamily: {
+				sans: [
+					'Jura',
+					'ui-sans-serif',
+					'system-ui',
+					'sans-serif'
+				]
+			},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

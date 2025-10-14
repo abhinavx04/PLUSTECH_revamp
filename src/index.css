@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --font-heading: 'Orbitron', system-ui, sans-serif;
-    --font-body: 'Exo 2', system-ui, sans-serif;
+    --font-heading: 'Jura', system-ui, sans-serif;
+    --font-body: 'Jura', system-ui, sans-serif;
     --font-retro: 'VT323', ui-monospace, monospace;
   }
   body {
