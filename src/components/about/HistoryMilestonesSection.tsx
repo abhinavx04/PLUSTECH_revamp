@@ -297,9 +297,9 @@ const TimelineMilestone: React.FC<{
   return (
     <motion.div
       ref={milestoneRef}
-      className={`relative flex items-center ${
+      className={`relative w-full flex items-start ${
         isLeftSide ? 'lg:flex-row' : 'lg:flex-row-reverse'
-      } flex-col lg:space-x-12 space-y-6 lg:space-y-0`}
+      } flex-col lg:items-center lg:space-x-12 space-y-6 lg:space-y-0 pl-16 lg:pl-0`}
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ 
@@ -311,9 +311,9 @@ const TimelineMilestone: React.FC<{
     >
       {/* Timeline Node */}
       <motion.div
-        className={`relative z-10 flex-shrink-0 ${
+        className={`z-10 flex-shrink-0 ${
           isLeftSide ? 'lg:order-1 lg:-translate-x-10' : 'lg:order-2 lg:translate-x-10'
-        }`}
+        } absolute left-8 top-1 lg:static`}
         initial={{ opacity: 0, scale: 0, rotate: -90 }}
         animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0, scale: 0, rotate: -90 }}
         transition={{ 
@@ -329,19 +329,19 @@ const TimelineMilestone: React.FC<{
       >
         {/* Circular Node */}
         <motion.div 
-          className={`w-16 h-16 ${config.node} rounded-full flex items-center justify-center shadow-lg ${config.shadow} border-4 border-white mx-auto lg:mx-0`}
+          className={`w-10 h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 ${config.node} rounded-full flex items-center justify-center shadow-lg ${config.shadow} border-2 md:border-3 lg:border-4 border-white mx-auto lg:mx-0`}
           whileHover={{ 
             scale: 1.1,
             transition: { duration: 0.2 }
           }}
         >
-          <div className="w-3 h-3 bg-white rounded-full"></div>
+          <div className="w-2 h-2 md:w-2.5 md:h-2.5 lg:w-3 lg:h-3 bg-white rounded-full"></div>
         </motion.div>
       </motion.div>
 
       {/* Milestone Card */}
       <motion.div
-        className={`bg-white rounded-2xl shadow-lg border border-gray-100 p-6 max-w-md mx-auto lg:mx-0 ${
+        className={`bg-white rounded-2xl shadow-lg border border-gray-100 p-5 md:p-6 w-full lg:max-w-md ml-4 lg:ml-0 mx-auto lg:mx-0 ${
           isLeftSide 
             ? 'lg:order-2 lg:mr-56'  // even wider gutter from center line on left side
             : 'lg:order-1 lg:ml-56'  // even wider gutter from center line on right side
@@ -549,8 +549,8 @@ const HistoryMilestonesSection: React.FC = () => {
           />
           
           {/* Central Timeline Line - Mobile */}
-          <motion.div 
-            className="lg:hidden absolute left-10 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
+              <motion.div
+            className="lg:hidden absolute left-6 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
             style={{ 
               scaleY: timelineHeight,
               originY: 0
