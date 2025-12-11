@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, getIdTokenResult } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
@@ -13,6 +13,10 @@ interface AdminUser {
 const ADMIN_EMAILS: string[] = import.meta.env.VITE_ADMIN_EMAILS 
   ? import.meta.env.VITE_ADMIN_EMAILS.split(',').map((email: string) => email.trim())
   : [];
+
+// Optional fallback: when no admin allowlist is provided, treat any authenticated
+// user as admin (useful when all Firebase console users are intended admins).
+const ALLOW_ALL_AUTH_USERS_AS_ADMIN = ADMIN_EMAILS.length === 0;
 
 export const useAdminAuth = () => {
   const [user, setUser] = useState<AdminUser | null>(null);
@@ -35,24 +39,47 @@ export const useAdminAuth = () => {
       // Simple auth state listener without complex type casting
       const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
         if (debugEnabled) console.log('[Auth] Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
-        
+
         if (firebaseUser) {
-          // Check if user is admin based on the admin email list
-          const isAdmin = ADMIN_EMAILS.includes(firebaseUser.email || '');
-          if (debugEnabled) {
-            console.log('[Auth] User authenticated');
-            console.log('[Auth] Is admin:', isAdmin);
-          }
-          
-          setUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            isAdmin,
-          });
+          const verifyAdmin = async () => {
+            try {
+              // Prefer explicit admin claims if present; fallback to env email allowlist
+              const tokenResult = await getIdTokenResult(firebaseUser);
+              const claimAdmin = Boolean(tokenResult?.claims?.admin || tokenResult?.claims?.role === 'admin');
+              const emailAdmin = ADMIN_EMAILS.includes(firebaseUser.email || '');
+              const isAdmin = claimAdmin || emailAdmin || ALLOW_ALL_AUTH_USERS_AS_ADMIN;
+
+              if (debugEnabled) {
+                console.log('[Auth] User authenticated');
+                console.log('[Auth] Token admin claim:', claimAdmin);
+                console.log('[Auth] Email allowlist admin:', emailAdmin);
+                console.log('[Auth] Fallback all-auth-users admin:', ALLOW_ALL_AUTH_USERS_AS_ADMIN);
+                console.log('[Auth] Is admin:', isAdmin);
+              }
+
+              setUser({
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                isAdmin,
+              });
+            } catch (tokenError) {
+              console.error('[Auth] Error checking admin claim:', tokenError);
+              setError('Unable to verify admin privileges');
+              setUser({
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                isAdmin: ADMIN_EMAILS.includes(firebaseUser.email || '') || ALLOW_ALL_AUTH_USERS_AS_ADMIN,
+              });
+            } finally {
+              setLoading(false);
+            }
+          };
+
+          verifyAdmin();
         } else {
           setUser(null);
+          setLoading(false);
         }
-        setLoading(false);
       });
 
       return () => {
