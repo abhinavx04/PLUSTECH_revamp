@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, Timestamp, getDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { deleteImageFromStorage } from '../lib/storageUtils';
 
 interface NewsArticle {
   id: string;
@@ -229,6 +230,26 @@ export const useNewsFirestore = () => {
       
       const { id, ...updateData } = newsData;
       const newsDoc = doc(db, 'news', id);
+      
+      // Get current article to check for old image
+      const currentDoc = await getDoc(newsDoc);
+      if (currentDoc.exists()) {
+        const currentData = currentDoc.data();
+        const oldImageUrl = currentData?.imageUrl;
+        const newImageUrl = updateData.imageUrl;
+        
+        // If image is being changed and old image exists, delete the old one
+        if (oldImageUrl && newImageUrl && oldImageUrl !== newImageUrl) {
+          console.log('[News] Image changed, deleting old image from Storage...');
+          try {
+            await deleteImageFromStorage(oldImageUrl);
+          } catch (imageError) {
+            // Log but don't fail the update if image deletion fails
+            console.warn('[News] Failed to delete old image, continuing with update:', imageError);
+          }
+        }
+      }
+      
       await updateDoc(newsDoc, {
         ...updateData,
         updatedAt: Timestamp.now(),
@@ -268,7 +289,29 @@ export const useNewsFirestore = () => {
       setError(null);
       console.log('[News] Deleting news article:', id);
       
+      // Get the article first to extract image URL
       const newsDoc = doc(db, 'news', id);
+      const docSnapshot = await getDoc(newsDoc);
+      
+      if (!docSnapshot.exists()) {
+        throw new Error('Article not found');
+      }
+      
+      const articleData = docSnapshot.data();
+      const imageUrl = articleData?.imageUrl;
+      
+      // Delete the image from Storage if it exists
+      if (imageUrl) {
+        console.log('[News] Deleting associated image from Storage...');
+        try {
+          await deleteImageFromStorage(imageUrl);
+        } catch (imageError) {
+          // Log but don't fail the deletion if image deletion fails
+          console.warn('[News] Failed to delete image, continuing with article deletion:', imageError);
+        }
+      }
+      
+      // Delete the Firestore document
       await deleteDoc(newsDoc);
       
       // Remove from local state

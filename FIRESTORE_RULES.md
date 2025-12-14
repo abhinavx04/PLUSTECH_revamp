@@ -76,43 +76,59 @@ Since the app now supports image uploads, you also need to configure Firebase St
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // News images - allow authenticated users to upload/read
+    // News images - allow authenticated users to upload/read/delete
     match /news/images/{imageId} {
+      // Allow read for authenticated users
       allow read: if request.auth != null;
+      
+      // Allow write (upload) for authenticated users with size and type validation
       allow write: if request.auth != null
         && request.resource.size < 5 * 1024 * 1024  // Max 5MB before compression
         && request.resource.contentType.matches('image/.*');
+      
+      // Allow delete for authenticated users
+      allow delete: if request.auth != null;
     }
     
     // Default: deny all other access
     match /{allPaths=**} {
-      allow read, write: if false;
+      allow read, write, delete: if false;
     }
   }
 }
 ```
 
-### Alternative: Public Read, Authenticated Write
+**Note:** The `write` rule only applies to uploads (create/update). For deletion, you need the explicit `allow delete` rule.
+
+### Alternative: Public Read, Authenticated Write/Delete
 
 ```javascript
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // News images - public read, authenticated write
+    // News images - public read, authenticated write/delete
     match /news/images/{imageId} {
-      allow read: if true;  // Anyone can read
+      // Anyone can read
+      allow read: if true;
+      
+      // Only authenticated users can upload
       allow write: if request.auth != null
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
+      
+      // Only authenticated users can delete
+      allow delete: if request.auth != null;
     }
     
     // Default: deny all other access
     match /{allPaths=**} {
-      allow read, write: if false;
+      allow read, write, delete: if false;
     }
   }
 }
 ```
+
+**Note:** The `write` rule only applies to uploads (create/update). For deletion, you need the explicit `allow delete` rule.
 
 ## Troubleshooting
 
