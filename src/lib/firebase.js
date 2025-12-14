@@ -2,6 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 // Firebase configuration for PlusTech project
 const firebaseConfig = {
@@ -17,13 +18,17 @@ const firebaseConfig = {
 let app = null;
 let auth = null;
 let db = null;
+let storage = null;
 
 try {
   // Initialize Firebase with the real configuration
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
   console.log('[Firebase] Successfully initialized with PlusTech configuration');
+  console.log('[Firebase] Project ID:', firebaseConfig.projectId);
+  console.log('[Firebase] Auth Domain:', firebaseConfig.authDomain);
 } catch (e) {
   console.error('[Firebase] Initialization failed:', e && e.message ? e.message : e);
   // Create mock auth object as fallback
@@ -40,7 +45,7 @@ try {
   db = null;
 }
 
-export { db, auth };
+export { db, auth, storage };
 
 // Provide basic type declarations for TS when importing from JS file
 /**

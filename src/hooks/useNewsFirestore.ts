@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 interface NewsArticle {
@@ -40,7 +40,10 @@ export const useNewsFirestore = () => {
   useEffect(() => {
     const loadNews = async () => {
       if (!db) {
+        const msg = 'Firestore not configured (check VITE_FIREBASE_* env vars)';
         console.warn('[News] Firestore not available');
+        setError(msg);
+        setLoading(false);
         return;
       }
 
@@ -48,13 +51,57 @@ export const useNewsFirestore = () => {
         setLoading(true);
         setError(null);
         
-        const newsCollection = collection(db, 'news');
-        const q = query(newsCollection, orderBy('createdAt', 'desc'));
-        const querySnapshot = await getDocs(q);
+        console.log('[News] Starting to load news from Firestore...');
+        console.log('[News] DB object:', db ? 'exists' : 'null');
         
+        // Log project info if available
+        if (db && (db as any).app) {
+          const projectId = (db as any).app.options?.projectId;
+          console.log('[News] Firestore Project ID:', projectId);
+        }
+        
+        const newsCollection = collection(db, 'news');
+        console.log('[News] Collection reference created for "news"');
+        console.log('[News] Collection path:', newsCollection.path);
+        
+        // Try simple query first (no orderBy) to avoid index issues and get faster error feedback
+        let querySnapshot;
+        try {
+          console.log('[News] Attempting simple query (no ordering)...');
+          querySnapshot = await getDocs(newsCollection);
+          console.log('[News] Simple query succeeded, got', querySnapshot.size, 'documents');
+          
+          // If we got results, try to sort them with orderBy for better performance next time
+          if (querySnapshot.size > 0) {
+            console.log('[News] Attempting to use orderBy for future queries...');
+            try {
+              const q = query(newsCollection, orderBy('createdAt', 'desc'));
+              await getDocs(q); // Test if index exists
+              console.log('[News] OrderBy index exists, will use it next time');
+            } catch (indexTestError: any) {
+              if (indexTestError?.code === 'failed-precondition') {
+                console.warn('[News] OrderBy index missing - using simple query. Create index for better performance.');
+              }
+            }
+          }
+        } catch (queryError: any) {
+          console.error('[News] Query failed:', queryError);
+          console.error('[News] Error code:', queryError?.code);
+          console.error('[News] Error message:', queryError?.message);
+          console.error('[News] Full error:', queryError);
+          
+          if (queryError?.code === 'permission-denied') {
+            console.error('[News] PERMISSION DENIED - Firestore rules are blocking access!');
+            console.error('[News] Update Firestore security rules to allow read access to "news" collection');
+          }
+          throw queryError;
+        }
+        
+        console.log('[News] Processing', querySnapshot.size, 'documents...');
         const newsData: NewsArticle[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          console.log('[News] Processing document:', doc.id, 'data keys:', Object.keys(data));
           const article = {
             id: doc.id,
             ...data,
@@ -66,15 +113,55 @@ export const useNewsFirestore = () => {
             id: article.id,
             title: article.title,
             published: article.published,
-            featured: article.featured
+            featured: article.featured,
+            createdAt: article.createdAt
           });
+        });
+        
+        // Sort manually if we loaded without orderBy
+        newsData.sort((a, b) => {
+          const aTime = a.createdAt.getTime();
+          const bTime = b.createdAt.getTime();
+          return bTime - aTime; // Descending order
         });
         
         setNews(newsData);
         console.log('[News] Loaded', newsData.length, 'articles from Firestore');
-      } catch (err) {
+        if (newsData.length === 0) {
+          console.warn('[News] ⚠️ WARNING: Query returned 0 documents. Check:');
+          console.warn('[News] 1. Verify Project ID matches your Firebase console');
+          if (db && (db as any).app) {
+            const projectId = (db as any).app.options?.projectId;
+            console.warn(`[News]    Current Project ID: ${projectId}`);
+            console.warn(`[News]    → Go to Firebase Console and verify this matches your project`);
+          }
+          console.warn('[News] 2. Collection name is exactly "news" (case-sensitive, no spaces)');
+          console.warn('[News] 3. Documents exist in the "news" collection in Firebase Console');
+          console.warn('[News] 4. Firestore security rules allow read access (query succeeded, so this is OK)');
+          console.warn('[News] 💡 TIP: Open Firebase Console → Firestore Database and verify:');
+          console.warn('[News]    - You see a collection named "news"');
+          console.warn('[News]    - The collection has 2 documents');
+          console.warn('[News]    - The project ID matches the one shown above');
+        }
+      } catch (err: any) {
         console.error('[News] Error loading news:', err);
-        setError('Failed to load news articles');
+        console.error('[News] Full error object:', JSON.stringify(err, null, 2));
+        const code = err?.code || 'unknown';
+        let errorMsg = '';
+        
+        if (code === 'permission-denied') {
+          errorMsg = 'Firestore permission denied. Update security rules to allow read access to "news" collection.';
+          console.error('[News] PERMISSION DENIED - Check Firestore security rules!');
+        } else if (code === 'failed-precondition') {
+          errorMsg = 'Missing Firestore index. Check console for index creation link.';
+          if (err?.message) {
+            console.error('[News] Index error details:', err.message);
+          }
+        } else {
+          errorMsg = `Failed to load news articles. Error code: ${code}. Check console for details.`;
+        }
+        
+        setError(errorMsg);
       } finally {
         setLoading(false);
       }
@@ -85,6 +172,7 @@ export const useNewsFirestore = () => {
 
   const createNews = async (newsData: CreateNewsData): Promise<string> => {
     if (!db) {
+      setError('Firestore not configured (check VITE_FIREBASE_* env vars)');
       throw new Error('Firestore not available');
     }
 
@@ -93,10 +181,11 @@ export const useNewsFirestore = () => {
       console.log('[News] Creating news article:', newsData);
       
       const newsCollection = collection(db, 'news');
+      const now = Timestamp.now();
       const docRef = await addDoc(newsCollection, {
         ...newsData,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
       });
       
       // Add to local state
@@ -110,15 +199,27 @@ export const useNewsFirestore = () => {
       
       console.log('[News] Created article with ID:', docRef.id);
       return docRef.id;
-    } catch (err) {
+    } catch (err: any) {
       console.error('[News] Error creating news:', err);
-      setError('Failed to create news article');
+      console.error('[News] Full error object:', JSON.stringify(err, null, 2));
+      const code = err?.code || 'unknown';
+      let errorMsg = '';
+      
+      if (code === 'permission-denied') {
+        errorMsg = 'Firestore permission denied. Update security rules to allow write access to "news" collection.';
+        console.error('[News] PERMISSION DENIED - Check Firestore security rules!');
+      } else {
+        errorMsg = `Failed to create news article. Error code: ${code}. Check console for details.`;
+      }
+      
+      setError(errorMsg);
       throw err;
     }
   };
 
   const updateNews = async (newsData: UpdateNewsData): Promise<void> => {
     if (!db) {
+      setError('Firestore not configured (check VITE_FIREBASE_* env vars)');
       throw new Error('Firestore not available');
     }
 
@@ -130,7 +231,7 @@ export const useNewsFirestore = () => {
       const newsDoc = doc(db, 'news', id);
       await updateDoc(newsDoc, {
         ...updateData,
-        updatedAt: new Date(),
+        updatedAt: Timestamp.now(),
       });
       
       // Update local state
@@ -139,15 +240,27 @@ export const useNewsFirestore = () => {
       ));
       
       console.log('[News] Updated article:', id);
-    } catch (err) {
+    } catch (err: any) {
       console.error('[News] Error updating news:', err);
-      setError('Failed to update news article');
+      console.error('[News] Full error object:', JSON.stringify(err, null, 2));
+      const code = err?.code || 'unknown';
+      let errorMsg = '';
+      
+      if (code === 'permission-denied') {
+        errorMsg = 'Firestore permission denied. Update security rules to allow write access to "news" collection.';
+        console.error('[News] PERMISSION DENIED - Check Firestore security rules!');
+      } else {
+        errorMsg = `Failed to update news article. Error code: ${code}. Check console for details.`;
+      }
+      
+      setError(errorMsg);
       throw err;
     }
   };
 
   const deleteNews = async (id: string): Promise<void> => {
     if (!db) {
+      setError('Firestore not configured (check VITE_FIREBASE_* env vars)');
       throw new Error('Firestore not available');
     }
 
@@ -162,9 +275,20 @@ export const useNewsFirestore = () => {
       setNews(prev => prev.filter(article => article.id !== id));
       
       console.log('[News] Deleted article:', id);
-    } catch (err) {
+    } catch (err: any) {
       console.error('[News] Error deleting news:', err);
-      setError('Failed to delete news article');
+      console.error('[News] Full error object:', JSON.stringify(err, null, 2));
+      const code = err?.code || 'unknown';
+      let errorMsg = '';
+      
+      if (code === 'permission-denied') {
+        errorMsg = 'Firestore permission denied. Update security rules to allow delete access to "news" collection.';
+        console.error('[News] PERMISSION DENIED - Check Firestore security rules!');
+      } else {
+        errorMsg = `Failed to delete news article. Error code: ${code}. Check console for details.`;
+      }
+      
+      setError(errorMsg);
       throw err;
     }
   };

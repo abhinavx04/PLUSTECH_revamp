@@ -82,11 +82,13 @@ const SimpleNewsSection: React.FC = () => {
             {publishedNews.map(article => (
               <div key={article.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
                 {article.imageUrl && (
-                  <div className="h-48 overflow-hidden">
+                  <div className="h-48 overflow-hidden bg-gray-200">
                     <img 
                       src={article.imageUrl} 
                       alt={article.title} 
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }}
@@ -122,11 +124,13 @@ const SimpleNewsSection: React.FC = () => {
             {/* Modal Header */}
             <div className="relative">
               {selectedArticle.imageUrl && (
-                <div className="h-64 md:h-80 overflow-hidden">
+                <div className="h-64 md:h-80 overflow-hidden bg-gray-200">
                   <img 
                     src={selectedArticle.imageUrl} 
                     alt={selectedArticle.title} 
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none';
                     }}
