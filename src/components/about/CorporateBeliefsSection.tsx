@@ -17,7 +17,7 @@ const beliefsData: BeliefCard[] = [
     title: 'Customer Satisfaction',
     description: 'Since inception, Plustech has made "customer satisfaction" and "relationships" as the foundation of our business principle. We derive immense satisfaction when customers recall our brand and entrust us with successive projects.',
     icon: '',
-    color: 'from-blue-500 to-blue-700',
+    color: 'from-[#00aeef] to-[#0077a3]',
     stats: ['Foundation Principle', 'Brand Recognition', 'Successive Projects']
   },
   {
@@ -25,7 +25,7 @@ const beliefsData: BeliefCard[] = [
     title: 'Our Vision',
     description: 'To become a dominant and internationally acknowledged player in surface finishing plant and equipment by adopting greener technologies and best business practices.',
     icon: '',
-    color: 'from-green-500 to-green-700',
+    color: 'from-[#00aeef] to-[#005a7a]',
     stats: ['International Recognition', 'Green Technologies', 'Best Practices']
   },
   {
@@ -33,7 +33,7 @@ const beliefsData: BeliefCard[] = [
     title: 'Our Mission',
     description: 'To be the most preferred supplier for surface finishing plant by offering customized solutions in setting up energy efficient plants with consistently good quality. We believe in not just meeting customer expectations but exceeding them.',
     icon: '',
-    color: 'from-purple-500 to-purple-700',
+    color: 'from-[#0099d4] to-[#00aeef]',
     stats: ['Preferred Supplier', 'Energy Efficient', 'Exceed Expectations']
   },
   {
@@ -41,7 +41,7 @@ const beliefsData: BeliefCard[] = [
     title: 'Quality Policy',
     description: 'To provide professional & efficient service to customers by delivering high quality surface finishing process plants on time and at optimum price. We are committed to continual improvement and ISO 9001:2015 standards.',
     icon: '',
-    color: 'from-orange-500 to-orange-700',
+    color: 'from-[#0077a3] to-[#00aeef]',
     stats: ['Professional Service', 'ISO 9001:2015', 'Continual Improvement']
   },
   {
@@ -49,7 +49,7 @@ const beliefsData: BeliefCard[] = [
     title: 'PEACE USP',
     description: 'Our USP outlined under the acronym PEACE (Productivity, Efficiency, Affordability, Cost and Environment) focuses on delivering best value proposition to customers for long lasting relationships.',
     icon: '',
-    color: 'from-indigo-500 to-indigo-700',
+    color: 'from-[#00aeef] to-[#0099d4]',
     stats: ['Productivity', 'Efficiency', 'Affordability']
   },
   {
@@ -57,7 +57,7 @@ const beliefsData: BeliefCard[] = [
     title: 'Future Plans',
     description: 'Plustech is steering geographical expansion drive to serve global industry with greener technologies and best engineering practices. We are coming up with a Technical Center and elegant office in a new business district.',
     icon: '',
-    color: 'from-teal-500 to-teal-700',
+    color: 'from-[#005a7a] to-[#00aeef]',
     stats: ['Global Expansion', 'Technical Center', 'Green Technologies']
   }
 ];
@@ -136,57 +136,94 @@ const CorporateBeliefsSection: React.FC = () => {
             variants={cardVariants}
             className="group cursor-pointer h-full"
             whileHover={{ 
-              y: -10,
-              transition: { duration: 0.3 }
+              y: -12,
+              scale: 1.02,
+              transition: { 
+                type: "spring",
+                stiffness: 300,
+                damping: 20
+              }
             }}
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <div className="animated-border rounded-2xl h-full">
-              <div className="animated-inner relative rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-transparent bg-white flex flex-col h-full min-h-[340px]">
-              {/* Gradient Background */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${belief.color} opacity-5 group-hover:opacity-10 transition-opacity duration-500`} />
-              
-              {/* Header */}
-              <div className="relative p-6 bg-gradient-to-r from-gray-50 to-gray-100">
-                <div>
-                  <h3 className="text-xl font-bold font-heading text-black">
-                    {belief.title}
-                  </h3>
-                  <div className={`h-1 w-16 bg-gradient-to-r ${belief.color} rounded-full mt-2`} />
-                </div>
-              </div>
-              
-              {/* Content */}
-              <div className="p-6 flex-1">
-                <p className="text-gray-600 leading-relaxed mb-6">
-                  {belief.description}
-                </p>
-                
-                {/* Key Points */}
-                <div className="space-y-2">
-                  {belief.stats.map((stat, index) => (
-                    <motion.div
-                      key={index}
-                      className="flex items-center space-x-3"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.5, delay: 0.3 + (index * 0.1) }}
-                    >
-                      <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${belief.color}`} />
-                      <span className="text-sm text-gray-600 font-medium">{stat}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Hover Effect Line */}
+            <div className="rounded-2xl h-full">
               <motion.div 
-                className={`h-1 bg-gradient-to-r ${belief.color} rounded-full`}
-                initial={{ width: 0 }}
-                whileHover={{ width: "100%" }}
-                transition={{ duration: 0.3 }}
-              />
-              </div>
+                className="relative rounded-2xl shadow-lg overflow-hidden border border-gray-200 bg-white flex flex-col h-full min-h-[340px]"
+                whileHover={{
+                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
+                  transition: { duration: 0.3 }
+                }}
+              >
+                {/* Subtle gradient background on hover */}
+                <motion.div 
+                  className={`absolute inset-0 bg-gradient-to-br ${belief.color} opacity-0`}
+                  whileHover={{
+                    opacity: 0.05,
+                    transition: { duration: 0.3 }
+                  }}
+                />
+                
+                {/* Header with dual-tone gradient */}
+                <div className="relative p-6 bg-gradient-to-r from-white via-gray-50 to-white group-hover:from-[#00aeef]/5 group-hover:via-white group-hover:to-[#00aeef]/5 transition-all duration-500">
+                  <div>
+                    <motion.h3 
+                      className="text-xl font-bold font-heading text-black group-hover:text-[#00aeef] transition-colors duration-300"
+                    >
+                      {belief.title}
+                    </motion.h3>
+                    <motion.div 
+                      className={`h-1 w-16 bg-gradient-to-r ${belief.color} rounded-full mt-2`}
+                      whileHover={{
+                        width: "100%",
+                        transition: { duration: 0.4, ease: "easeOut" }
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Content */}
+                <div className="p-6 flex-1 relative z-10">
+                  <p className="text-gray-600 leading-relaxed mb-6 group-hover:text-gray-700 transition-colors duration-300">
+                    {belief.description}
+                  </p>
+                  
+                  {/* Key Points */}
+                  <div className="space-y-2">
+                    {belief.stats.map((stat, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex items-center space-x-3"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                        transition={{ duration: 0.5, delay: 0.3 + (index * 0.1) }}
+                        whileHover={{
+                          x: 4,
+                          transition: { duration: 0.2 }
+                        }}
+                      >
+                        <motion.div 
+                          className={`w-2 h-2 rounded-full bg-gradient-to-r ${belief.color}`}
+                          whileHover={{
+                            scale: 1.5,
+                            transition: { duration: 0.2 }
+                          }}
+                        />
+                        <span className="text-sm text-gray-600 font-medium group-hover:text-[#00aeef] transition-colors duration-300">{stat}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Animated bottom border */}
+                <motion.div 
+                  className={`h-1 bg-gradient-to-r ${belief.color} rounded-full`}
+                  initial={{ width: 0 }}
+                  whileHover={{ 
+                    width: "100%"
+                  }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                />
+              </motion.div>
             </div>
           </motion.div>
         ))}
@@ -194,10 +231,14 @@ const CorporateBeliefsSection: React.FC = () => {
 
       {/* Summary Quote */}
       <motion.div 
-        className="mt-16 text-center bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-12"
+        className="mt-16 text-center bg-gradient-to-r from-[#00aeef]/10 via-white to-[#00aeef]/10 rounded-2xl p-12 border border-[#00aeef]/20 relative overflow-hidden"
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8, delay: 0.8 }}
+        whileHover={{
+          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
+          transition: { duration: 0.3 }
+        }}
       >
         <motion.h3 
           className="text-2xl font-bold font-heading text-black mb-6"
