@@ -3,20 +3,13 @@
  * Compresses images to 1-2MB range while maintaining high quality
  */
 
-interface CompressionOptions {
-  maxSizeMB: number;
-  maxWidthOrHeight: number;
-  useWebWorker: boolean;
-  quality: number;
-}
-
 /**
  * Compress an image file to target size (1-2MB)
  * Uses canvas API for compression
  */
 export async function compressImage(
   file: File,
-  targetSizeMB: number = 1.5,
+  _targetSizeMB: number = 1.5,
   maxWidthOrHeight: number = 1920
 ): Promise<File> {
   return new Promise((resolve, reject) => {
@@ -56,7 +49,6 @@ export async function compressImage(
         
         // Try different quality levels to get target size
         let quality = 0.92; // Start with high quality
-        let compressedBlob: Blob | null = null;
         let attempts = 0;
         const maxAttempts = 10;
         
