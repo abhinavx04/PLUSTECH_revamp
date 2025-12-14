@@ -148,10 +148,14 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     baseUv += parallaxOffset;
   }
 
-  // Dynamic background: subtly reacts to line positions
-  vec3 bgCol = vec3(1.0); // Start with white
-  vec3 lineAccum = vec3(0.0);
-  float totalInfluence = 0.0;
+  // Subtle blue-tinted gradient background
+  // Linear gradient: top (very light blue) to bottom (pure white)
+  vec3 topBlue = vec3(0.980, 0.988, 1.0); // #fafcff
+  vec3 bottomWhite = vec3(1.0, 1.0, 1.0); // #ffffff
+  // Normalize UV for gradient (0 to 1 from top to bottom)
+  float gradientT = (baseUv.y + 1.0) * 0.5; // Map from [-1,1] to [0,1]
+  gradientT = clamp(gradientT, 0.0, 1.0);
+  vec3 bgCol = mix(bottomWhite, topBlue, gradientT); // Gradient from bottom (white) to top (light blue)
 
   vec3 b = lineGradientCount > 0 ? vec3(0.0) : background_color(baseUv);
 
@@ -176,12 +180,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         mouseUv,
         interactive
       ) * 0.2;
-      
-      // Accumulate for dynamic background (wider, softer influence)
-      float bgInfluence = exp(-abs(ruv.y + bottomLineDistance * fi + bottomWavePosition.y - baseUv.y) * 6.0) * 0.1;
-      lineAccum += lineCol * bgInfluence;
-      totalInfluence += bgInfluence;
-      
       // Render solid glossy neon line
       bgCol = mix(bgCol, lineCol, clamp(w * 0.9, 0.0, 1.0));
     }
@@ -202,12 +200,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         mouseUv,
         interactive
       );
-      
-      // Accumulate for dynamic background (wider, softer influence)
-      float bgInfluence = exp(-abs(ruv.y + middleLineDistance * fi + middleWavePosition.y - baseUv.y) * 6.0) * 0.1;
-      lineAccum += lineCol * bgInfluence;
-      totalInfluence += bgInfluence;
-      
       // Render solid glossy neon line
       bgCol = mix(bgCol, lineCol, clamp(w * 0.9, 0.0, 1.0));
     }
@@ -229,31 +221,12 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         mouseUv,
         interactive
       ) * 0.1;
-      
-      // Accumulate for dynamic background (wider, softer influence)
-      float bgInfluence = exp(-abs(ruv.y + topLineDistance * fi + topWavePosition.y - baseUv.y) * 6.0) * 0.1;
-      lineAccum += lineCol * bgInfluence;
-      totalInfluence += bgInfluence;
-      
       // Render solid glossy neon line
       bgCol = mix(bgCol, lineCol, clamp(w * 0.9, 0.0, 1.0));
     }
   }
-
-  // Apply dynamic background: subtle blue tint that reacts to line positions
-  if (totalInfluence > 0.001) {
-    vec3 avgLineColor = lineAccum / totalInfluence;
-    // Very subtle background tint that follows the lines
-    bgCol = mix(bgCol, avgLineColor * 0.12 + vec3(0.98, 0.99, 1.0), clamp(totalInfluence * 1.5, 0.0, 0.25));
-  }
   
-  // Subtle vignette effect: darken edges to draw focus to center
-  vec2 center = vec2(0.0, 0.0);
-  float distFromCenter = length(baseUv - center);
-  // More visible vignette: starts closer to center, stronger darkening
-  float vignette = 1.0 - smoothstep(0.8, 2.0, distFromCenter) * 0.35; // More visible darkening at edges
-  
-  vec3 col = bgCol * vignette;
+  vec3 col = bgCol;
 
   fragColor = vec4(col, 1.0);
 }
