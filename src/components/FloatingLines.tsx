@@ -247,7 +247,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     bgCol = mix(bgCol, avgLineColor * 0.12 + vec3(0.98, 0.99, 1.0), clamp(totalInfluence * 1.5, 0.0, 0.25));
   }
   
-  vec3 col = bgCol;
+  // Subtle vignette effect: darken edges to draw focus to center
+  vec2 center = vec2(0.0, 0.0);
+  float distFromCenter = length(baseUv - center);
+  // More visible vignette: starts closer to center, stronger darkening
+  float vignette = 1.0 - smoothstep(0.8, 2.0, distFromCenter) * 0.35; // More visible darkening at edges
+  
+  vec3 col = bgCol * vignette;
 
   fragColor = vec4(col, 1.0);
 }
