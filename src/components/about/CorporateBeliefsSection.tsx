@@ -1,6 +1,22 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas, faUsers, faGlasses, faBullseye, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { far, faCircleCheck } from '@fortawesome/free-regular-svg-icons';
 import '../../styles/animatedBorder.css';
+
+// Add icons to library
+library.add(fas, far);
+
+// Icon mapping
+const iconMap: Record<string, any> = {
+  'users': faUsers,
+  'glasses': faGlasses,
+  'bullseye': faBullseye,
+  'circle-check': faCircleCheck,
+  'chart-line': faChartLine,
+};
 
 interface BeliefCard {
   id: string;
@@ -16,7 +32,7 @@ const beliefsData: BeliefCard[] = [
     id: 'customer-satisfaction',
     title: 'Customer Satisfaction',
     description: 'Since inception, Plustech has made "customer satisfaction" and "relationships" as the foundation of our business principle. We derive immense satisfaction when customers recall our brand and entrust us with successive projects.',
-    icon: '',
+    icon: 'users',
     color: 'from-[#00aeef] to-[#0077a3]',
     stats: ['Foundation Principle', 'Brand Recognition', 'Successive Projects']
   },
@@ -24,7 +40,7 @@ const beliefsData: BeliefCard[] = [
     id: 'vision',
     title: 'Our Vision',
     description: 'To become a dominant and internationally acknowledged player in surface finishing plant and equipment by adopting greener technologies and best business practices.',
-    icon: '',
+    icon: 'glasses',
     color: 'from-[#00aeef] to-[#005a7a]',
     stats: ['International Recognition', 'Green Technologies', 'Best Practices']
   },
@@ -32,7 +48,7 @@ const beliefsData: BeliefCard[] = [
     id: 'mission',
     title: 'Our Mission',
     description: 'To be the most preferred supplier for surface finishing plant by offering customized solutions in setting up energy efficient plants with consistently good quality. We believe in not just meeting customer expectations but exceeding them.',
-    icon: '',
+    icon: 'bullseye',
     color: 'from-[#0099d4] to-[#00aeef]',
     stats: ['Preferred Supplier', 'Energy Efficient', 'Exceed Expectations']
   },
@@ -40,7 +56,7 @@ const beliefsData: BeliefCard[] = [
     id: 'quality-policy',
     title: 'Quality Policy',
     description: 'To provide professional & efficient service to customers by delivering high quality surface finishing process plants on time and at optimum price. We are committed to continual improvement and ISO 9001:2015 standards.',
-    icon: '',
+    icon: 'circle-check',
     color: 'from-[#0077a3] to-[#00aeef]',
     stats: ['Professional Service', 'ISO 9001:2015', 'Continual Improvement']
   },
@@ -48,7 +64,7 @@ const beliefsData: BeliefCard[] = [
     id: 'peace-usp',
     title: 'PEACE USP',
     description: 'Our USP outlined under the acronym PEACE (Productivity, Efficiency, Affordability, Cost and Environment) focuses on delivering best value proposition to customers for long lasting relationships.',
-    icon: '',
+    icon: 'chart-line',
     color: 'from-[#00aeef] to-[#0099d4]',
     stats: ['Productivity', 'Efficiency', 'Affordability']
   },
@@ -56,7 +72,7 @@ const beliefsData: BeliefCard[] = [
     id: 'future-plans',
     title: 'Future Plans',
     description: 'Plustech is steering geographical expansion drive to serve global industry with greener technologies and best engineering practices. We are coming up with a Technical Center and elegant office in a new business district.',
-    icon: '',
+    icon: 'long-term',
     color: 'from-[#005a7a] to-[#00aeef]',
     stats: ['Global Expansion', 'Technical Center', 'Green Technologies']
   }
@@ -124,110 +140,109 @@ const CorporateBeliefsSection: React.FC = () => {
       </motion.div>
 
       {/* Beliefs Grid */}
-      <motion.div 
+      <div 
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
+        style={{ gridAutoRows: 'minmax(340px, auto)' }}
       >
-        {beliefsData.map((belief) => (
-          <motion.div
-            key={belief.id}
-            variants={cardVariants}
-            className="group cursor-pointer h-full"
-            whileHover={{ 
-              y: -12,
-              scale: 1.02,
-              transition: { 
-                type: "spring",
-                stiffness: 300,
-                damping: 20
-              }
-            }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className="rounded-2xl h-full">
-              <motion.div 
-                className="relative rounded-2xl shadow-lg overflow-hidden border border-gray-200 bg-white flex flex-col h-full min-h-[340px]"
-                whileHover={{
-                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
-                  transition: { duration: 0.3 }
-                }}
-              >
-                {/* Subtle gradient background on hover */}
-                <motion.div 
-                  className={`absolute inset-0 bg-gradient-to-br ${belief.color} opacity-0`}
-                  whileHover={{
-                    opacity: 0.05,
-                    transition: { duration: 0.3 }
+        {beliefsData.map((belief, index) => {
+          return (
+            <div
+              key={belief.id}
+              className="group h-full relative z-10"
+            >
+               <div className="rounded-2xl h-full w-full overflow-hidden">
+                 <div 
+                   className="relative rounded-2xl border border-gray-200 bg-white flex flex-col h-full min-h-[340px] w-full overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,174,239,0.05)]"
+                 >
+                {/* Subtle geometric pattern background */}
+                <div className="absolute inset-0 opacity-[0.03] rounded-2xl" 
+                  style={{
+                    backgroundImage: `radial-gradient(circle at 2px 2px, #00aeef 1px, transparent 0)`,
+                    backgroundSize: '24px 24px'
                   }}
                 />
                 
-                {/* Header with dual-tone gradient */}
-                <div className="relative p-6 bg-gradient-to-r from-white via-gray-50 to-white group-hover:from-[#00aeef]/5 group-hover:via-white group-hover:to-[#00aeef]/5 transition-all duration-500">
-                  <div>
-                    <motion.h3 
-                      className="text-xl font-bold font-heading text-black group-hover:text-[#00aeef] transition-colors duration-300"
-                    >
-                      {belief.title}
-                    </motion.h3>
-                    <motion.div 
-                      className={`h-1 w-16 bg-gradient-to-r ${belief.color} rounded-full mt-2`}
-                      whileHover={{
-                        width: "100%",
-                        transition: { duration: 0.4, ease: "easeOut" }
-                      }}
-                    />
-                  </div>
-                </div>
+                 {/* Corner accent decoration */}
+                 <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${belief.color} opacity-5 rounded-bl-full`} />
+                 
+                 {/* Left border accent */}
+                 <div 
+                   className={`absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b ${belief.color} rounded-l-2xl opacity-70`}
+                 />
+                 
+                 {/* Number badge */}
+                 <div className={`absolute top-4 right-4 w-8 h-8 rounded-lg bg-gradient-to-br ${belief.color} flex items-center justify-center text-white font-bold text-sm shadow-md z-10`}>
+                   {index + 1}
+                 </div>
                 
-                {/* Content */}
-                <div className="p-6 flex-1 relative z-10">
-                  <p className="text-gray-600 leading-relaxed mb-6 group-hover:text-gray-700 transition-colors duration-300">
-                    {belief.description}
-                  </p>
-                  
-                  {/* Key Points */}
-                  <div className="space-y-2">
-                    {belief.stats.map((stat, index) => (
-                      <motion.div
-                        key={index}
-                        className="flex items-center space-x-3"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                        transition={{ duration: 0.5, delay: 0.3 + (index * 0.1) }}
-                        whileHover={{
-                          x: 4,
-                          transition: { duration: 0.2 }
-                        }}
-                      >
-                        <motion.div 
-                          className={`w-2 h-2 rounded-full bg-gradient-to-r ${belief.color}`}
-                          whileHover={{
-                            scale: 1.5,
-                            transition: { duration: 0.2 }
-                          }}
-                        />
-                        <span className="text-sm text-gray-600 font-medium group-hover:text-[#00aeef] transition-colors duration-300">{stat}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                 {/* Header with icon and gradient */}
+                 <div className="relative p-6">
+                   <div className="flex items-start gap-4">
+                     {/* Icon badge */}
+                     <div className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center">
+                       {belief.icon === 'long-term' ? (
+                         <img 
+                           src="/long-term.png" 
+                           alt="Long-term" 
+                           className="w-10 h-10 object-contain"
+                         />
+                       ) : (
+                         <FontAwesomeIcon 
+                           icon={iconMap[belief.icon]} 
+                           className="text-3xl text-gray-700"
+                         />
+                       )}
+                     </div>
+                     
+                     {/* Title section */}
+                     <div className="flex-1 min-w-0">
+                       <h3 
+                         className="text-2xl font-bold font-heading text-black text-left"
+                       >
+                         {belief.title}
+                       </h3>
+                       <div 
+                         className={`h-1 mt-2 w-16 bg-gradient-to-r ${belief.color} rounded-full`}
+                       />
+                     </div>
+                   </div>
+                 </div>
                 
-                {/* Animated bottom border */}
-                <motion.div 
-                  className={`h-1 bg-gradient-to-r ${belief.color} rounded-full`}
-                  initial={{ width: 0 }}
-                  whileHover={{ 
-                    width: "100%"
-                  }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                />
-              </motion.div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+                 {/* Content */}
+                 <div className="flex-1 relative z-10 p-6">
+                   <p 
+                     className="text-gray-900 mb-6 text-left text-lg leading-relaxed"
+                   >
+                     {belief.description}
+                   </p>
+                   
+                   {/* Key Points */}
+                   <div className="space-y-3">
+                     {belief.stats.map((stat, statIndex) => (
+                       <div
+                         key={statIndex}
+                         className="flex items-center space-x-3"
+                       >
+                         <div 
+                           className={`w-3 h-3 rounded-full bg-gradient-to-r ${belief.color} shadow-sm flex items-center justify-center`}
+                         >
+                           <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                         </div>
+                         <span 
+                           className="text-gray-900 font-medium text-base"
+                         >
+                           {stat}
+                         </span>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+           );
+         })}
+       </div>
 
       {/* Summary Quote */}
       <motion.div 
@@ -240,31 +255,22 @@ const CorporateBeliefsSection: React.FC = () => {
           transition: { duration: 0.3 }
         }}
       >
-        <motion.h3 
-          className="text-2xl font-bold font-heading text-black mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 1 }}
+        <h3 
+          className="text-3xl font-bold font-heading text-black mb-6"
         >
           Our Commitment
-        </motion.h3>
-        <motion.blockquote 
-          className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed italic"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
+        </h3>
+        <blockquote 
+          className="text-2xl text-gray-900 max-w-4xl mx-auto leading-relaxed italic"
         >
           "Our associates take pride and comfort in their engagement with Plustech. 
           We believe in not just meeting customer expectations but exceeding them."
-        </motion.blockquote>
-        <motion.cite 
-          className="block mt-6 text-lg text-gray-500 font-semibold"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
+        </blockquote>
+        <cite 
+          className="block mt-6 text-xl text-gray-800 font-semibold"
         >
           — Plustech Systems and Solutions
-        </motion.cite>
+        </cite>
       </motion.div>
     </div>
   );

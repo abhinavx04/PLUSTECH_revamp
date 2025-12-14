@@ -2,7 +2,7 @@
 const Footer = () => {
   return (
     <footer
-      className="w-full border-t"
+      className="w-full border-t relative z-20"
       style={{
         background: 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 35%, rgba(255,255,255,0.02) 100%), rgba(0,0,0,0.82)',
         borderColor: 'rgba(255,255,255,0.16)',

@@ -341,7 +341,7 @@ const TimelineMilestone: React.FC<{
 
       {/* Milestone Card */}
       <motion.div
-        className={`bg-white rounded-2xl shadow-lg border border-gray-100 p-5 md:p-6 w-full lg:max-w-md ml-4 lg:ml-0 mx-auto lg:mx-0 ${
+        className={`bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30 p-5 md:p-6 w-full lg:max-w-md ml-4 lg:ml-0 mx-auto lg:mx-0 ${
           isLeftSide 
             ? 'lg:order-2 lg:mr-56'  // even wider gutter from center line on left side
             : 'lg:order-1 lg:ml-56'  // even wider gutter from center line on right side
@@ -503,7 +503,7 @@ const HistoryMilestonesSection: React.FC = () => {
         transition={{ duration: 0.8 }}
       >
         <motion.h2 
-          className="text-4xl md:text-5xl font-bold font-heading text-black mb-6"
+          className="text-4xl md:text-5xl font-bold font-heading text-gray-900 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -511,7 +511,7 @@ const HistoryMilestonesSection: React.FC = () => {
           History & Milestones
         </motion.h2>
         <motion.p 
-          className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+          className="text-lg md:text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -530,7 +530,7 @@ const HistoryMilestonesSection: React.FC = () => {
         transition={{ duration: 0.8, delay: 0.6 }}
       >
         <motion.h3 
-          className="text-3xl font-bold font-heading text-black mb-12 text-center"
+          className="text-3xl font-bold font-heading text-gray-900 mb-12 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.8 }}
@@ -613,7 +613,7 @@ const HistoryMilestonesSection: React.FC = () => {
         ].map((stat, index) => (
           <motion.div 
             key={index}
-            className="relative overflow-hidden bg-white rounded-2xl shadow-lg p-8 text-center group"
+            className="relative overflow-hidden bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30 p-8 text-center group"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ 
@@ -643,19 +643,14 @@ const HistoryMilestonesSection: React.FC = () => {
 
       {/* Future Vision */}
       <motion.div 
-        className="mt-20 relative overflow-hidden bg-gradient-to-r from-[#00aeef]/10 via-blue-50 to-purple-50 rounded-2xl p-12 text-center"
+        className="mt-20 relative overflow-hidden bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30 p-12 text-center"
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8, delay: 2.0 }}
       >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#00aeef] to-purple-600"></div>
-        </div>
-        
         <div className="relative z-10">
         <motion.h3 
-            className="text-3xl md:text-4xl font-bold font-heading text-black mb-6"
+            className="text-3xl md:text-4xl font-bold font-heading text-gray-900 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 2.2 }}

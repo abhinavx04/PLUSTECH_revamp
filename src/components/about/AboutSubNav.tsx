@@ -13,7 +13,7 @@ const tabs = [
 const AboutSubNav: React.FC = () => {
   const location = useLocation();
   return (
-    <div className="w-full bg-white border-b border-gray-200">
+    <div className="relative w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-30">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
         <nav className="flex justify-center items-center gap-8 md:gap-10 overflow-x-auto py-3 md:py-4">
           {tabs.map((tab) => {

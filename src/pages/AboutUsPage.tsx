@@ -78,7 +78,7 @@ const AboutUsPage: React.FC = () => {
       {/* Hero Section with Background Image */}
       <motion.section 
         ref={heroRef}
-        className="relative w-full h-screen flex items-center justify-center overflow-hidden"
+        className="relative w-full h-screen flex items-center justify-center overflow-hidden z-20"
       >
         {/* Background Image */}
         <div 
@@ -163,7 +163,7 @@ const AboutUsPage: React.FC = () => {
       <AboutSubNav />
 
       {/* Routed Section Content */}
-      <div className="relative py-16 px-6 md:px-12 lg:px-16">
+      <div className="relative py-16 px-6 md:px-12 lg:px-16 z-10">
         <Outlet />
       </div>
 
