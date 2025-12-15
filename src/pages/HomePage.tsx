@@ -66,65 +66,110 @@ const HomePage: React.FC = () => {
     // Skip parallax animation for reduced motion
     if (prefersReducedMotion) return;
 
+    // Tweakable proximity constants
+    const PROXIMITY_MAX_DISTANCE_FACTOR = 0.8; // fraction of container diagonal for falloff
+    const MOVE_SENSITIVITY_NEAR = isMobile ? 11 : 10;   // higher divisor => slightly less movement
+    const MOVE_SENSITIVITY_FAR = isMobile ? 24 : 18;
+    const ROTATION_NEAR = isMobile ? 0.85 : 1.0;
+    const ROTATION_FAR = isMobile ? 0.32 : 0.45;
+    const SCALE_NEAR = isMobile ? 0.0016 : 0.0018;
+    const SCALE_FAR = isMobile ? 0.00065 : 0.0009;
+    const ROTATION_SMOOTHING = 0.18;
+    const MAX_ROTATION_DEG = 8;
+
     let rafId: number | null = null;
     const target = { x: 0, y: 0 };
     const current = { x: 0, y: 0 };
+    let moveSensitivity = MOVE_SENSITIVITY_FAR;
+    let rotationIntensity = ROTATION_FAR;
+    let scaleIntensity = SCALE_FAR;
+    let rotationTarget = 0;
+    let rotationCurrent = 0;
 
-    // Responsive sensitivity based on device type
-    const sensitivity = isMobile ? 25 : 15;
-    const rotationSensitivity = isMobile ? 0.3 : 0.5;
-    const scaleSensitivity = isMobile ? 0.0005 : 0.001;
+    const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+
+    const updateProximity = (clientX: number, clientY: number) => {
+      const robotRect = robot.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const centerX = robotRect.left + robotRect.width / 2;
+      const centerY = robotRect.top + robotRect.height / 2;
+      const dx = clientX - centerX;
+      const dy = clientY - centerY;
+      const distance = Math.hypot(dx, dy);
+      const maxDistance = Math.hypot(containerRect.width, containerRect.height) * 0.5 * PROXIMITY_MAX_DISTANCE_FACTOR;
+      const proximity = clamp01(1 - distance / maxDistance);
+
+      // Higher proximity => stronger reaction (lower move sensitivity divisor, higher rotation/scale multipliers)
+      moveSensitivity = MOVE_SENSITIVITY_FAR - proximity * (MOVE_SENSITIVITY_FAR - MOVE_SENSITIVITY_NEAR);
+      rotationIntensity = ROTATION_FAR + proximity * (ROTATION_NEAR - ROTATION_FAR);
+      scaleIntensity = SCALE_FAR + proximity * (SCALE_NEAR - SCALE_FAR);
+
+      // Rotate relative to robot center for better symmetry, with a mild dampener
+      rotationTarget = dx / (moveSensitivity * 1.1);
+
+      return { proximity, dx, dy, containerRect };
+    };
+
+    const resetDynamics = () => {
+      moveSensitivity = MOVE_SENSITIVITY_FAR;
+      rotationIntensity = ROTATION_FAR;
+      scaleIntensity = SCALE_FAR;
+    };
 
     const onMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const x = e.clientX - (rect.left + rect.width / 2);
-      const y = e.clientY - (rect.top + rect.height / 2);
-      target.x = x / sensitivity;
-      target.y = y / sensitivity;
+      const { containerRect } = updateProximity(e.clientX, e.clientY);
+      const x = e.clientX - (containerRect.left + containerRect.width / 2);
+      const y = e.clientY - (containerRect.top + containerRect.height / 2);
+      target.x = x / moveSensitivity;
+      target.y = y / moveSensitivity;
     };
 
     const onTouchMove = (e: TouchEvent) => {
       if (e.touches.length === 1) {
         const touch = e.touches[0];
-        const rect = container.getBoundingClientRect();
-        const x = touch.clientX - (rect.left + rect.width / 2);
-        const y = touch.clientY - (rect.top + rect.height / 2);
-        target.x = x / sensitivity;
-        target.y = y / sensitivity;
+        const { containerRect } = updateProximity(touch.clientX, touch.clientY);
+        const x = touch.clientX - (containerRect.left + containerRect.width / 2);
+        const y = touch.clientY - (containerRect.top + containerRect.height / 2);
+        target.x = x / moveSensitivity;
+        target.y = y / moveSensitivity;
       }
     };
 
     const onMouseOut = () => {
       target.x = 0;
       target.y = 0;
+      resetDynamics();
     };
 
     const onTouchEnd = () => {
       target.x = 0;
       target.y = 0;
+      resetDynamics();
     };
 
     const tick = () => {
       current.x += (target.x - current.x) * 0.1;
       current.y += (target.y - current.y) * 0.1;
-      const rotateZ = current.x * rotationSensitivity;
-      const scale = 1 + Math.abs(current.x + current.y) * scaleSensitivity;
+      rotationCurrent += (rotationTarget - rotationCurrent) * ROTATION_SMOOTHING;
+      const rotateZRaw = rotationCurrent * rotationIntensity;
+      const rotateZ = Math.max(-MAX_ROTATION_DEG, Math.min(MAX_ROTATION_DEG, rotateZRaw));
+      const scale = 1 + Math.abs(current.x + current.y) * scaleIntensity;
       (robot as HTMLDivElement).style.transform = `translate(${current.x}px, ${current.y}px) rotateZ(${rotateZ}deg) scale(${scale})`;
       rafId = window.requestAnimationFrame(tick);
     };
 
-    // Add both mouse and touch event listeners
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseout", onMouseOut);
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("touchend", onTouchEnd);
+    // Add both mouse and touch event listeners scoped to the container
+    container.addEventListener("mousemove", onMouseMove);
+    container.addEventListener("mouseleave", onMouseOut);
+    container.addEventListener("touchmove", onTouchMove, { passive: true });
+    container.addEventListener("touchend", onTouchEnd);
     rafId = window.requestAnimationFrame(tick);
 
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseout", onMouseOut);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
+      container.removeEventListener("mousemove", onMouseMove);
+      container.removeEventListener("mouseleave", onMouseOut);
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
@@ -211,7 +256,7 @@ const HomePage: React.FC = () => {
       {/* Welcome Section */}
       <div className="w-full px-6 md:px-12 lg:px-16 py-12 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <div ref={containerRef} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div className="space-y-6">
               <h2 className="text-4xl md:text-5xl font-bold font-heading text-black">
                 Welcome to Plustech
@@ -222,7 +267,7 @@ const HomePage: React.FC = () => {
                 <strong> customized solutions</strong> that combine innovation, efficiency, and quality.
               </p>
             </div>
-            <div ref={containerRef} className="flex justify-center items-start relative z-[0] pt-4 md:pt-2">
+            <div className="flex justify-center items-start relative z-[0] pt-4 md:pt-2">
               <div ref={robotRef} className="will-change-transform relative">
                 <img ref={handRef} src="/home/file.svg" alt="Robotic Hand" className="w-52 md:w-80" style={{ filter: 'brightness(1.1) contrast(1.1)' }} />
               </div>
