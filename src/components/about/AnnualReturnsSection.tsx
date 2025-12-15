@@ -1,138 +1,122 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
-
-interface FinancialYear {
-  id: string;
-  year: string;
-  revenue: string;
-  growth: string;
-  projects: string;
-  clients: string;
-  description: string;
-  highlights: string[];
-  color: string;
-  metrics: {
-    label: string;
-    value: string;
-    change: string;
-    trend: 'up' | 'down' | 'stable';
-  }[];
-}
-
-const financialData: FinancialYear[] = [
-  {
-    id: '2023',
-    year: '2023',
-    revenue: '₹45.2 Cr',
-    growth: '+12.5%',
-    projects: '28',
-    clients: '15',
-    description: 'Strong growth driven by expansion in international markets and new technology implementations.',
-    highlights: [
-      'Launched Industry 4.0 solutions',
-      'Expanded to 3 new countries',
-      'Achieved 25-year milestone',
-      'Increased R&D investment by 40%'
-    ],
-    color: 'from-blue-500 to-blue-700',
-    metrics: [
-      { label: 'Revenue Growth', value: '12.5%', change: '+2.3%', trend: 'up' },
-      { label: 'Project Count', value: '28', change: '+3', trend: 'up' },
-      { label: 'Client Satisfaction', value: '98%', change: '+2%', trend: 'up' }
-    ]
-  },
-  {
-    id: '2022',
-    year: '2022',
-    revenue: '₹40.1 Cr',
-    growth: '+8.3%',
-    projects: '25',
-    clients: '14',
-    description: 'Resilient performance despite global challenges, with focus on digital transformation initiatives.',
-    highlights: [
-      'Digital transformation acceleration',
-      'Sustainability initiatives launch',
-      'New certification achievements',
-      'Client satisfaction score: 98%'
-    ],
-    color: 'from-green-500 to-green-700',
-    metrics: [
-      { label: 'Revenue Growth', value: '8.3%', change: '-2.1%', trend: 'down' },
-      { label: 'Project Count', value: '25', change: '+2', trend: 'up' },
-      { label: 'Client Satisfaction', value: '96%', change: '+1%', trend: 'up' }
-    ]
-  },
-  {
-    id: '2021',
-    year: '2021',
-    revenue: '₹37.0 Cr',
-    growth: '+15.2%',
-    projects: '22',
-    clients: '12',
-    description: 'Recovery and growth phase with emphasis on automation and efficiency improvements.',
-    highlights: [
-      'Robotic solutions expansion',
-      'Supply chain optimization',
-      'Quality certifications renewed',
-      'Employee count increased by 25%'
-    ],
-    color: 'from-purple-500 to-purple-700',
-    metrics: [
-      { label: 'Revenue Growth', value: '15.2%', change: '+8.5%', trend: 'up' },
-      { label: 'Project Count', value: '22', change: '+4', trend: 'up' },
-      { label: 'Client Satisfaction', value: '95%', change: '+3%', trend: 'up' }
-    ]
-  },
-  {
-    id: '2020',
-    year: '2020',
-    revenue: '₹32.1 Cr',
-    growth: '-5.8%',
-    projects: '18',
-    clients: '10',
-    description: 'Challenging year with COVID-19 impact, but maintained core operations and client relationships.',
-    highlights: [
-      'Remote operations implementation',
-      'Client support continuity',
-      'Cost optimization measures',
-      'Digital infrastructure upgrade'
-    ],
-    color: 'from-orange-500 to-orange-700',
-    metrics: [
-      { label: 'Revenue Growth', value: '-5.8%', change: '-12.3%', trend: 'down' },
-      { label: 'Project Count', value: '18', change: '-4', trend: 'down' },
-      { label: 'Client Satisfaction', value: '92%', change: '-2%', trend: 'down' }
-    ]
-  },
-  {
-    id: '2019',
-    year: '2019',
-    revenue: '₹34.1 Cr',
-    growth: '+18.7%',
-    projects: '24',
-    clients: '11',
-    description: 'Strong performance with significant growth in international markets and new technology adoption.',
-    highlights: [
-      'International market expansion',
-      'New technology partnerships',
-      'Sustainability programs launch',
-      'Innovation lab establishment'
-    ],
-    color: 'from-cyan-500 to-cyan-700',
-    metrics: [
-      { label: 'Revenue Growth', value: '18.7%', change: '+5.2%', trend: 'up' },
-      { label: 'Project Count', value: '24', change: '+6', trend: 'up' },
-      { label: 'Client Satisfaction', value: '94%', change: '+2%', trend: 'up' }
-    ]
-  }
-];
+import { useAnnualReturnsFirestore } from '../../hooks/useAnnualReturnsFirestore';
+import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const AnnualReturnsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [selectedYear, setSelectedYear] = useState(0);
+  const { annualReturns, getPublishedAnnualReturns, loading, error } = useAnnualReturnsFirestore();
+  const publishedReturns = getPublishedAnnualReturns();
   const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
+  const isVisible = isInView || publishedReturns.length > 0; // fail-safe to render even if IntersectionObserver misses
 
-  const currentYear = financialData[selectedYear];
+  const wrapLabel = (text: string, maxCharsPerLine = 16) => {
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let current = '';
+    words.forEach((w) => {
+      if ((current + ' ' + w).trim().length > maxCharsPerLine) {
+        lines.push(current.trim());
+        current = w;
+      } else {
+        current = (current + ' ' + w).trim();
+      }
+    });
+    if (current) lines.push(current.trim());
+    return lines;
+  };
+
+  const renderActivityLabel = (props: any) => {
+    const RADIAN = Math.PI / 180;
+    const { cx, cy, midAngle, outerRadius, name, percent } = props;
+    const radius = outerRadius + 22;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    const lines = wrapLabel(name || '', 18);
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="#0088bb"
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="middle"
+        fontSize="12"
+      >
+        {lines.map((line: string, idx: number) => (
+          <tspan key={idx} x={x} dy={idx === 0 ? 0 : 14}>
+            {line}
+          </tspan>
+        ))}
+        <tspan x={x} dy={14}>
+          {percent ? `${(percent * 100).toFixed(1)}%` : ''}
+        </tspan>
+      </text>
+    );
+  };
+  
+  // Handle error state
+  if (error) {
+    // Rendering handled below; no console logging to keep noise minimal
+  }
+
+  // Get available years
+  const availableYears = publishedReturns.map(ret => ret.financialYear).sort((a, b) => b.localeCompare(a));
+  const [selectedYear, setSelectedYear] = useState<string>('');
+  
+  // Set default selected year when availableYears changes
+  useEffect(() => {
+    if (availableYears.length > 0 && !selectedYear) {
+      setSelectedYear(availableYears[0]);
+    }
+  }, [availableYears, selectedYear]);
+
+  // Get selected year data with a fallback to first entry in case of mismatch
+  const selectedYearData = useMemo(() => {
+    if (publishedReturns.length === 0) return undefined;
+    const exact = publishedReturns.find(ret => ret.financialYear === selectedYear);
+    return exact || publishedReturns[0];
+  }, [publishedReturns, selectedYear]);
+
+  // Prepare chart data for turnover trend
+  const turnoverChartData = publishedReturns
+    .sort((a, b) => a.financialYear.localeCompare(b.financialYear))
+    .map(ret => ({
+      year: ret.financialYear,
+      turnover: ret.turnover / 10000000, // Convert to Crores
+      netWorth: ret.netWorth ? ret.netWorth / 10000000 : null,
+    }));
+
+  // Prepare business activity data for pie chart
+  const businessActivityData = selectedYearData?.businessActivities.map((activity) => ({
+    name: activity.name,
+    value: activity.percentage,
+  })) || [];
+
+  const COLORS = ['#00aeef', '#0099d4', '#0088bb', '#0077a2', '#006688', '#005577'];
+
+  const formatCurrency = (amount: number) => {
+    if (amount >= 10000000) {
+      return `₹${(amount / 10000000).toFixed(2)} Cr`;
+    } else if (amount >= 100000) {
+      return `₹${(amount / 100000).toFixed(2)} Lakh`;
+    } else {
+      return `₹${amount.toLocaleString()}`;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch {
+      return dateString;
+    }
+  };
+
+  const formatCroreTick = (value?: number) => {
+    if (value === undefined || value === null) return '';
+    return `₹${value.toFixed(0)} Cr`;
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -163,239 +147,389 @@ const AnnualReturnsSection: React.FC = () => {
     }
   };
 
-  const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
-    switch (trend) {
-      case 'up': return '↗';
-      case 'down': return '↘';
-      case 'stable': return '→';
-    }
-  };
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-16 space-y-4">
+        <h2 className="text-3xl font-bold text-black">Annual Return</h2>
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-6 shadow-sm">
+          <p className="font-semibold mb-2">Unable to load Annual Returns</p>
+          <p className="text-sm">
+            {error}
+          </p>
+          <p className="text-xs text-red-600 mt-3">
+            Check that Firebase is configured (VITE_FIREBASE_*), Firestore rules allow reading
+            published annual returns, and at least one document exists with status "published".
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  const getTrendColor = (trend: 'up' | 'down' | 'stable') => {
-    switch (trend) {
-      case 'up': return 'text-green-600 bg-green-100';
-      case 'down': return 'text-red-600 bg-red-100';
-      case 'stable': return 'text-gray-600 bg-gray-100';
-    }
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-16">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00aeef]"></div>
+      </div>
+    );
+  }
+
+  if (!loading && publishedReturns.length === 0) {
+    const hasDrafts = annualReturns.length > 0;
+    return (
+      <div className="max-w-7xl mx-auto text-center py-16">
+        <h2 className="text-4xl md:text-5xl font-bold font-heading text-black mb-6">
+          Annual Return
+        </h2>
+        {hasDrafts ? (
+          <div className="space-y-3">
+            <p className="text-lg md:text-xl text-gray-600">
+              Annual returns exist but none are published yet.
+            </p>
+            <p className="text-sm text-gray-500">
+              Publish at least one entry (status = "published") in the admin dashboard to display it here.
+            </p>
+            <div className="mx-auto max-w-xl bg-gray-50 border border-gray-200 rounded-lg p-4 text-left">
+              <p className="text-sm font-semibold text-gray-700 mb-2">Loaded entries</p>
+              <ul className="text-sm text-gray-600 space-y-1">
+                {annualReturns.slice(0, 5).map((ret, idx) => (
+                  <li key={ret.id || idx} className="flex items-center justify-between">
+                    <span className="truncate">
+                      {ret.financialYear || 'Unknown year'} — {ret.companyName || 'Untitled'}
+                    </span>
+                    <span className="ml-2 px-2 py-1 rounded-full text-xs bg-gray-200 text-gray-700">
+                      {ret.status || 'unknown'}
+                    </span>
+                  </li>
+                ))}
+                {annualReturns.length > 5 && (
+                  <li className="text-xs text-gray-500">+{annualReturns.length - 5} more…</li>
+                )}
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <p className="text-lg md:text-xl text-gray-600">
+            No annual returns published yet. Please check back later.
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <div ref={sectionRef} className="max-w-7xl mx-auto">
+    <div ref={sectionRef} className="max-w-7xl mx-auto space-y-4">
       {/* Section Header */}
       <motion.div 
         className="text-center mb-16"
         initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8 }}
       >
         <motion.h2 
           className="text-4xl md:text-5xl font-bold font-heading text-black mb-6"
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Annual Returns Dashboard
+          Annual Return
         </motion.h2>
         <motion.p 
           className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          Our financial performance reflects our commitment to sustainable growth, 
-          innovation, and delivering value to our stakeholders.
+          Statutory disclosures under the Companies Act, 2013
         </motion.p>
       </motion.div>
 
-      {/* Year Selection */}
-      <motion.div 
-        className="flex flex-wrap justify-center gap-4 mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-      >
-        {financialData.map((year, index) => (
-          <motion.button
-            key={year.id}
-            onClick={() => setSelectedYear(index)}
-            className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-              selectedYear === index
-                ? 'bg-[#00aeef] text-white shadow-lg'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {year.year}
-          </motion.button>
-        ))}
-      </motion.div>
+      {/* Financial Year Selector */}
+      {availableYears.length > 0 && (
+        <motion.div 
+          className="flex flex-wrap justify-center gap-4 mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          {availableYears.map((year) => (
+            <motion.button
+              key={year}
+              onClick={() => setSelectedYear(year)}
+              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                selectedYear === year
+                  ? 'bg-[#00aeef] text-white shadow-lg'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {year}
+            </motion.button>
+          ))}
+        </motion.div>
+      )}
 
-      {/* Financial Overview Widgets */}
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12"
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-      >
-        {[
-          { label: 'Revenue', value: currentYear.revenue, color: 'bg-blue-500' },
-          { label: 'Growth', value: currentYear.growth, color: 'bg-green-500' },
-          { label: 'Projects', value: currentYear.projects, color: 'bg-purple-500' },
-          { label: 'Clients', value: currentYear.clients, color: 'bg-orange-500' }
-        ].map((metric, index) => (
-          <motion.div
-            key={index}
-            variants={widgetVariants}
-            className="bg-white rounded-2xl shadow-lg p-6 text-center"
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+      {selectedYearData && (
+        <>
+          {/* Quick Statutory Facts */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12"
+            variants={containerVariants}
+            initial="hidden"
+          animate={isVisible ? "visible" : "hidden"}
           >
-            <div className="text-3xl font-bold text-[#00aeef] mb-2">
-              {metric.value}
-            </div>
-            <div className="text-lg font-semibold text-gray-700">
-              {metric.label}
+            {[
+              { label: 'Financial Year', value: selectedYearData.financialYear },
+              { label: 'Filing Date', value: formatDate(selectedYearData.filingDate) },
+              { label: 'AGM Date', value: formatDate(selectedYearData.agmDate) },
+              { label: 'Form Type', value: selectedYearData.formType },
+            ].map((fact, index) => (
+              <motion.div
+                key={index}
+                variants={widgetVariants}
+                className="bg-white rounded-2xl shadow-lg p-6 text-center"
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+              >
+                <div className="text-sm font-medium text-gray-600 mb-2">
+                  {fact.label}
+                </div>
+                <div className="text-xl font-bold text-[#00aeef]">
+                  {fact.value}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* PDF Download Block */}
+          {selectedYearData.documentUrl && (
+            <motion.div 
+              className="bg-gradient-to-r from-[#00aeef] to-[#0099d4] rounded-2xl shadow-lg p-8 mb-12 text-white"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-2xl font-bold mb-2">Download Annual Return (PDF)</h3>
+                  {selectedYearData.documentSize && (
+                    <p className="text-white/80">
+                      File size: {(selectedYearData.documentSize / (1024 * 1024)).toFixed(2)} MB
+                    </p>
+                  )}
+                  {selectedYearData.documentUploadedAt && (
+                    <p className="text-white/80 text-sm">
+                      Last updated: {formatDate(selectedYearData.documentUploadedAt.toISOString())}
+                    </p>
+                  )}
+                </div>
+                <a
+                  href={selectedYearData.documentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-3 bg-white text-[#00aeef] rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
+                >
+                  Download PDF
+                </a>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Statutory Snapshot */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, delay: 1 }}
+          >
+            {[
+              { label: 'Company Type', value: selectedYearData.companyType || 'N/A' },
+              { label: 'Authorized Capital', value: formatCurrency(selectedYearData.authorizedCapital) },
+              { label: 'Paid-up Capital', value: formatCurrency(selectedYearData.paidUpCapital) },
+              { label: 'Promoter Holding', value: `${selectedYearData.promoterHoldingPercent.toFixed(2)}%` },
+            ].map((snapshot, index) => (
+              <motion.div
+                key={index}
+                className="bg-white rounded-2xl shadow-lg p-6 text-center"
+                initial={{ opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.6, delay: 1.1 + index * 0.1 }}
+              >
+                <div className="text-sm font-medium text-gray-600 mb-2">
+                  {snapshot.label}
+                </div>
+                <div className="text-xl font-bold text-[#00aeef]">
+                  {snapshot.value}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Financial Highlights Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* Turnover Trend Line Chart */}
+            {turnoverChartData.length > 0 && (
+              <motion.div 
+                className="bg-white rounded-2xl shadow-lg p-8"
+                initial={{ opacity: 0, x: -30 }}
+                animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
+              >
+                <h3 className="text-2xl font-bold font-heading text-black mb-6">
+                  Turnover Trend
+                </h3>
+                <ResponsiveContainer width="100%" height={340}>
+                  <LineChart
+                    data={turnoverChartData}
+                    margin={{ top: 10, right: 16, left: 0, bottom: 12 }}
+                  >
+                    <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
+                    <XAxis dataKey="year" tick={{ fill: '#6b7280' }} />
+                    <YAxis tickFormatter={formatCroreTick} tick={{ fill: '#6b7280' }} />
+                    <Tooltip formatter={(value: number | undefined) => value !== undefined ? `₹${value.toFixed(2)} Cr` : ''} />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="turnover"
+                      stroke="#00aeef"
+                      strokeWidth={3}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 6 }}
+                      name="Turnover (₹ Cr)"
+                    />
+                    {selectedYearData?.netWorth && (
+                      <Line
+                        type="monotone"
+                        dataKey="netWorth"
+                        stroke="#0099d4"
+                        strokeWidth={3}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 6 }}
+                        name="Net Worth (₹ Cr)"
+                        strokeDasharray="5 5"
+                      />
+                    )}
+                  </LineChart>
+                </ResponsiveContainer>
+              </motion.div>
+            )}
+
+            {/* Business Activity Pie Chart */}
+            {businessActivityData.length > 0 && (
+              <motion.div 
+                className="bg-white rounded-2xl shadow-lg p-8"
+                initial={{ opacity: 0, x: 30 }}
+                animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
+              >
+                <h3 className="text-2xl font-bold font-heading text-black mb-6">
+                  Business Activity Split
+                </h3>
+                <div className="flex justify-center">
+                  <ResponsiveContainer width="95%" height={400}>
+                    <PieChart>
+                      <Pie
+                        data={businessActivityData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={true}
+                        label={renderActivityLabel}
+                        outerRadius={120}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {businessActivityData.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value: number | undefined) => value !== undefined ? `${value.toFixed(2)}%` : ''} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Governance Summary */}
+          <motion.div 
+            className="bg-white rounded-2xl shadow-lg p-8 mb-12"
+            initial={{ opacity: 0, y: 30 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, delay: 1.4 }}
+          >
+            <h3 className="text-2xl font-bold font-heading text-black mb-6">
+              Governance Summary
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center p-4 bg-gray-50 rounded-lg">
+                <div className="text-3xl font-bold text-[#00aeef] mb-2">
+                  {selectedYearData.totalDirectors}
+                </div>
+                <div className="text-gray-600">Total Directors</div>
+              </div>
+              <div className="text-center p-4 bg-gray-50 rounded-lg">
+                <div className="text-3xl font-bold text-[#00aeef] mb-2">
+                  {selectedYearData.boardMeetingsHeld}
+                </div>
+                <div className="text-gray-600">Board Meetings Held</div>
+              </div>
+              <div className="text-center p-4 bg-gray-50 rounded-lg">
+                <div className="text-3xl font-bold text-[#00aeef] mb-2">
+                  {selectedYearData.agmConducted ? 'Yes' : 'No'}
+                </div>
+                <div className="text-gray-600">AGM Conducted</div>
+              </div>
             </div>
           </motion.div>
-        ))}
-      </motion.div>
 
-      {/* Performance Metrics */}
-      <motion.div 
-        className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        {/* Key Metrics */}
-        <motion.div 
-          className="bg-white rounded-2xl shadow-lg p-8"
-          key={`metrics-${selectedYear}`}
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h3 className="text-2xl font-bold font-heading text-black mb-6">
-            {currentYear.year} Performance Metrics
-          </h3>
-          
-          <div className="space-y-4">
-            {currentYear.metrics.map((metric, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <div>
-                  <div className="font-semibold text-gray-800">{metric.label}</div>
-                  <div className="text-2xl font-bold text-[#00aeef]">{metric.value}</div>
+          {/* Compliance Status */}
+          <motion.div 
+            className="bg-white rounded-2xl shadow-lg p-8 mb-12"
+            initial={{ opacity: 0, y: 30 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, delay: 1.6 }}
+          >
+            <h3 className="text-2xl font-bold font-heading text-black mb-6">
+              Compliance Status
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { label: 'Filed on time', value: selectedYearData.filedOnTime },
+                { label: 'No penalties', value: selectedYearData.noPenalties },
+                { label: 'Statutory compliances met', value: selectedYearData.statutoryCompliancesMet },
+              ].map((compliance, index) => (
+                <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                  {compliance.value ? (
+                    <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                  <span className={`font-medium ${compliance.value ? 'text-green-700' : 'text-red-700'}`}>
+                    {compliance.label}
+                  </span>
                 </div>
-                <div className="text-right">
-                  <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-semibold ${getTrendColor(metric.trend)}`}>
-                    <span>{getTrendIcon(metric.trend)}</span>
-                    <span>{metric.change}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+              ))}
+            </div>
+          </motion.div>
 
-        {/* Year Highlights */}
-        <motion.div 
-          className="bg-white rounded-2xl shadow-lg p-8"
-          key={`highlights-${selectedYear}`}
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h3 className="text-2xl font-bold font-heading text-black mb-6">
-            {currentYear.year} Highlights
-          </h3>
-          
-          <p className="text-gray-600 leading-relaxed mb-6">
-            {currentYear.description}
-          </p>
-          
-          <div className="space-y-3">
-            {currentYear.highlights.map((highlight, index) => (
-              <motion.div
-                key={index}
-                className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${currentYear.color} mt-2 flex-shrink-0`} />
-                <span className="text-gray-700 text-sm">{highlight}</span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Financial Chart Visualization */}
-      <motion.div 
-        className="bg-white rounded-2xl shadow-lg p-8"
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.8, delay: 1 }}
-      >
-        <h3 className="text-2xl font-bold font-heading text-black mb-8 text-center">
-          Revenue Trend (Last 5 Years)
-        </h3>
-        
-        {/* Bar Chart */}
-        <div className="flex items-end justify-between space-x-4 h-64">
-          {financialData.map((year, index) => {
-            const maxRevenue = Math.max(...financialData.map(y => parseFloat(y.revenue.replace(/[₹,Cr]/g, ''))));
-            const height = (parseFloat(year.revenue.replace(/[₹,Cr]/g, '')) / maxRevenue) * 100;
-            
-            return (
-              <motion.div
-                key={year.id}
-                className="flex flex-col items-center space-y-2 flex-1"
-                initial={{ opacity: 0, scaleY: 0 }}
-                animate={{ opacity: 1, scaleY: 1 }}
-                transition={{ duration: 0.8, delay: 1.2 + (index * 0.1) }}
-                whileHover={{ scale: 1.05 }}
-              >
-                {/* Bar */}
-                <div 
-                  className={`w-full bg-gradient-to-t ${year.color} rounded-t-lg relative cursor-pointer transition-all duration-300 ${
-                    selectedYear === index ? 'ring-4 ring-[#00aeef] ring-opacity-50' : ''
-                  }`}
-                  style={{ height: `${height}%` }}
-                  onClick={() => setSelectedYear(index)}
-                >
-                  {/* Value on hover */}
-                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-sm font-semibold text-gray-700 opacity-0 hover:opacity-100 transition-opacity">
-                    {year.revenue}
-                  </div>
-                </div>
-                
-                {/* Year Label */}
-                <span className="text-sm font-semibold text-gray-600">
-                  {year.year}
-                </span>
-              </motion.div>
-            );
-          })}
-        </div>
-        
-        {/* Chart Legend */}
-        <div className="mt-8 flex justify-center space-x-8">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-[#00aeef] rounded"></div>
-            <span className="text-sm text-gray-600">Revenue (₹ Cr)</span>
-          </div>
-        </div>
-      </motion.div>
+          {/* Disclaimer */}
+          <motion.div 
+            className="text-center text-sm text-gray-500"
+            initial={{ opacity: 0 }}
+          animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.8, delay: 1.8 }}
+          >
+            <p>
+              Data shown is extracted from statutory filings. The complete Annual Return document is available above.
+            </p>
+          </motion.div>
+        </>
+      )}
     </div>
   );
 };
 
 export default AnnualReturnsSection;
-
