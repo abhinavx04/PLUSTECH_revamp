@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import React, { useLayoutEffect, useRef, useState } from 'react';
+import { motion, useInView, useScroll, useSpring, useTransform } from 'framer-motion';
 
 interface Milestone {
   id: string;
@@ -289,10 +289,61 @@ const TimelineMilestone: React.FC<{
   milestone: Milestone;
   isLeftSide: boolean;
   categoryConfig: typeof categoryConfig;
-}> = ({ milestone, isLeftSide, categoryConfig }) => {
+  lineFillPx: ReturnType<typeof useTransform>;
+  timelineContainerRef: React.RefObject<HTMLDivElement>;
+  scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress'];
+  timelinePx: number;
+}> = ({ milestone, isLeftSide, categoryConfig, lineFillPx, timelineContainerRef, scrollYProgress, timelinePx }) => {
   const milestoneRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(milestoneRef, { once: true, margin: "-100px" });
   const config = categoryConfig[milestone.category];
+  const [offsetTop, setOffsetTop] = useState(0);
+  const isInView = useInView(milestoneRef, { margin: "-100px" });
+
+  useLayoutEffect(() => {
+    const milestoneEl = milestoneRef.current;
+    const containerEl = timelineContainerRef.current;
+    if (!milestoneEl || !containerEl) return;
+    const updateOffset = () => {
+      const milestoneRect = milestoneEl.getBoundingClientRect();
+      const containerRect = containerEl.getBoundingClientRect();
+      setOffsetTop(milestoneRect.top - containerRect.top + containerEl.scrollTop);
+    };
+    updateOffset();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateOffset) : null;
+    ro?.observe(milestoneEl);
+    ro?.observe(containerEl);
+    if (!ro) {
+      window.addEventListener('resize', updateOffset);
+    }
+    return () => {
+      ro?.disconnect();
+      if (!ro) {
+        window.removeEventListener('resize', updateOffset);
+      }
+    };
+  }, [timelineContainerRef]);
+
+  useLayoutEffect(() => {
+    // Recompute offset when overall timeline height changes (layout shifts)
+    const milestoneEl = milestoneRef.current;
+    const containerEl = timelineContainerRef.current;
+    if (!milestoneEl || !containerEl) return;
+    const milestoneRect = milestoneEl.getBoundingClientRect();
+    const containerRect = containerEl.getBoundingClientRect();
+    setOffsetTop(milestoneRect.top - containerRect.top + containerEl.scrollTop);
+  }, [timelinePx, timelineContainerRef]);
+
+  const reached = useTransform(scrollYProgress, (p) => {
+    const ratio = timelinePx > 0 ? offsetTop / timelinePx : 1;
+    return p >= ratio ? 1 : 0;
+  });
+  const reachedSpring = useSpring(reached, { stiffness: 260, damping: 30 });
+  const cardOpacity = reachedSpring;
+  const cardY = useTransform(reachedSpring, (v) => 40 - 40 * v);
+  const cardScale = useTransform(reachedSpring, (v) => 0.96 + 0.04 * v);
+  const nodeOpacity = reachedSpring;
+  const nodeScale = useTransform(reachedSpring, (v) => 0.0 + 1.0 * v);
+  const nodeRotate = useTransform(reachedSpring, (v) => -90 + 90 * v);
 
   return (
     <motion.div
@@ -300,13 +351,10 @@ const TimelineMilestone: React.FC<{
       className={`relative w-full flex items-start ${
         isLeftSide ? 'lg:flex-row' : 'lg:flex-row-reverse'
       } flex-col lg:items-center lg:space-x-12 space-y-6 lg:space-y-0 pl-16 lg:pl-0`}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ 
-        type: "spring",
-        stiffness: 100,
-        damping: 20,
-        delay: 0.2
+      initial={false}
+      style={{
+        opacity: cardOpacity,
+        y: cardY
       }}
     >
       {/* Timeline Node */}
@@ -314,13 +362,11 @@ const TimelineMilestone: React.FC<{
         className={`z-10 flex-shrink-0 ${
           isLeftSide ? 'lg:order-1 lg:-translate-x-10' : 'lg:order-2 lg:translate-x-10'
         } absolute left-8 top-1 lg:static`}
-        initial={{ opacity: 0, scale: 0, rotate: -90 }}
-        animate={isInView ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0, scale: 0, rotate: -90 }}
-        transition={{ 
-          type: "spring",
-          stiffness: 300,
-          damping: 20,
-          delay: 0.4
+        initial={false}
+        style={{
+          opacity: nodeOpacity,
+          scale: nodeScale,
+          rotate: nodeRotate
         }}
         whileHover={{ 
           scale: 1.2,
@@ -346,13 +392,11 @@ const TimelineMilestone: React.FC<{
             ? 'lg:order-2 lg:mr-56'  // even wider gutter from center line on left side
             : 'lg:order-1 lg:ml-56'  // even wider gutter from center line on right side
         }`}
-        initial={{ opacity: 0, x: isLeftSide ? -100 : 100, scale: 0.9 }}
-        animate={isInView ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: isLeftSide ? -100 : 100, scale: 0.9 }}
-        transition={{ 
-          type: "spring",
-          stiffness: 120,
-          damping: 25,
-          delay: 0.6
+        initial={false}
+        style={{
+          opacity: cardOpacity,
+          y: cardY,
+          scale: cardScale
         }}
         whileHover={{ 
           y: -10,
@@ -433,7 +477,11 @@ const TimelineYearGroup: React.FC<{
   isEvenYear: boolean;
   hasMultipleMilestones: boolean;
   categoryConfig: typeof categoryConfig;
-}> = ({ yearGroup, isEvenYear, hasMultipleMilestones, categoryConfig }) => {
+  lineFillPx: ReturnType<typeof useTransform>;
+  timelineContainerRef: React.RefObject<HTMLDivElement>;
+  scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress'];
+  timelinePx: number;
+}> = ({ yearGroup, isEvenYear, hasMultipleMilestones, categoryConfig, lineFillPx, timelineContainerRef, scrollYProgress, timelinePx }) => {
   const yearRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(yearRef, { once: true, margin: "-100px" });
 
@@ -468,6 +516,10 @@ const TimelineYearGroup: React.FC<{
               milestone={milestone}
               isLeftSide={isLeftSide}
               categoryConfig={categoryConfig}
+              lineFillPx={lineFillPx}
+              timelineContainerRef={timelineContainerRef}
+              scrollYProgress={scrollYProgress}
+              timelinePx={timelinePx}
             />
           );
         })}
@@ -480,6 +532,7 @@ const HistoryMilestonesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-200px" });
+  const [timelinePx, setTimelinePx] = useState(0);
   
   // Scroll-based animations for timeline
   const { scrollYProgress } = useScroll({
@@ -488,7 +541,28 @@ const HistoryMilestonesSection: React.FC = () => {
   });
   
   // Transform scroll progress to timeline line height
-  const timelineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const lineFillPx = useTransform(scrollYProgress, [0, 1], [0, timelinePx]);
+
+  useLayoutEffect(() => {
+    const el = timelineRef.current;
+    if (!el) return;
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      setTimelinePx(rect.height || 0);
+    };
+    update();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+    ro?.observe(el);
+    if (!ro) {
+      window.addEventListener('resize', update);
+    }
+    return () => {
+      ro?.disconnect();
+      if (!ro) {
+        window.removeEventListener('resize', update);
+      }
+    };
+  }, []);
   
   const groupedMilestones = groupMilestonesByYear(allMilestones);
 
@@ -543,8 +617,7 @@ const HistoryMilestonesSection: React.FC = () => {
           <motion.div 
             className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
             style={{ 
-              scaleY: timelineHeight,
-              originY: 0
+              height: lineFillPx
             }}
           />
           
@@ -552,8 +625,7 @@ const HistoryMilestonesSection: React.FC = () => {
               <motion.div
             className="lg:hidden absolute left-6 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
             style={{ 
-              scaleY: timelineHeight,
-              originY: 0
+              height: lineFillPx
             }}
           />
 
@@ -574,6 +646,10 @@ const HistoryMilestonesSection: React.FC = () => {
                     isEvenYear={isEvenYear}
                     hasMultipleMilestones={hasMultipleMilestones}
                     categoryConfig={categoryConfig}
+                    lineFillPx={lineFillPx}
+                    timelineContainerRef={timelineRef}
+                    scrollYProgress={scrollYProgress}
+                    timelinePx={timelinePx}
                   />
                 </div>
               );
