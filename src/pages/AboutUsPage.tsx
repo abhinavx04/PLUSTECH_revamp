@@ -25,6 +25,7 @@ const AboutUsPage: React.FC = () => {
   const navItems = [
     { name: "Home", link: "/" },
     { name: "About", link: "/about" },
+    { name: "Projects", link: "/projects" },
     { name: "Services", link: "/services" },
     { name: "Contact", link: "/contact" },
   ];

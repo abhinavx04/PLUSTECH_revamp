@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import {
   Navbar,
   NavBody,
@@ -15,44 +14,20 @@ import CompanyAnimation from '../components/ui/CompanyAnimation';
 import SimpleNewsSection from '../components/SimpleNewsSection';
 import CapabilitiesSection from '../components/CapabilitiesSection';
 import Footer from '../components/Footer';
-// import FirebaseStatus from '../components/FirebaseStatus';
 
 
 const HomePage: React.FC = () => {
-  const handRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const robotRef = useRef<HTMLDivElement | null>(null);
-  // Cloud removed
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [panelOrigin] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [showWisp, setShowWisp] = useState(false);
-  const [wispDirection, setWispDirection] = useState<'open' | 'close' | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
     { name: "Home", link: "/" },
     { name: "About", link: "/about" },
+    { name: "Projects", link: "/projects" },
     { name: "Services", link: "/services" },
     { name: "Contact", link: "/contact" },
   ];
-
-  const getWispPath = (origin: { x: number; y: number }) => {
-    const startX = window.innerWidth / 2 + origin.x;
-    const startY = window.innerHeight / 2 + origin.y;
-    const endX = window.innerWidth / 2;
-    const endY = window.innerHeight / 2;
-    const midX = (startX + endX) / 2;
-    const midY = (startY + endY) / 2 - 180;
-    return `M ${startX},${startY} Q ${midX},${midY} ${endX},${endY}`;
-  };
-
-  // Cloud removed; interaction handler no longer needed
-
-  const closePanel = () => {
-    setWispDirection('close');
-    setShowWisp(true);
-    setIsPanelOpen(false);
-  };
 
   useEffect(() => {
     const robot = robotRef.current;
@@ -158,19 +133,48 @@ const HomePage: React.FC = () => {
       rafId = window.requestAnimationFrame(tick);
     };
 
+    const startAnimation = () => {
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(tick);
+      }
+    };
+
+    const stopAnimation = () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      resetDynamics();
+      (robot as HTMLDivElement).style.transform = '';
+    };
+
     // Add both mouse and touch event listeners scoped to the container
     container.addEventListener("mousemove", onMouseMove);
     container.addEventListener("mouseleave", onMouseOut);
     container.addEventListener("touchmove", onTouchMove, { passive: true });
     container.addEventListener("touchend", onTouchEnd);
-    rafId = window.requestAnimationFrame(tick);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry?.isIntersecting) {
+          startAnimation();
+        } else {
+          stopAnimation();
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(container);
+    startAnimation(); // Kick off if already visible on mount
 
     return () => {
       container.removeEventListener("mousemove", onMouseMove);
       container.removeEventListener("mouseleave", onMouseOut);
       container.removeEventListener("touchmove", onTouchMove);
       container.removeEventListener("touchend", onTouchEnd);
-      if (rafId) cancelAnimationFrame(rafId);
+      stopAnimation();
+      observer.disconnect();
     };
   }, []);
 
@@ -269,7 +273,7 @@ const HomePage: React.FC = () => {
             </div>
             <div className="flex justify-center items-start relative z-[0] pt-4 md:pt-2">
               <div ref={robotRef} className="will-change-transform relative">
-                <img ref={handRef} src="/home/file.svg" alt="Robotic Hand" className="w-52 md:w-80" style={{ filter: 'brightness(1.1) contrast(1.1)' }} />
+                <img src="/home/file.svg" alt="Robotic Hand" className="w-52 md:w-80" style={{ filter: 'brightness(1.1) contrast(1.1)' }} />
               </div>
             </div>
           </div>
@@ -319,77 +323,6 @@ const HomePage: React.FC = () => {
           </div>
 
       <Footer />
-
-      {/* Floating Panel */}
-      <AnimatePresence>
-        {(isPanelOpen || wispDirection === 'close') && (
-          <div role="dialog" aria-modal="true" className="fixed inset-0 z-[2000] pointer-events-none">
-            <button
-              aria-label="Close overlay"
-              onClick={closePanel}
-              className="absolute inset-0 bg-transparent"
-              style={{ pointerEvents: 'auto' }}
-            />
-            {showWisp && (
-              <motion.svg
-                key="wisp"
-                className="fixed inset-0 w-full h-full z-[2100]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{ pointerEvents: 'none' }}
-              >
-                <motion.path
-                  d={getWispPath(panelOrigin)}
-                  fill="none"
-                  stroke="#00aeef"
-                  strokeOpacity={0.95}
-                  strokeWidth={8}
-                  strokeLinecap="round"
-                  initial={{ pathLength: wispDirection === 'close' ? 1 : 0 }}
-                  animate={{ pathLength: wispDirection === 'close' ? 0 : 1 }}
-                  transition={{ duration: 2.2, ease: 'easeOut' }}
-                  onAnimationComplete={() => { setShowWisp(false); setWispDirection(null); }}
-                />
-              </motion.svg>
-            )}
-            <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
-              <motion.div
-                initial={{ x: panelOrigin.x, y: panelOrigin.y, scale: 0.4, opacity: 0 }}
-                animate={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-                exit={{ x: panelOrigin.x, y: panelOrigin.y, scale: 0.4, opacity: 0 }}
-                transition={{ 
-                  type: 'spring', 
-                  stiffness: window.innerWidth < 768 ? 200 : 160, 
-                  damping: window.innerWidth < 768 ? 20 : 18 
-                }}
-                onAnimationComplete={() => setShowWisp(false)}
-                style={{ transformOrigin: 'center' }}
-              >
-                <div className="relative w-[95vw] sm:w-[92vw] max-w-6xl h-[80vh] sm:h-[70vh] md:h-[75vh] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] border border-black/10 overflow-hidden flex flex-col">
-                  <div className="flex items-center justify-between px-4 sm:px-5 md:px-6 py-3 md:py-4 border-b border-black/10 bg-black/5">
-                    <h3 className="text-black font-heading text-base sm:text-lg md:text-xl font-semibold">Interaction Panel</h3>
-                    <button
-                      onClick={closePanel}
-                      className="rounded-full px-3 py-1.5 text-sm font-semibold bg-black text-white hover:bg-gray-800 transition-colors touch-manipulation"
-                      aria-label="Close"
-                    >
-                      Close
-                    </button>
-                  </div>
-                  <div className="flex-1 overflow-auto p-4 sm:p-5 md:p-8 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                    <div className="min-h-[150px] sm:min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
-                    <div className="min-h-[150px] sm:min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
-                    <div className="min-h-[150px] sm:min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
-                    <div className="min-h-[150px] sm:min-h-[200px] rounded-xl bg-black/5 border border-black/10" />
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        )}
-      </AnimatePresence>
-      {/* <FirebaseStatus /> */}
     </div>
   );
 };

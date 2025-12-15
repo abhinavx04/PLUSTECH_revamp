@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+import ServicesPage from './pages/ServicesPage';
+import ContactPage from './pages/ContactPage';
 import AboutUsPage from './pages/AboutUsPage';
 import CorporateBeliefsPage from './pages/about/CorporateBeliefsPage';
 import IndustryFocusPage from './pages/about/IndustryFocusPage';
@@ -15,6 +17,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/services" element={<ServicesPage />} />
+      <Route path="/contact" element={<ContactPage />} />
       <Route path="/about" element={<AboutUsPage />}>
         <Route index element={<Navigate to="corporate-beliefs" replace />} />
         <Route path="corporate-beliefs" element={<CorporateBeliefsPage />} />
