@@ -12,12 +12,16 @@ import CSRActivitiesPage from './pages/about/CSRActivitiesPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoutes';
+import ProjectsPage from './pages/ProjectsPage';
+import ProjectDetailPage from './pages/ProjectDetailPage';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/services" element={<ServicesPage />} />
+      <Route path="/projects" element={<ProjectsPage />} />
+      <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/about" element={<AboutUsPage />}>
         <Route index element={<Navigate to="corporate-beliefs" replace />} />

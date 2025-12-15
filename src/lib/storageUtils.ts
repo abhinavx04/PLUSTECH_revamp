@@ -99,7 +99,10 @@ function extractStoragePathFromURL(downloadURL: string): string | null {
  * @param imageUrl - Firebase Storage download URL or storage path
  * @returns true if deleted successfully, false if image doesn't exist or URL is invalid
  */
-export async function deleteImageFromStorage(imageUrl: string): Promise<boolean> {
+export async function deleteImageFromStorage(
+  imageUrl: string,
+  allowedPaths: string[] = ['news/images/', 'projects/images/']
+): Promise<boolean> {
   if (!storage) {
     console.warn('[Storage] Firebase Storage is not initialized');
     return false;
@@ -129,9 +132,10 @@ export async function deleteImageFromStorage(imageUrl: string): Promise<boolean>
       return false;
     }
 
-    // Only delete if it's in the news/images path (security)
-    if (!storagePath.startsWith('news/images/')) {
-      console.warn('[Storage] Path is not in news/images, skipping deletion:', storagePath);
+    // Only delete if it matches an allowed prefix (security)
+    const isAllowedPath = allowedPaths.some(prefix => storagePath?.startsWith(prefix));
+    if (!isAllowedPath) {
+      console.warn('[Storage] Path not in allowed list, skipping deletion:', storagePath);
       return false;
     }
 

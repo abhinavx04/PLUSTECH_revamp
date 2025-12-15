@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import NewsManagerSimple from '../components/NewsManagerSimple';
 import AnnualReturnManager from '../components/AnnualReturnManager';
+import ProjectsManager from '../components/ProjectsManager';
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'news' | 'annualReturns'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'news' | 'annualReturns'>('dashboard');
 
   const handleLogout = async () => {
     try {
@@ -69,6 +70,16 @@ const AdminDashboard: React.FC = () => {
               Dashboard
             </button>
             <button
+              onClick={() => setActiveTab('projects')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'projects'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              Projects
+            </button>
+            <button
               onClick={() => setActiveTab('news')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'news'
@@ -107,7 +118,10 @@ const AdminDashboard: React.FC = () => {
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
             <h3 className="text-xl font-semibold text-white mb-4">Projects</h3>
             <p className="text-gray-300 mb-4">Manage company projects and portfolio</p>
-            <button className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200">
+            <button
+              onClick={() => setActiveTab('projects')}
+              className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+            >
               Manage Projects
             </button>
           </div>
@@ -173,6 +187,8 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           </>
+        ) : activeTab === 'projects' ? (
+          <ProjectsManager />
         ) : activeTab === 'news' ? (
           <NewsManagerSimple />
         ) : (

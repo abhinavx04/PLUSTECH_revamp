@@ -27,6 +27,12 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null;
     }
+
+    // Projects collection - allow authenticated users to read/write
+    match /projects/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
     
     // Default: deny all other access
     match /{document=**} {
@@ -55,6 +61,14 @@ service cloud.firestore {
       // Anyone can read published annual returns
       allow read: if resource.data.status == 'published' || request.auth != null;
       // Only authenticated users can write
+      allow write: if request.auth != null;
+    }
+
+    // Projects collection - public read for published, authenticated write
+    match /projects/{document=**} {
+      // Anyone can read published projects
+      allow read: if resource.data.status == 'published' || request.auth != null;
+      // Only authenticated users can create/update/delete
       allow write: if request.auth != null;
     }
     
@@ -120,6 +134,15 @@ service firebase.storage {
       // Allow delete for authenticated users
       allow delete: if request.auth != null;
     }
+
+    // Project images - allow authenticated users to upload/read/delete
+    match /projects/images/{imageId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null;
+    }
     
     // Default: deny all other access
     match /{allPaths=**} {
@@ -162,6 +185,15 @@ service firebase.storage {
         && request.resource.contentType == 'application/pdf';
       
       // Only authenticated users can delete
+      allow delete: if request.auth != null;
+    }
+
+    // Project images - public read, authenticated write/delete
+    match /projects/images/{imageId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
       allow delete: if request.auth != null;
     }
     
