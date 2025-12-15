@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { motion, useInView, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useInView, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
 
 interface Milestone {
   id: string;
@@ -289,11 +289,10 @@ const TimelineMilestone: React.FC<{
   milestone: Milestone;
   isLeftSide: boolean;
   categoryConfig: typeof categoryConfig;
-  lineFillPx: ReturnType<typeof useTransform>;
-  timelineContainerRef: React.RefObject<HTMLDivElement>;
+  timelineContainerRef: React.RefObject<HTMLDivElement | null>;
   scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress'];
   timelinePx: number;
-}> = ({ milestone, isLeftSide, categoryConfig, lineFillPx, timelineContainerRef, scrollYProgress, timelinePx }) => {
+}> = ({ milestone, isLeftSide, categoryConfig, timelineContainerRef, scrollYProgress, timelinePx }) => {
   const milestoneRef = useRef<HTMLDivElement>(null);
   const config = categoryConfig[milestone.category];
   const [offsetTop, setOffsetTop] = useState(0);
@@ -336,8 +335,8 @@ const TimelineMilestone: React.FC<{
   const reached = useTransform(scrollYProgress, (p) => {
     const ratio = timelinePx > 0 ? offsetTop / timelinePx : 1;
     return p >= ratio ? 1 : 0;
-  });
-  const reachedSpring = useSpring(reached, { stiffness: 260, damping: 30 });
+  }) as MotionValue<number>;
+  const reachedSpring = useSpring(reached as MotionValue<number>, { stiffness: 260, damping: 30 });
   const cardOpacity = reachedSpring;
   const cardY = useTransform(reachedSpring, (v) => 40 - 40 * v);
   const cardScale = useTransform(reachedSpring, (v) => 0.96 + 0.04 * v);
@@ -477,11 +476,10 @@ const TimelineYearGroup: React.FC<{
   isEvenYear: boolean;
   hasMultipleMilestones: boolean;
   categoryConfig: typeof categoryConfig;
-  lineFillPx: ReturnType<typeof useTransform>;
-  timelineContainerRef: React.RefObject<HTMLDivElement>;
+  timelineContainerRef: React.RefObject<HTMLDivElement | null>;
   scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress'];
   timelinePx: number;
-}> = ({ yearGroup, isEvenYear, hasMultipleMilestones, categoryConfig, lineFillPx, timelineContainerRef, scrollYProgress, timelinePx }) => {
+}> = ({ yearGroup, isEvenYear, hasMultipleMilestones, categoryConfig, timelineContainerRef, scrollYProgress, timelinePx }) => {
   const yearRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(yearRef, { once: true, margin: "-100px" });
 
@@ -516,7 +514,6 @@ const TimelineYearGroup: React.FC<{
               milestone={milestone}
               isLeftSide={isLeftSide}
               categoryConfig={categoryConfig}
-              lineFillPx={lineFillPx}
               timelineContainerRef={timelineContainerRef}
               scrollYProgress={scrollYProgress}
               timelinePx={timelinePx}
@@ -646,7 +643,6 @@ const HistoryMilestonesSection: React.FC = () => {
                     isEvenYear={isEvenYear}
                     hasMultipleMilestones={hasMultipleMilestones}
                     categoryConfig={categoryConfig}
-                    lineFillPx={lineFillPx}
                     timelineContainerRef={timelineRef}
                     scrollYProgress={scrollYProgress}
                     timelinePx={timelinePx}
