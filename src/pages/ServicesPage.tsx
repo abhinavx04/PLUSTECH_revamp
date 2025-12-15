@@ -11,21 +11,6 @@ import {
 } from '../components/ui/resizable-navbar';
 import Footer from '../components/Footer';
 
-const servicePillars = [
-  {
-    label: 'Customer-centricity',
-    description: 'Co-creating solutions with your plant teams and workflows.',
-  },
-  {
-    label: 'Cost Effectiveness',
-    description: 'Pragmatic engineering that protects uptime and budgets.',
-  },
-  {
-    label: 'Competent Engineering',
-    description: 'Multi-disciplinary experts across paint, automation, and controls.',
-  },
-];
-
 const services = [
   {
     title: 'Technical Consultancy',
