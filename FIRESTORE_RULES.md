@@ -1,6 +1,6 @@
-# Firestore Security Rules for News Management
+# Firestore Security Rules for News Management and Annual Returns
 
-The 403 errors you're seeing are due to Firestore security rules blocking access. You need to update your Firestore security rules to allow authenticated users to read and write to the `news` collection.
+The 403 errors you're seeing are due to Firestore security rules blocking access. You need to update your Firestore security rules to allow authenticated users to read and write to the `news` and `annualReturns` collections.
 
 ## How to Update Firestore Rules
 
@@ -18,6 +18,12 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // News collection - allow authenticated users to read/write
     match /news/{document=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // Annual Returns collection - allow authenticated users to read/write
+    match /annualReturns/{document=**} {
       allow read: if request.auth != null;
       allow write: if request.auth != null;
     }
@@ -44,6 +50,14 @@ service cloud.firestore {
       allow write: if request.auth != null;  // Only authenticated users can write
     }
     
+    // Annual Returns collection - public read for published, authenticated write
+    match /annualReturns/{document=**} {
+      // Anyone can read published annual returns
+      allow read: if resource.data.status == 'published' || request.auth != null;
+      // Only authenticated users can write
+      allow write: if request.auth != null;
+    }
+    
     // Default: deny all other access
     match /{document=**} {
       allow read, write: if false;
@@ -59,6 +73,9 @@ After updating the rules:
 2. Try loading the News Management page - it should load quickly
 3. Try creating a news article - it should save to Firestore
 4. Check the main page - news should appear
+5. Try loading the Annual Return Management page - it should load
+6. Try uploading a PDF and creating an annual return - it should save to Firestore
+7. Check the `/about/annual-returns` page - published annual returns should appear
 
 ## Firebase Storage Rules (for Image Uploads)
 
@@ -90,6 +107,20 @@ service firebase.storage {
       allow delete: if request.auth != null;
     }
     
+    // Annual Return PDFs - allow authenticated users to upload/read/delete
+    match /annualReturns/pdfs/{pdfId} {
+      // Allow read for authenticated users
+      allow read: if request.auth != null;
+      
+      // Allow write (upload) for authenticated users with size and type validation
+      allow write: if request.auth != null
+        && request.resource.size < 50 * 1024 * 1024  // Max 50MB
+        && request.resource.contentType == 'application/pdf';
+      
+      // Allow delete for authenticated users
+      allow delete: if request.auth != null;
+    }
+    
     // Default: deny all other access
     match /{allPaths=**} {
       allow read, write, delete: if false;
@@ -115,6 +146,20 @@ service firebase.storage {
       allow write: if request.auth != null
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
+      
+      // Only authenticated users can delete
+      allow delete: if request.auth != null;
+    }
+    
+    // Annual Return PDFs - public read, authenticated write/delete
+    match /annualReturns/pdfs/{pdfId} {
+      // Anyone can read (for published annual returns)
+      allow read: if true;
+      
+      // Only authenticated users can upload
+      allow write: if request.auth != null
+        && request.resource.size < 50 * 1024 * 1024  // Max 50MB
+        && request.resource.contentType == 'application/pdf';
       
       // Only authenticated users can delete
       allow delete: if request.auth != null;

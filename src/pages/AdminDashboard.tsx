@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import NewsManagerSimple from '../components/NewsManagerSimple';
+import AnnualReturnManager from '../components/AnnualReturnManager';
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'news'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'news' | 'annualReturns'>('dashboard');
 
   const handleLogout = async () => {
     try {
@@ -77,6 +78,16 @@ const AdminDashboard: React.FC = () => {
             >
               News Management
             </button>
+            <button
+              onClick={() => setActiveTab('annualReturns')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'annualReturns'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              Annual Return
+            </button>
           </nav>
         </div>
       </div>
@@ -115,6 +126,20 @@ const AdminDashboard: React.FC = () => {
                         </div>
                       </div>
 
+                      {/* Annual Return Card */}
+                      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+                        <h3 className="text-xl font-semibold text-white mb-4">Annual Return</h3>
+                        <p className="text-gray-300 mb-4">Manage annual return filings and statutory disclosures</p>
+                        <div className="space-y-2">
+                          <button
+                            onClick={() => setActiveTab('annualReturns')}
+                            className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+                          >
+                            Manage Annual Returns
+                          </button>
+                        </div>
+                      </div>
+
           {/* Analytics Card */}
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
             <h3 className="text-xl font-semibold text-white mb-4">Analytics</h3>
@@ -148,8 +173,10 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           </>
-        ) : (
+        ) : activeTab === 'news' ? (
           <NewsManagerSimple />
+        ) : (
+          <AnnualReturnManager />
         )}
       </main>
     </div>
