@@ -4,11 +4,24 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import NewsManagerSimple from '../components/NewsManagerSimple';
 import AnnualReturnManager from '../components/AnnualReturnManager';
 import ProjectsManager from '../components/ProjectsManager';
+import { useProjectsFirestore } from '../hooks/useProjectsFirestore';
+import { useNewsFirestore } from '../hooks/useNewsFirestore';
+import { useAnnualReturnsFirestore } from '../hooks/useAnnualReturnsFirestore';
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'news' | 'annualReturns'>('dashboard');
+
+  // Load live data for quick stats
+  const { projects, loading: projectsLoading } = useProjectsFirestore();
+  const { news, loading: newsLoading } = useNewsFirestore();
+  const { annualReturns, loading: returnsLoading } = useAnnualReturnsFirestore();
+
+  const publishedProjectsCount = projects.filter((p) => p.status === 'published').length;
+  const publishedNewsCount = news.filter((n) => n.published).length;
+  const publishedReturnsCount = annualReturns.filter((r) => r.status === 'published').length;
+  const isStatsLoading = projectsLoading || newsLoading || returnsLoading;
 
   const handleLogout = async () => {
     try {
@@ -126,63 +139,56 @@ const AdminDashboard: React.FC = () => {
             </button>
           </div>
 
-                      {/* News Card */}
-                      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-                        <h3 className="text-xl font-semibold text-white mb-4">News & Updates</h3>
-                        <p className="text-gray-300 mb-4">Add company news and announcements</p>
-                        <div className="space-y-2">
-                          <button
-                            onClick={() => setActiveTab('news')}
-                            className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
-                          >
-                            Manage News
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Annual Return Card */}
-                      <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-                        <h3 className="text-xl font-semibold text-white mb-4">Annual Return</h3>
-                        <p className="text-gray-300 mb-4">Manage annual return filings and statutory disclosures</p>
-                        <div className="space-y-2">
-                          <button
-                            onClick={() => setActiveTab('annualReturns')}
-                            className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
-                          >
-                            Manage Annual Returns
-                          </button>
-                        </div>
-                      </div>
-
-          {/* Analytics Card */}
+          {/* News Card */}
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-            <h3 className="text-xl font-semibold text-white mb-4">Analytics</h3>
-            <p className="text-gray-300 mb-4">View website analytics and stats</p>
-            <button className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200">
-              View Analytics
-            </button>
+            <h3 className="text-xl font-semibold text-white mb-4">News & Updates</h3>
+            <p className="text-gray-300 mb-4">Add company news and announcements</p>
+            <div className="space-y-2">
+              <button
+                onClick={() => setActiveTab('news')}
+                className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+              >
+                Manage News
+              </button>
+            </div>
+          </div>
+
+          {/* Annual Return Card */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <h3 className="text-xl font-semibold text-white mb-4">Annual Return</h3>
+            <p className="text-gray-300 mb-4">Manage annual return filings and statutory disclosures</p>
+            <div className="space-y-2">
+              <button
+                onClick={() => setActiveTab('annualReturns')}
+                className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+              >
+                Manage Annual Returns
+              </button>
+            </div>
           </div>
         </div>
 
-            {/* Quick Stats */}
+            {/* Quick Stats (live data) */}
             <div className="mt-8 bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
               <h2 className="text-2xl font-bold text-white mb-6">Quick Stats</h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-[#00aeef]">12</div>
-                  <div className="text-gray-300">Active Projects</div>
+                  <div className="text-3xl font-bold text-[#00aeef]">
+                    {isStatsLoading ? '—' : publishedProjectsCount}
+                  </div>
+                  <div className="text-gray-300">Active Projects (published)</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-[#00aeef]">245</div>
-                  <div className="text-gray-300">Website Visits</div>
+                  <div className="text-3xl font-bold text-[#00aeef]">
+                    {isStatsLoading ? '—' : publishedNewsCount}
+                  </div>
+                  <div className="text-gray-300">Published News Articles</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-[#00aeef]">8</div>
-                  <div className="text-gray-300">News Articles</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-[#00aeef]">98%</div>
-                  <div className="text-gray-300">Uptime</div>
+                  <div className="text-3xl font-bold text-[#00aeef]">
+                    {isStatsLoading ? '—' : publishedReturnsCount}
+                  </div>
+                  <div className="text-gray-300">Published Annual Returns</div>
                 </div>
               </div>
             </div>
