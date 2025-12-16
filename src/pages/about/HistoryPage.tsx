@@ -20,7 +20,13 @@ const HistoryPage: React.FC = () => {
       >
         <div style={{ pointerEvents: 'auto', width: '100%', height: '100%' }}>
           <FloatingLines
-            linesGradient={['#00aeef', '#0099d4', '#0077a3']}
+            linesGradient={[
+              '#E63946',   // Logo red
+              '#FF6B6B',   // Lighter red
+              '#9B59B6',   // Purple transition
+              '#00aeef',   // Brand blue
+              '#0099d4'    // Darker blue
+            ]}
             enabledWaves={['top', 'middle', 'bottom']}
             lineCount={5}
             lineDistance={5}

@@ -226,33 +226,35 @@ const allMilestones: Milestone[] = [
   }
 ];
 
-// Two-tone aesthetic: PlusTech blue + neutral gray
+// Brand colors: Red (#E63946) → Purple (#9B59B6) → Blue (#00aeef)
 const categoryConfig = {
-  // Map founding and innovation to primary blue
+  // Founding: Logo red - represents origins
   founding: {
-    badge: 'bg-blue-100 text-blue-800 border-blue-200',
-    accent: 'bg-gradient-to-r from-[#00aeef] to-gray-400',
-    node: 'bg-[#00aeef]',
-    shadow: 'shadow-blue-200'
+    badge: 'bg-red-50 text-red-700 border-red-200',
+    accent: 'bg-gradient-to-r from-[#E63946] via-[#9B59B6] to-[#00aeef]',
+    node: 'bg-[#E63946]',
+    shadow: 'shadow-red-200'
   },
-  // Map expansion and achievement to neutral gray
+  // Expansion: Purple - growth transition
   expansion: {
-    badge: 'bg-gray-100 text-gray-800 border-gray-200',
-    accent: 'bg-gradient-to-r from-gray-500 to-gray-400',
-    node: 'bg-gray-500',
-    shadow: 'shadow-gray-200'
+    badge: 'bg-purple-50 text-purple-700 border-purple-200',
+    accent: 'bg-gradient-to-r from-[#9B59B6] to-[#00aeef]',
+    node: 'bg-[#9B59B6]',
+    shadow: 'shadow-purple-200'
   },
+  // Innovation: Blue - future focused
   innovation: {
-    badge: 'bg-blue-100 text-blue-800 border-blue-200',
-    accent: 'bg-gradient-to-r from-[#00aeef] to-gray-400',
+    badge: 'bg-blue-50 text-blue-700 border-blue-200',
+    accent: 'bg-gradient-to-r from-[#00aeef] to-[#9B59B6]',
     node: 'bg-[#00aeef]',
     shadow: 'shadow-blue-200'
   },
+  // Achievement: Red-blue gradient - milestones
   achievement: {
-    badge: 'bg-gray-100 text-gray-800 border-gray-200',
-    accent: 'bg-gradient-to-r from-gray-500 to-gray-400',
-    node: 'bg-gray-500',
-    shadow: 'shadow-gray-200'
+    badge: 'bg-gradient-to-r from-red-50 to-blue-50 text-gray-700 border-purple-200',
+    accent: 'bg-gradient-to-r from-[#E63946] to-[#00aeef]',
+    node: 'bg-gradient-to-br from-[#E63946] to-[#00aeef]',
+    shadow: 'shadow-purple-200'
   }
 };
 
@@ -296,7 +298,6 @@ const TimelineMilestone: React.FC<{
   const milestoneRef = useRef<HTMLDivElement>(null);
   const config = categoryConfig[milestone.category];
   const [offsetTop, setOffsetTop] = useState(0);
-  const isInView = useInView(milestoneRef, { margin: "-100px" });
 
   useLayoutEffect(() => {
     const milestoneEl = milestoneRef.current;
@@ -404,67 +405,42 @@ const TimelineMilestone: React.FC<{
         }}
       >
         {/* Category Badge */}
-        <motion.div 
-          className={`inline-block px-3 py-1 rounded-full text-[11px] font-semibold border mb-4 tracking-wide uppercase ${config.badge}`}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.8 }}
-        >
+        <div className={`inline-block px-3 py-1 rounded-full text-[11px] font-semibold border mb-4 tracking-wide uppercase ${config.badge}`}>
           {milestone.category}
-        </motion.div>
+        </div>
 
         {/* Title */}
-        <motion.h4 
-          className="text-[20px] md:text-[22px] font-bold text-gray-900 tracking-tight mb-2"
-          initial={{ opacity: 0, y: 18 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-          transition={{ type: "spring", stiffness: 200, damping: 20, delay: 1.0 }}
-        >
+        <h4 className="text-[20px] md:text-[22px] font-bold text-gray-900 tracking-tight mb-2">
           {milestone.title}
-        </motion.h4>
+        </h4>
 
-        {/* Subtle Divider */}
-        <div className="h-px bg-gradient-to-r from-gray-100 to-transparent mb-4" />
+        {/* Subtle Divider - brand gradient */}
+        <div className="h-px bg-gradient-to-r from-[#E63946]/30 via-[#9B59B6]/30 to-[#00aeef]/30 mb-4" />
 
         {/* Description */}
-        <motion.p 
-          className="text-[15px] md:text-[16px] text-gray-700 leading-relaxed mb-5"
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-          transition={{ type: "spring", stiffness: 200, damping: 20, delay: 1.15 }}
-        >
+        <p className="text-[15px] md:text-[16px] text-gray-700 leading-relaxed mb-5">
           {milestone.description}
-        </motion.p>
+        </p>
 
         {/* Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {milestone.metrics.map((metric, metricIndex) => (
-            <motion.div
+            <div
               key={metricIndex}
-              className="p-3 rounded-lg border border-gray-100 bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)]"
-              initial={{ opacity: 0, scale: 0.95, y: 14 }}
-              animate={isInView ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.95, y: 14 }}
-              transition={{ type: "spring", stiffness: 280, damping: 20, delay: 1.3 + (metricIndex * 0.08) }}
-              whileHover={{ scale: 1.03, transition: { duration: 0.18 } }}
+              className="p-3 rounded-lg border border-gray-100 bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] hover:scale-[1.03] transition-transform duration-200"
             >
               <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 mb-1">
                 {metric.label}
               </div>
-              <div className="text-[15px] md:text-[16px] font-bold text-[#00aeef]">
+              <div className="text-[15px] md:text-[16px] font-bold bg-gradient-to-r from-[#E63946] via-[#9B59B6] to-[#00aeef] bg-clip-text text-transparent">
                 {metric.value}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Gradient Accent Bar */}
-        <motion.div 
-          className={`h-1 w-full rounded-full mt-5 ${config.accent}`}
-          initial={{ scaleX: 0 }}
-          animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-          transition={{ type: "spring", stiffness: 200, damping: 20, delay: 1.6 }}
-          style={{ originX: 0 }}
-        />
+        <div className={`h-1 w-full rounded-full mt-5 ${config.accent}`} />
       </motion.div>
     </motion.div>
   );
@@ -485,10 +461,12 @@ const TimelineYearGroup: React.FC<{
 
   return (
     <div ref={yearRef} className="relative">
-      {/* Year Badge */}
+      {/* Year Badge - alternating red/blue with gradient */}
       <motion.div 
-        className={`bg-[#00aeef] text-white px-6 py-3 rounded-full font-bold text-xl shadow-lg mb-8 w-fit ${
-          isEvenYear ? 'mx-auto lg:mx-0 lg:ml-0' : 'mx-auto lg:mx-0 lg:mr-0 lg:ml-auto'
+        className={`text-white px-6 py-3 rounded-full font-bold text-xl shadow-lg mb-8 w-fit ${
+          isEvenYear 
+            ? 'bg-gradient-to-r from-[#E63946] to-[#9B59B6] mx-auto lg:mx-0 lg:ml-0' 
+            : 'bg-gradient-to-r from-[#9B59B6] to-[#00aeef] mx-auto lg:mx-0 lg:mr-0 lg:ml-auto'
         }`}
         initial={{ opacity: 0, y: -30, scale: 0.8 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -30, scale: 0.8 }}
@@ -610,19 +588,21 @@ const HistoryMilestonesSection: React.FC = () => {
         </motion.h3>
         
         <div className="relative">
-          {/* Central Timeline Line - Desktop */}
+          {/* Central Timeline Line - Desktop - Red to Purple to Blue gradient */}
           <motion.div 
-            className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
+            className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full rounded-full"
             style={{ 
-              height: lineFillPx
+              height: lineFillPx,
+              background: 'linear-gradient(to bottom, #E63946, #FF6B6B, #9B59B6, #00aeef, #0099d4)'
             }}
           />
           
-          {/* Central Timeline Line - Mobile */}
-              <motion.div
-            className="lg:hidden absolute left-6 w-1 h-full bg-gradient-to-b from-[#00aeef] to-gray-300 rounded-full"
+          {/* Central Timeline Line - Mobile - Red to Purple to Blue gradient */}
+          <motion.div
+            className="lg:hidden absolute left-6 w-1 h-full rounded-full"
             style={{ 
-              height: lineFillPx
+              height: lineFillPx,
+              background: 'linear-gradient(to bottom, #E63946, #FF6B6B, #9B59B6, #00aeef, #0099d4)'
             }}
           />
 
@@ -665,22 +645,26 @@ const HistoryMilestonesSection: React.FC = () => {
           { 
             label: 'Years of Excellence', 
             value: '18+', 
-            gradient: 'from-blue-500 to-blue-600'
+            gradient: 'from-[#E63946] to-[#FF6B6B]',
+            textGradient: 'from-[#E63946] to-[#9B59B6]'
           },
           { 
             label: 'Major Projects', 
             value: '11+', 
-            gradient: 'from-green-500 to-green-600'
+            gradient: 'from-[#FF6B6B] to-[#9B59B6]',
+            textGradient: 'from-[#FF6B6B] to-[#9B59B6]'
           },
           { 
             label: 'Blue-chip Clients', 
             value: '10+', 
-            gradient: 'from-purple-500 to-purple-600'
+            gradient: 'from-[#9B59B6] to-[#00aeef]',
+            textGradient: 'from-[#9B59B6] to-[#00aeef]'
           },
           { 
             label: 'Countries Served', 
             value: '2+', 
-            gradient: 'from-orange-500 to-orange-600'
+            gradient: 'from-[#00aeef] to-[#0099d4]',
+            textGradient: 'from-[#00aeef] to-[#0099d4]'
           }
         ].map((stat, index) => (
           <motion.div 
@@ -698,15 +682,15 @@ const HistoryMilestonesSection: React.FC = () => {
             }}
           >
             {/* Background Gradient */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300`}></div>
+            <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-5 group-hover:opacity-15 transition-opacity duration-300`}></div>
             
             {/* Content */}
             <div className="relative z-10">
-              <div className="text-3xl font-bold text-[#00aeef] mb-2">
+              <div className={`text-3xl font-bold bg-gradient-to-r ${stat.textGradient} bg-clip-text text-transparent mb-2`}>
                 {stat.value}
-            </div>
-            <div className="text-lg font-semibold text-gray-700">
-              {stat.label}
+              </div>
+              <div className="text-lg font-semibold text-gray-700">
+                {stat.label}
               </div>
             </div>
           </motion.div>
@@ -715,30 +699,38 @@ const HistoryMilestonesSection: React.FC = () => {
 
       {/* Future Vision */}
       <motion.div 
-        className="mt-20 relative overflow-hidden bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30 p-12 text-center"
+        className="mt-20 relative overflow-hidden bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl p-12 text-center"
+        style={{
+          border: '2px solid transparent',
+          backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #E63946, #9B59B6, #00aeef)',
+          backgroundOrigin: 'border-box',
+          backgroundClip: 'padding-box, border-box'
+        }}
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8, delay: 2.0 }}
       >
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#E63946]/5 via-[#9B59B6]/5 to-[#00aeef]/5 rounded-2xl"></div>
+        
         <div className="relative z-10">
-        <motion.h3 
-            className="text-3xl md:text-4xl font-bold font-heading text-gray-900 mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          <motion.h3 
+            className="text-3xl md:text-4xl font-bold font-heading bg-gradient-to-r from-[#E63946] via-[#9B59B6] to-[#00aeef] bg-clip-text text-transparent mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 2.2 }}
-        >
-          Looking Forward
-        </motion.h3>
-        <motion.p 
-          className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          >
+            Looking Forward
+          </motion.h3>
+          <motion.p 
+            className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 2.4 }}
-        >
-          As we continue our journey, we remain committed to pushing the boundaries of innovation, 
-          embracing emerging technologies, and delivering solutions that shape the future of manufacturing.
-        </motion.p>
-          
+          >
+            As we continue our journey, we remain committed to pushing the boundaries of innovation, 
+            embracing emerging technologies, and delivering solutions that shape the future of manufacturing.
+          </motion.p>
         </div>
       </motion.div>
     </div>
