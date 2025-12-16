@@ -22,6 +22,7 @@ const SimpleNewsSection: React.FC = () => {
   console.log('[SimpleNewsSection] News data:', { news: news.length, loading, error });
 
   const publishedNews = news.filter(article => article.published);
+  const latestPublished = publishedNews.slice(0, 3); // show only latest few on homepage
   console.log('[SimpleNewsSection] Published news:', publishedNews.length);
 
   // Show error state
@@ -30,10 +31,10 @@ const SimpleNewsSection: React.FC = () => {
       <section className="w-full px-6 md:px-12 lg:px-16 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <h2 className="text-4xl md:text-5xl font-bold font-heading text-black">
+            <h2 className="text-4xl md:text-5xl font-bold font-heading text-slate-900">
               Latest News & Updates
             </h2>
-            <div className="mt-8 p-4 bg-red-100 border border-red-300 rounded-lg">
+            <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-700">Error loading news: {error}</p>
             </div>
           </div>
@@ -47,9 +48,26 @@ const SimpleNewsSection: React.FC = () => {
     return (
       <section className="w-full px-6 md:px-12 lg:px-16 py-12">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00aeef] mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading news...</p>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold font-heading text-black">
+              Latest News & Updates
+            </h2>
+            <p className="mt-4 text-lg md:text-xl text-slate-600 font-body">
+              Stay informed with our latest announcements and insights.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="w-full aspect-[16/9] bg-slate-200 animate-pulse" />
+                <div className="p-6 space-y-3">
+                  <div className="h-5 bg-slate-200 rounded animate-pulse w-3/4" />
+                  <div className="h-4 bg-slate-200 rounded animate-pulse w-full" />
+                  <div className="h-4 bg-slate-200 rounded animate-pulse w-5/6" />
+                  <div className="h-4 bg-slate-200 rounded animate-pulse w-4/5" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -60,59 +78,97 @@ const SimpleNewsSection: React.FC = () => {
     <section className="w-full px-6 md:px-12 lg:px-16 py-12">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold font-heading text-black">
+          <h2 className="text-4xl md:text-5xl font-bold font-heading text-slate-900">
             Latest News & Updates
           </h2>
-          <p className="mt-4 text-lg md:text-xl text-gray-700 font-body">
+          <p className="mt-4 text-lg md:text-xl text-slate-600 font-body">
             Stay informed with our latest announcements and insights.
           </p>
         </div>
 
         {/* Show message when no news articles */}
         {publishedNews.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-500 text-lg">
-              <i className="fas fa-newspaper text-4xl mb-4 block"></i>
-              <p>No news articles available yet.</p>
-              <p className="text-sm mt-2">Check back soon for updates!</p>
-            </div>
+          <div className="max-w-md mx-auto text-center py-16 px-6 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">No articles yet</h3>
+            <p className="text-sm text-slate-600">Check back soon for our latest insights and updates.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {publishedNews.map(article => (
-              <div key={article.id} className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
-                {article.imageUrl && (
-                  <div className="h-48 overflow-hidden bg-gray-200">
-                    <img 
-                      src={article.imageUrl} 
-                      alt={article.title} 
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {latestPublished.map(article => (
+              <div
+                key={article.id}
+                className="group relative bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 ease-out flex flex-col overflow-hidden"
+              >
+                {article.featured && (
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-500 z-10" />
                 )}
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h4 className="text-xl font-bold text-black mb-2">{article.title}</h4>
-                    <p className="text-gray-600 text-sm mb-4">{article.excerpt}</p>
+                <div className="relative w-full aspect-[16/9] min-h-[220px] overflow-hidden bg-slate-100">
+                  {article.imageUrl ? (
+                    <>
+                      <img 
+                        src={article.imageUrl} 
+                        alt={article.title || 'News image'} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
+                      <div className="text-slate-300 text-6xl font-light">N</div>
+                    </div>
+                  )}
+                </div>
+                <div className="p-6 flex-1 flex flex-col space-y-4">
+                  <h4 className="text-xl font-bold text-slate-900 leading-snug line-clamp-2 tracking-tight">
+                    {article.title}
+                  </h4>
+                  <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
+                    {article.excerpt}
+                  </p>
+                  <div className="flex items-center gap-3 text-xs font-medium text-slate-500">
+                    <span className="uppercase tracking-wide">{article.author}</span>
+                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                    <time>
+                      {article.createdAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </time>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                    <span>By {article.author}</span>
-                    <span>{article.createdAt.toLocaleDateString()}</span>
-                  </div>
+                  {(article.tags || []).length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {(article.tags || []).slice(0, 2).map(tag => (
+                        <span 
+                          key={tag} 
+                          className="px-2.5 py-1 text-xs font-medium rounded-md bg-slate-100 text-slate-700 border border-slate-200"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <button
                     onClick={() => setSelectedArticle(article)}
-                    className="w-full px-3 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200 font-semibold text-sm"
+                    className="mt-auto w-full inline-flex items-center justify-center rounded-xl bg-[#00aeef] text-black font-semibold py-3 text-sm shadow-md hover:shadow-lg hover:bg-[#0099d4] hover:-translate-y-0.5 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#00aeef] focus-visible:ring-offset-2"
                   >
-                    View More
+                    Read Article
                   </button>
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {publishedNews.length > latestPublished.length && (
+          <div className="flex justify-center mt-12">
+            <a
+              href="/news"
+              className="inline-flex items-center px-6 py-3 rounded-xl bg-white text-[#00aeef] border border-slate-200 font-semibold shadow-sm hover:shadow-md hover:border-[#00aeef]/40 hover:-translate-y-0.5 transition-all duration-200"
+            >
+              View all news
+            </a>
           </div>
         )}
       </div>

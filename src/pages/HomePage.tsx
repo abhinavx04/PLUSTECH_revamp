@@ -235,7 +235,7 @@ const HomePage: React.FC = () => {
               <h1 className="text-black/60 text-3xl md:text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
                 Building Intelligent Solutions for Modern Manufacturing
               </h1>
-              <p className="mt-4 text-black/50 text-base md:text-lg max-w-3xl mx-auto font-body" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
+              <p className="mt-4 text-black/50 text-base md:text-lg max-w-3xl mx-auto font-body text-justify" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
                 At PlusTech, we design, engineer, and deliver precision systems that connect
                 people, processes, and products—so your operations run smarter, faster, and safer.
               </p>
@@ -265,10 +265,10 @@ const HomePage: React.FC = () => {
               <h2 className="text-4xl md:text-5xl font-bold font-heading text-black">
                 Welcome to Plustech
               </h2>
-              <p className="text-lg md:text-xl text-gray-700 font-body leading-relaxed">
-                At Plustech, we design and build <strong>surface finishing plants</strong> for automotive and general
+              <p className="text-lg md:text-xl text-gray-700 font-body leading-relaxed text-justify">
+                At Plustech, we design and build surface finishing plants for automotive and general
                 industries. With expertise in engineering, automation, and commissioning, we deliver
-                <strong> customized solutions</strong> that combine innovation, efficiency, and quality.
+                customized solutions that combine innovation, efficiency, and quality.
               </p>
             </div>
             <div className="flex justify-center items-start relative z-[0] pt-4 md:pt-2">
@@ -289,15 +289,15 @@ const HomePage: React.FC = () => {
             </div>
             <div className="space-y-5">
               <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">ABOUT US</h3>
-              <div className="text-lg md:text-xl text-gray-800 font-body leading-relaxed space-y-4">
+              <div className="text-lg md:text-xl text-gray-800 font-body leading-relaxed space-y-4 text-justify">
                 <p>
-                  Plustech Systems and Solutions is a trusted partner in building <strong>integrated paintshops</strong> for automotive and general industry applications. With expertise spanning <strong>design, engineering, procurement, construction, and commissioning</strong>, we provide <strong>customized solutions</strong> tailored to each customer’s unique requirements.
+                  Plustech Systems and Solutions is a trusted partner in building integrated paintshops for automotive and general industry applications. With expertise spanning design, engineering, procurement, construction, and commissioning, we provide customized solutions tailored to each customer's unique requirements.
                 </p>
                 <p>
-                  Our reputation has been built over the years on delivering paintshops that embody <strong>consistency, reliability, and robust performance</strong>. Whether semi-automatic or fully automatic, every solution reflects our commitment to <strong>continuous improvement, innovation, and long-term value</strong> for our clients.
+                  Our reputation has been built over the years on delivering paintshops that embody consistency, reliability, and robust performance. Whether semi-automatic or fully automatic, every solution reflects our commitment to continuous improvement, innovation, and long-term value for our clients.
                 </p>
                 <p>
-                  At Plustech, we don’t just build plants—we build partnerships that enable industries to achieve <strong>precision, efficiency, and excellence</strong> in finishing operations.
+                  At Plustech, we don't just build plants—we build partnerships that enable industries to achieve precision, efficiency, and excellence in finishing operations.
                 </p>
               </div>
             </div>
@@ -305,15 +305,15 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Company Logos Animation */}
-      <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-r from-blue-50 to-blue-100">
+      {/* Company Logos Animation – Trusted by leading companies */}
+      <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-r from-blue-50 via-blue-100 to-blue-200">
         <div className="max-w-7xl mx-auto w-full">
           <CompanyAnimation />
         </div>
       </section>
 
-      {/* News Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-blue-100">
+      {/* News Section – Latest News & Updates (separate visual section) */}
+      <div className="bg-slate-50 border-t border-slate-200">
         <SimpleNewsSection />
       </div>
 
