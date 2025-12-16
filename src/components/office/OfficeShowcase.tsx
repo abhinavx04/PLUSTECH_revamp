@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight, Maximize2, Map } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Map } from 'lucide-react';
 
 interface Room {
   id: string;

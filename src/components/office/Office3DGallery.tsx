@@ -279,7 +279,7 @@ const GalleryCard: React.FC<GalleryCardProps> = ({
   isHovered,
   onHover,
 }) => {
-  const [flipped, setFlipped] = useState(false);
+  const [flipped] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const sizeClasses = {

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { Camera, Info, MapPin, Users, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Camera, Users, Zap } from 'lucide-react';
 
 interface Room {
   id: string;
@@ -75,7 +75,7 @@ export const IsometricOfficeExplorer: React.FC = () => {
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0 && !e.target.closest('.room-card')) {
+    if (e.button === 0 && !(e.target as HTMLElement).closest('.room-card')) {
       setIsDragging(true);
       setDragStart({ x: e.clientX - cameraPosition.x, y: e.clientY - cameraPosition.y });
     }
