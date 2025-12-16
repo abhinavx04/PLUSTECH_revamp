@@ -14,6 +14,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoutes';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
+import NewsPage from './pages/NewsPage';
+import { OfficeTourPage } from './pages/OfficeTourPage';
 
 function App() {
   return (
@@ -22,7 +24,9 @@ function App() {
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/projects" element={<ProjectsPage />} />
       <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
+      <Route path="/news" element={<NewsPage />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/facility" element={<OfficeTourPage />} />
       <Route path="/about" element={<AboutUsPage />}>
         <Route index element={<Navigate to="corporate-beliefs" replace />} />
         <Route path="corporate-beliefs" element={<CorporateBeliefsPage />} />

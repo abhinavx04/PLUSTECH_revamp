@@ -32,6 +32,17 @@ interface UpdateNewsData extends Partial<CreateNewsData> {
   id: string;
 }
 
+// Firestore does not allow fields with value `undefined`. This helper removes them.
+const sanitizeForFirestore = <T extends Record<string, any>>(data: T): Record<string, any> => {
+  const cleaned: Record<string, any> = {};
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined) {
+      cleaned[key] = value;
+    }
+  });
+  return cleaned;
+};
+
 export const useNewsFirestore = () => {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
@@ -183,11 +194,12 @@ export const useNewsFirestore = () => {
       
       const newsCollection = collection(db, 'news');
       const now = Timestamp.now();
-      const docRef = await addDoc(newsCollection, {
+      const payload = sanitizeForFirestore({
         ...newsData,
         createdAt: now,
         updatedAt: now,
       });
+      const docRef = await addDoc(newsCollection, payload);
       
       // Add to local state
       const newArticle: NewsArticle = {
@@ -250,10 +262,11 @@ export const useNewsFirestore = () => {
         }
       }
       
-      await updateDoc(newsDoc, {
+      const payload = sanitizeForFirestore({
         ...updateData,
         updatedAt: Timestamp.now(),
       });
+      await updateDoc(newsDoc, payload);
       
       // Update local state
       setNews(prev => prev.map(article =>

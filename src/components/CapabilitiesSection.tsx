@@ -147,17 +147,19 @@ const CapabilitiesSection: React.FC = () => {
     <div ref={sectionRef} id="capabilities" className="w-full relative overflow-hidden">
       {/* Section Header */}
       <motion.div 
-        className="text-center py-12 px-6"
+        className="py-12 px-6"
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <h2 className="text-3xl md:text-4xl font-bold font-heading text-black mb-4">
-          OUR CAPABILITIES
-        </h2>
-        <p className="text-lg md:text-xl text-gray-600 font-body max-w-3xl mx-auto">
-          Transforming industries through innovative automation and digital solutions
-        </p>
+        <div className="max-w-7xl mx-auto space-y-3 text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold font-heading text-black leading-tight">
+            Our Capabilities
+          </h2>
+          <p className="text-lg md:text-xl text-gray-600 font-body max-w-3xl mx-auto">
+            Transforming industries through integrated paintshop, robotic, and digital solutions.
+          </p>
+        </div>
       </motion.div>
 
       {/* Capability Items */}
@@ -199,11 +201,11 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
         <div className="space-y-16">
           {/* Content Section */}
           <motion.div 
-            className="text-left max-w-5xl mx-auto"
+            className="text-left max-w-5xl"
             variants={variants}
           >
             <div className="space-y-6">
-              <h3 className={`text-3xl md:text-4xl font-bold font-heading leading-tight ${capability.textColor}`}>
+              <h3 className={`text-2xl md:text-3xl font-semibold font-heading leading-tight ${capability.textColor}`}>
                 {capability.title}
               </h3>
               <p className={`text-lg md:text-xl font-body leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>
@@ -244,28 +246,27 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
             variants={imageVariants}
           >
             {capability.id === 'robotic-applications' ? (
-              // Horizontal scroll for robotic applications (5 images)
+              // Robotic applications with carousel (buttons only, no counter)
               <RoboticImageCarousel images={capability.images} />
             ) : capability.id === 'material-handling' ? (
-              // 3-column grid for material handling (3 images)
-              <div className="flex flex-col md:flex-row gap-4 overflow-x-auto pb-4">
+              // 3-column responsive grid for material handling (no horizontal scroll)
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {capability.images.map((image, imageIndex) => (
                   <motion.div
                     key={imageIndex}
                     className="relative overflow-hidden rounded-2xl shadow-2xl group"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={isItemInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={isItemInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
                     transition={{ 
                       delay: isItemInView ? 0.2 + (imageIndex * 0.1) : 0,
                       duration: 0.6,
                       ease: isItemInView ? "easeOut" : "easeIn"
                     }}
-                    style={{ width: '450px', minWidth: '450px' }}
                   >
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-[260px] md:h-[320px] object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -356,11 +357,6 @@ const RoboticImageCarousel: React.FC<{ images: string[] }> = ({ images }) => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
-
-      {/* Image Counter */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-        {currentIndex + 1} / {images.length}
-      </div>
 
       {/* Carousel Container */}
       <div
