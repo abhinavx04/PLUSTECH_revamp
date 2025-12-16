@@ -1,6 +1,22 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, Timestamp, getDoc } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, where, Timestamp, getDoc, Query } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+
+// Shared query for published annual returns - matches Firestore security rules
+// This ensures queries align with rules: resource.data.status == "published"
+export const getPublishedAnnualReturnsQuery = (firestoreDb: typeof db): Query | null => {
+  if (!firestoreDb) return null;
+  
+  const annualReturnsCollection = collection(firestoreDb, 'annualReturns');
+  // CRITICAL: Filter by status to match security rules
+  // Rules allow: resource.data.status == "published"
+  // Query must use: where("status", "==", "published")
+  return query(
+    annualReturnsCollection,
+    where('status', '==', 'published'),
+    orderBy('financialYear', 'desc')
+  );
+};
 
 export interface BusinessActivity {
   name: string;
@@ -87,29 +103,56 @@ export const useAnnualReturnsFirestore = () => {
         setError(null);
         
         console.log('[AnnualReturns] Loading annual returns from Firestore...');
+        console.log('[AnnualReturns] Using query with status filter to match security rules');
         
-        const annualReturnsCollection = collection(db, 'annualReturns');
+        // Use shared query that filters by status to match security rules
+        const publishedQuery = getPublishedAnnualReturnsQuery(db);
         
-        // Try to get all documents, sorted by financial year descending
+        if (!publishedQuery) {
+          throw new Error('Firestore not available');
+        }
+        
         let querySnapshot;
         try {
-          const q = query(annualReturnsCollection, orderBy('financialYear', 'desc'));
-          querySnapshot = await getDocs(q);
+          // Query with status filter - matches security rules: resource.data.status == "published"
+          querySnapshot = await getDocs(publishedQuery);
+          console.log('[AnnualReturns] Query executed successfully with status filter');
         } catch (indexError: any) {
-          // If index doesn't exist, try without orderBy
+          // If index doesn't exist for status + orderBy combination, try with status only
           if (indexError?.code === 'failed-precondition') {
-            console.warn('[AnnualReturns] OrderBy index missing, loading without sort');
-            querySnapshot = await getDocs(annualReturnsCollection);
+            console.warn('[AnnualReturns] Composite index missing, trying status-only query');
+            console.warn('[AnnualReturns] Error details:', indexError.message);
+            
+            // Fallback: query with status filter only (no orderBy)
+            const statusOnlyQuery = query(
+              collection(db, 'annualReturns'),
+              where('status', '==', 'published')
+            );
+            querySnapshot = await getDocs(statusOnlyQuery);
+            
+            console.log('[AnnualReturns] Status-only query succeeded, will sort client-side');
           } else {
             throw indexError;
           }
         }
         
-        console.log('[AnnualReturns] Loaded', querySnapshot.size, 'documents');
+        console.log('[AnnualReturns] Loaded', querySnapshot.size, 'published documents');
+        
+        if (querySnapshot.empty) {
+          console.warn('[AnnualReturns] No published documents found. Check that documents have status="published" (lowercase)');
+        }
         
         const returnsData: AnnualReturnData[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          
+          // Validate status field exists and is correct
+          const status = data.status || 'draft';
+          if (status !== 'published') {
+            console.warn(`[AnnualReturns] Document ${doc.id} has status "${status}", expected "published". Skipping.`);
+            return; // Skip non-published documents (shouldn't happen with query filter, but safety check)
+          }
+          
           const returnData: AnnualReturnData = {
             id: doc.id,
             financialYear: data.financialYear || '',
@@ -134,27 +177,41 @@ export const useAnnualReturnsFirestore = () => {
             documentUrl: data.documentUrl || '',
             documentSize: data.documentSize,
             documentUploadedAt: data.documentUploadedAt?.toDate(),
-            status: data.status || 'draft',
+            status: status as 'published',
             createdAt: data.createdAt?.toDate() || new Date(),
             updatedAt: data.updatedAt?.toDate() || new Date(),
           };
           returnsData.push(returnData);
         });
         
-        // Sort manually if we loaded without orderBy
+        // Sort by financial year descending (if not already sorted by query)
         returnsData.sort((a, b) => b.financialYear.localeCompare(a.financialYear));
         
         setAnnualReturns(returnsData);
-        console.log('[AnnualReturns] Processed', returnsData.length, 'annual returns');
+        console.log('[AnnualReturns] Processed', returnsData.length, 'published annual returns');
       } catch (err: any) {
         console.error('[AnnualReturns] Error loading:', err);
+        console.error('[AnnualReturns] Error code:', err?.code);
+        console.error('[AnnualReturns] Error message:', err?.message);
+        console.error('[AnnualReturns] Full error:', JSON.stringify(err, null, 2));
+        
         const code = err?.code || 'unknown';
         let errorMsg = '';
         
         if (code === 'permission-denied') {
-          errorMsg = 'Firestore permission denied. Update security rules to allow read access to "annualReturns" collection.';
+          errorMsg = 'Firestore permission denied. Query must filter by status="published" to match security rules. Ensure documents have status="published" (lowercase) and composite index exists for status + financialYear.';
+          console.error('[AnnualReturns] PERMISSION DENIED - Query-Rules mismatch!');
+          console.error('[AnnualReturns] Rules require: resource.data.status == "published"');
+          console.error('[AnnualReturns] Query must include: where("status", "==", "published")');
+          console.error('[AnnualReturns] Check Firebase Console for missing composite index');
+        } else if (code === 'unavailable' || code === 'deadline-exceeded') {
+          errorMsg = 'Network error. Please check your internet connection and try again.';
+          console.error('[AnnualReturns] Network error - may be mobile connectivity issue');
+        } else if (code === 'unauthenticated') {
+          errorMsg = 'Authentication error. This should not happen for public reads.';
+          console.error('[AnnualReturns] Authentication error - check Firebase config');
         } else {
-          errorMsg = `Failed to load annual returns. Error code: ${code}. Check console for details.`;
+          errorMsg = `Failed to load annual returns. Error code: ${code}. ${err?.message || 'Check console for details.'}`;
         }
         
         setError(errorMsg);
@@ -322,7 +379,9 @@ export const useAnnualReturnsFirestore = () => {
     }
   };
 
+  // Get published returns - query already filters by status, but this is a safety check
   const getPublishedAnnualReturns = () => {
+    // Query already filters to status="published", but filter again as safety check
     return annualReturns.filter(ret => ret.status === 'published');
   };
 

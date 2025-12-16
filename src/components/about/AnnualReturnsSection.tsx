@@ -157,8 +157,7 @@ const AnnualReturnsSection: React.FC = () => {
             {error}
           </p>
           <p className="text-xs text-red-600 mt-3">
-            Check that Firebase is configured (VITE_FIREBASE_*), Firestore rules allow reading
-            published annual returns, and at least one document exists with status "published".
+            Ensure: (1) Firebase config is correct (VITE_FIREBASE_* env vars), (2) Firestore rules allow reading documents where status="published", (3) At least one document has status="published" (lowercase), (4) Composite index exists for status + financialYear fields. Check browser console for details.
           </p>
         </div>
       </div>
