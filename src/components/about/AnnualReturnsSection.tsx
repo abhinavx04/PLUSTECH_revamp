@@ -9,6 +9,8 @@ const AnnualReturnsSection: React.FC = () => {
   const publishedReturns = getPublishedAnnualReturns();
   const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
   const isVisible = isInView || publishedReturns.length > 0; // fail-safe to render even if IntersectionObserver misses
+  const [showPdfViewer, setShowPdfViewer] = useState(false);
+  const [showDownloadMessage, setShowDownloadMessage] = useState(false);
 
   const wrapLabel = (text: string, maxCharsPerLine = 16) => {
     const words = text.split(' ');
@@ -299,38 +301,110 @@ const AnnualReturnsSection: React.FC = () => {
             ))}
           </motion.div>
 
-          {/* PDF Download Block */}
+          {/* PDF View Block */}
           {selectedYearData.documentUrl && (
-            <motion.div 
-              className="bg-gradient-to-r from-[#00aeef] to-[#0099d4] rounded-2xl shadow-lg p-8 mb-12 text-white"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-            >
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-2xl font-bold mb-2">Download Annual Return (PDF)</h3>
-                  {selectedYearData.documentSize && (
-                    <p className="text-white/80">
-                      File size: {(selectedYearData.documentSize / (1024 * 1024)).toFixed(2)} MB
-                    </p>
-                  )}
-                  {selectedYearData.documentUploadedAt && (
-                    <p className="text-white/80 text-sm">
-                      Last updated: {formatDate(selectedYearData.documentUploadedAt.toISOString())}
-                    </p>
-                  )}
+            <>
+              <motion.div 
+                className="bg-gradient-to-r from-[#00aeef] to-[#0099d4] rounded-2xl shadow-lg p-8 mb-12 text-white"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              >
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2">View Annual Return (PDF)</h3>
+                    {selectedYearData.documentSize && (
+                      <p className="text-white/80">
+                        File size: {(selectedYearData.documentSize / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                    )}
+                    {selectedYearData.documentUploadedAt && (
+                      <p className="text-white/80 text-sm">
+                        Last updated: {formatDate(selectedYearData.documentUploadedAt.toISOString())}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowPdfViewer(true)}
+                      className="px-8 py-3 bg-white text-[#00aeef] rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      View PDF
+                    </button>
+                    <button
+                      onClick={() => setShowDownloadMessage(true)}
+                      className="px-8 py-3 bg-white/20 text-white border-2 border-white rounded-lg font-semibold hover:bg-white/30 transition-colors duration-200"
+                    >
+                      Request Download
+                    </button>
+                  </div>
                 </div>
-                <a
-                  href={selectedYearData.documentUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-3 bg-white text-[#00aeef] rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Download PDF
-                </a>
-              </div>
-            </motion.div>
+              </motion.div>
+
+              {/* PDF Viewer Modal */}
+              {showPdfViewer && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setShowPdfViewer(false)}>
+                  <div className="relative w-full h-full max-w-6xl max-h-[90vh] bg-white rounded-lg shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                    <div className="absolute top-0 left-0 right-0 bg-gray-800 text-white px-4 py-3 flex items-center justify-between z-10">
+                      <h3 className="text-lg font-semibold">Annual Return - {selectedYearData.financialYear}</h3>
+                      <button
+                        onClick={() => setShowPdfViewer(false)}
+                        className="text-white hover:text-gray-300 transition-colors text-2xl font-bold"
+                        aria-label="Close viewer"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <iframe
+                      src={`${selectedYearData.documentUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                      className="w-full h-full mt-12"
+                      style={{ height: 'calc(100% - 3rem)' }}
+                      title="Annual Return PDF Viewer"
+                      onContextMenu={(e) => e.preventDefault()}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Download Request Message Modal */}
+              {showDownloadMessage && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setShowDownloadMessage(false)}>
+                  <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="mb-6">
+                      <div className="mx-auto w-16 h-16 bg-[#00aeef]/10 rounded-full flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-[#00aeef]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-2xl font-bold text-[#0f172a] mb-2">Request Document Download</h3>
+                      <p className="text-slate-600 mb-6">
+                        To download the Annual Return document, please contact us. We'll be happy to provide you with the document.
+                      </p>
+                      <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
+                        <p className="text-sm text-slate-700 mb-2"><strong>Contact Information:</strong></p>
+                        <p className="text-sm text-slate-600">Email: <a href="mailto:info@plustech.com" className="text-[#00aeef] hover:underline">info@plustech.com</a></p>
+                        <p className="text-sm text-slate-600">Phone: <a href="tel:+912026114961" className="text-[#00aeef] hover:underline">+91 20 26114961</a></p>
+                        <p className="text-sm text-slate-600">Phone: <a href="tel:+912026056366" className="text-[#00aeef] hover:underline">+91 20 26056366</a></p>
+                      </div>
+                      <div className="flex gap-3">
+                        <a
+                          href="/contact"
+                          className="flex-1 px-6 py-3 bg-[#00aeef] text-white rounded-lg font-semibold hover:bg-[#0099d4] transition-colors duration-200"
+                        >
+                          Contact Us
+                        </a>
+                        <button
+                          onClick={() => setShowDownloadMessage(false)}
+                          className="px-6 py-3 bg-gray-100 text-slate-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors duration-200"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Statutory Snapshot */}
