@@ -48,6 +48,27 @@ const ProjectsManager: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate image file
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setFormError('Invalid file type. Please upload a JPEG, PNG, or WebP image.');
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
+    // Check file size (max 10MB before compression)
+    const maxSizeMB = 10;
+    const fileSizeMB = file.size / (1024 * 1024);
+    if (fileSizeMB > maxSizeMB) {
+      setFormError(`File is too large. Maximum size is ${maxSizeMB}MB before compression.`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
     setFormError(null);
     setSelectedImageFile(file);
 

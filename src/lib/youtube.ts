@@ -3,7 +3,7 @@
  */
 
 const YOUTUBE_ID_REGEX =
-  /^(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([\w-]{11})/i;
+  /(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([\w-]{11})/i;
 
 /**
  * Extract the YouTube video ID from a URL or raw ID.
@@ -15,8 +15,13 @@ export function extractYouTubeId(input: string | undefined | null): string | nul
   // Already looks like an 11-char ID
   if (/^[\w-]{11}$/.test(trimmed)) return trimmed;
 
+  // Try to match YouTube URL (works even with query parameters)
   const match = trimmed.match(YOUTUBE_ID_REGEX);
-  return match ? match[1] : null;
+  if (match && match[1]) {
+    return match[1];
+  }
+  
+  return null;
 }
 
 /**
@@ -40,6 +45,7 @@ export function normalizeYouTubeEmbedUrl(input: string | undefined | null): stri
 export function isValidYouTubeUrl(input: string | undefined | null): boolean {
   if (!input) return false;
   const trimmed = input.trim();
+  // Check if it's a raw 11-char ID or contains a valid YouTube URL pattern
   return /^[\w-]{11}$/.test(trimmed) || YOUTUBE_ID_REGEX.test(trimmed);
 }
 
