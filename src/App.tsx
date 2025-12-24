@@ -28,7 +28,6 @@ function App() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/facility" element={<OfficeTourPage />} />
       <Route path="/about" element={<AboutUsPage />}>
-        <Route index element={<Navigate to="corporate-beliefs" replace />} />
         <Route path="corporate-beliefs" element={<CorporateBeliefsPage />} />
         <Route path="industry-focus" element={<IndustryFocusPage />} />
         <Route path="certifications" element={<CertificationsPage />} />

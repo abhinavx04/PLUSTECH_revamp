@@ -32,6 +32,7 @@ const HomePage: React.FC = () => {
       name: "About", 
       link: "/about",
       submenu: [
+        { title: 'About Us', path: '/about' },
         { title: 'Corporate Beliefs', path: '/about/corporate-beliefs' },
         { title: 'Industry Focus', path: '/about/industry-focus' },
         { title: 'Certifications', path: '/about/certifications' },
@@ -309,7 +310,7 @@ const HomePage: React.FC = () => {
           <a href="#contact" className="px-8 md:px-10 py-4 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_8px_24px_rgba(0,174,239,0.3)] hover:bg-[#0099d4] transition-all duration-300 text-lg transform hover:scale-105">
             Get Started
           </a>
-          <a href="#about" className="px-8 md:px-10 py-4 rounded-full bg-white text-[#00aeef] font-semibold hover:bg-gray-50 transition-all duration-300 text-lg shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-[#00aeef]/20 transform hover:scale-105">
+          <a href="/about" className="px-8 md:px-10 py-4 rounded-full bg-white text-[#00aeef] font-semibold hover:bg-gray-50 transition-all duration-300 text-lg shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-[#00aeef]/20 transform hover:scale-105">
             Learn More
           </a>
         </div>
@@ -338,30 +339,15 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* About Section */}
-      <section id="about" className="w-full px-6 md:px-12 lg:px-16 py-12 bg-white">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <div className="w-full">
-              <video className="w-full rounded-2xl shadow-[0_12px_36px_rgba(0,0,0,0.25)]" src="/home/aboutvideo.mp4" autoPlay muted loop playsInline />
-            </div>
-            <div className="space-y-5">
-              <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">ABOUT US</h3>
-              <div className="text-lg md:text-xl text-gray-800 font-body leading-relaxed space-y-4 text-justify">
-                <p>
-                  Plustech Systems and Solutions is a trusted partner in building integrated paintshops for automotive and general industry applications. With expertise spanning design, engineering, procurement, construction, and commissioning, we provide customized solutions tailored to each customer's unique requirements.
-                </p>
-                <p>
-                  Our reputation has been built over the years on delivering paintshops that embody consistency, reliability, and robust performance. Whether semi-automatic or fully automatic, every solution reflects our commitment to continuous improvement, innovation, and long-term value for our clients.
-                </p>
-                <p>
-                  At Plustech, we don't just build plants—we build partnerships that enable industries to achieve precision, efficiency, and excellence in finishing operations.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Capabilities Section */}
+      <div className="bg-white">
+        <CapabilitiesSection />
+      </div>
+
+      {/* News Section – Latest News & Updates */}
+      <div className="bg-slate-50 border-t border-slate-200">
+        <SimpleNewsSection />
+      </div>
 
       {/* Company Logos Animation – Trusted by leading companies */}
       <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-r from-blue-50 via-blue-100 to-blue-200">
@@ -369,16 +355,6 @@ const HomePage: React.FC = () => {
           <CompanyAnimation />
         </div>
       </section>
-
-      {/* News Section – Latest News & Updates (separate visual section) */}
-      <div className="bg-slate-50 border-t border-slate-200">
-        <SimpleNewsSection />
-      </div>
-
-      {/* Capabilities Section */}
-      <div className="bg-white">
-        <CapabilitiesSection />
-          </div>
 
       <Footer />
     </div>

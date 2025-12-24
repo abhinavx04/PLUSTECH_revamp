@@ -41,6 +41,7 @@ const NewsPage: React.FC = () => {
       name: 'About', 
       link: '/about',
       submenu: [
+        { title: 'About Us', path: '/about' },
         { title: 'Corporate Beliefs', path: '/about/corporate-beliefs' },
         { title: 'Industry Focus', path: '/about/industry-focus' },
         { title: 'Certifications', path: '/about/certifications' },
