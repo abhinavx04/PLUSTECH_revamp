@@ -213,7 +213,30 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div className="rounded-2xl border border-white/60 bg-white/80 shadow-md p-4">
                   <div className="text-xs uppercase tracking-[0.12em] text-slate-500">Phone</div>
-                  <div className="text-base font-semibold text-[#0f172a]">+1-800-123-4567</div>
+                  <div className="text-base font-semibold text-[#0f172a]">+91 20 26114961</div>
+                  <div className="text-base font-semibold text-[#0f172a]">+91 20 26056366</div>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700">
+                <div className="rounded-2xl border border-white/60 bg-white/80 shadow-md p-4">
+                  <div className="text-xs uppercase tracking-[0.12em] text-slate-500">Main Office</div>
+                  <div className="text-sm text-[#0f172a] mt-2">
+                    Office no. 412, Antariksh Towers, 9th Floor, Building B,
+                    <br />
+                    Station Rd, opp. Old Zilla Parishad, Mangalwar Peth,
+                    <br />
+                    Pune, Maharashtra 411001
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-white/60 bg-white/80 shadow-md p-4">
+                  <div className="text-xs uppercase tracking-[0.12em] text-slate-500">Sales Office</div>
+                  <div className="text-sm text-[#0f172a] mt-2">
+                    6.29, Level 6, Avanta Business Center, Park Centra, Block A,
+                    <br />
+                    Sector 30, National Highway 8, Gurugram-122003
+                    <br />
+                    <span className="font-semibold">+91 99 10115755</span>
+                  </div>
                 </div>
               </div>
             </div>
