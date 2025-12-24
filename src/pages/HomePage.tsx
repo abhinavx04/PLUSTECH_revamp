@@ -305,7 +305,7 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* CTAs */}
-      <div className="w-full flex items-center justify-center mt-8 md:mt-12">
+      <div className="w-full hidden md:flex items-center justify-center mt-8 md:mt-12">
         <div className="flex items-center justify-center gap-6">
           <a href="#contact" className="px-8 md:px-10 py-4 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_8px_24px_rgba(0,174,239,0.3)] hover:bg-[#0099d4] transition-all duration-300 text-lg transform hover:scale-105">
             Get Started
