@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useProjectsFirestore, type Project } from '../hooks/useProjectsFirestore';
 import { uploadImageToStorage } from '../lib/storageUtils';
-import { getFileSizeMB } from '../lib/imageUtils';
 import { buildYouTubeEmbedUrl, extractYouTubeId, isValidYouTubeUrl } from '../lib/youtube';
 
 type Status = 'draft' | 'published';
