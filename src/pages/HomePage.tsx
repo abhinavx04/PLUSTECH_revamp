@@ -300,7 +300,7 @@ const HomePage: React.FC = () => {
               </p>
             </div>
           </div>
-          <Threads color={[0, 0.8, 1]} amplitude={1.2} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
+          <Threads color={[0, 0.8, 1]} amplitude={1.6} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
         </div>
       </div>
 
