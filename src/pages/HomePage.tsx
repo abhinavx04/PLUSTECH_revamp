@@ -292,7 +292,7 @@ const HomePage: React.FC = () => {
           <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
             <div className="text-center px-4 md:px-6 lg:px-8 max-w-5xl">
               <h1 className="text-black/60 text-3xl md:text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
-                Building Intelligent Solutions for Modern Manufacturing
+                DEVELOPING SOLUTION<br />DELIVERING QUALITY
               </h1>
               <p className="mt-4 text-black/50 text-base md:text-lg max-w-3xl mx-auto font-body text-justify" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
                 At PlusTech, we design, engineer, and deliver precision systems that connect
@@ -300,7 +300,7 @@ const HomePage: React.FC = () => {
               </p>
             </div>
           </div>
-          <Threads color={[0, 0.8, 1]} amplitude={2.4} enableMouseInteraction={true} />
+          <Threads color={[0, 0.8, 1]} amplitude={1.2} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
         </div>
       </div>
 
