@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // Utility function to combine class names
 const cn = (...classes: (string | undefined | null | false)[]): string => {
@@ -16,8 +16,14 @@ interface NavBodyProps {
   className?: string;
 }
 
+export interface NavItem {
+  name: string;
+  link: string;
+  submenu?: Array<{ title: string; path: string }>;
+}
+
 interface NavItemsProps {
-  items: Array<{ name: string; link: string }>;
+  items: Array<NavItem>;
   className?: string;
 }
 
@@ -84,20 +90,81 @@ export const NavBody = ({ children, className }: NavBodyProps) => {
   );
 };
 
-// Navigation Items
+// Navigation Items with Dropdown Support
 export const NavItems = ({ items, className }: NavItemsProps) => {
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.dropdown-container')) {
+        setOpenDropdown(null);
+      }
+    };
+
+    if (openDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [openDropdown]);
+
   return (
     <ul className={cn("flex items-center space-x-8", className)}>
-      {items.map((item, idx) => (
-        <li key={`nav-item-${idx}`}>
-          <a
-            href={item.link}
-            className="relative text-[#222222] hover:text-[#333333] transition-colors duration-200 font-medium transform hover:scale-105 inline-block"
+      {items.map((item, idx) => {
+        const hasSubmenu = item.submenu && item.submenu.length > 0;
+        const isOpen = openDropdown === item.name;
+
+        return (
+          <li 
+            key={`nav-item-${idx}`} 
+            className="relative dropdown-container"
           >
-            {item.name}
-          </a>
-        </li>
-      ))}
+            <a
+              href={item.link}
+              onClick={(e) => {
+                if (hasSubmenu) {
+                  e.preventDefault();
+                  setOpenDropdown(isOpen ? null : item.name);
+                }
+              }}
+              className={cn(
+                "relative text-[#222222] hover:text-[#333333] transition-colors duration-200 font-medium transform hover:scale-105 inline-block flex items-center gap-1",
+                isOpen && "text-[#00aeef]"
+              )}
+            >
+              {item.name}
+              {hasSubmenu && (
+                <svg 
+                  className={cn(
+                    "w-4 h-4 transition-transform duration-200",
+                    isOpen && "rotate-180"
+                  )} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              )}
+            </a>
+            
+            {hasSubmenu && isOpen && (
+              <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 opacity-100 translate-y-0 transition-all duration-200 ease-out max-h-[80vh] overflow-y-auto">
+                {item.submenu.map((subItem, subIdx) => (
+                  <a
+                    key={`submenu-${idx}-${subIdx}`}
+                    href={subItem.path}
+                    className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#00aeef] transition-colors duration-150 whitespace-nowrap"
+                    onClick={() => setOpenDropdown(null)}
+                  >
+                    {subItem.title}
+                  </a>
+                ))}
+              </div>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 };
