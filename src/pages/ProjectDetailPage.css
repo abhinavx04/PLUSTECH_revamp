@@ -1,0 +1,23 @@
+/* Hide scrollbar for project image gallery */
+.project-image-scroll-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+
+.project-image-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scrolling with snap points */
+.project-image-scroll-container {
+  scroll-snap-type: x mandatory;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .project-image-scroll-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+

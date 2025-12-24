@@ -12,6 +12,7 @@ interface ProjectFormState {
   description: string;
   category: string;
   featuredImageUrl: string;
+  imageUrls: string; // Comma-separated for form, will be converted to array
   youtubeUrl: string;
   year: string;
   location: string;
@@ -25,6 +26,7 @@ const defaultFormState: ProjectFormState = {
   description: '',
   category: '',
   featuredImageUrl: '',
+  imageUrls: '',
   youtubeUrl: '',
   year: '',
   location: '',
@@ -38,52 +40,78 @@ const ProjectsManager: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<ProjectFormState>(defaultFormState);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    // Validate image file
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      setFormError('Invalid file type. Please upload a JPEG, PNG, or WebP image.');
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-      return;
-    }
-
-    // Check file size (max 10MB before compression)
     const maxSizeMB = 10;
-    const fileSizeMB = file.size / (1024 * 1024);
-    if (fileSizeMB > maxSizeMB) {
-      setFormError(`File is too large. Maximum size is ${maxSizeMB}MB before compression.`);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+    const validFiles: File[] = [];
+    const invalidFiles: string[] = [];
+
+    files.forEach((file) => {
+      // Validate file type
+      if (!validTypes.includes(file.type)) {
+        invalidFiles.push(`${file.name}: Invalid file type`);
+        return;
       }
-      return;
+
+      // Check file size
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > maxSizeMB) {
+        invalidFiles.push(`${file.name}: File too large (max ${maxSizeMB}MB)`);
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    if (invalidFiles.length > 0) {
+      setFormError(`Some files were rejected:\n${invalidFiles.join('\n')}`);
     }
 
-    setFormError(null);
-    setSelectedImageFile(file);
+    if (validFiles.length > 0) {
+      setFormError(null);
+      const newFiles = [...selectedImageFiles, ...validFiles];
+      setSelectedImageFiles(newFiles);
 
-    const reader = new FileReader();
-    reader.onloadend = () => setImagePreview(reader.result as string);
-    reader.readAsDataURL(file);
-  };
+      // Create previews for new files
+      const newPreviews: string[] = [];
+      validFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          newPreviews.push(reader.result as string);
+          if (newPreviews.length === validFiles.length) {
+            setImagePreviews([...imagePreviews, ...newPreviews]);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
 
-  const handleRemoveImage = () => {
-    setSelectedImageFile(null);
-    setImagePreview(null);
-    setFormData((prev) => ({ ...prev, featuredImageUrl: '' }));
+    // Reset input to allow selecting same files again
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newFiles = selectedImageFiles.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setSelectedImageFiles(newFiles);
+    setImagePreviews(newPreviews);
+  };
+
+  const handleRemoveExistingImage = (imageUrl: string) => {
+    const currentUrls = formData.imageUrls?.split(',').filter(Boolean) || [];
+    const newUrls = currentUrls.filter((url) => url.trim() !== imageUrl.trim());
+    setFormData((prev) => ({ ...prev, imageUrls: newUrls.join(',') }));
   };
 
   const parseTechnologies = (value: string) =>
@@ -105,8 +133,8 @@ const ProjectsManager: React.FC = () => {
     setShowForm(false);
     setEditingId(null);
     setFormError(null);
-    setSelectedImageFile(null);
-    setImagePreview(null);
+    setSelectedImageFiles([]);
+    setImagePreviews([]);
     setFormData(defaultFormState);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -124,25 +152,41 @@ const ProjectsManager: React.FC = () => {
     }
 
     try {
-      let finalImageUrl = formData.featuredImageUrl;
       const videoId = extractYouTubeId(formData.youtubeUrl || '');
       const technologies = parseTechnologies(formData.technologies);
+      
+      // Get existing image URLs from form
+      const existingImageUrls = formData.imageUrls
+        .split(',')
+        .map((url) => url.trim())
+        .filter(Boolean);
 
-      if (selectedImageFile) {
+      // Upload new images
+      let uploadedImageUrls: string[] = [];
+      if (selectedImageFiles.length > 0) {
         setUploadingImage(true);
         try {
-          finalImageUrl = await uploadImageToStorage(selectedImageFile, 'projects/images');
+          uploadedImageUrls = await Promise.all(
+            selectedImageFiles.map((file) => uploadImageToStorage(file, 'projects/images'))
+          );
         } finally {
           setUploadingImage(false);
         }
       }
+
+      // Combine existing and new image URLs
+      const allImageUrls = [...existingImageUrls, ...uploadedImageUrls];
+      
+      // For backward compatibility, set featuredImageUrl to first image
+      const featuredImageUrl = allImageUrls.length > 0 ? allImageUrls[0] : undefined;
 
       const payload = {
         title: formData.title.trim(),
         shortDescription: formData.shortDescription.trim(),
         description: formData.description.trim(),
         category: formData.category.trim() || undefined,
-        featuredImageUrl: finalImageUrl || undefined,
+        featuredImageUrl, // Keep for backward compatibility
+        imageUrls: allImageUrls.length > 0 ? allImageUrls : undefined,
         youtubeVideoId: videoId || undefined,
         year: formData.year.trim() || undefined,
         location: formData.location.trim() || undefined,
@@ -157,6 +201,8 @@ const ProjectsManager: React.FC = () => {
       }
 
       resetForm();
+      setSelectedImageFiles([]);
+      setImagePreviews([]);
     } catch (err: any) {
       console.error('[Projects] Error saving project:', err);
       const message = err?.message || 'Failed to save project. Check console for details.';
@@ -167,20 +213,22 @@ const ProjectsManager: React.FC = () => {
 
   const handleEdit = (project: Project) => {
     setEditingId(project.id);
+    const imageUrls = project.imageUrls || (project.featuredImageUrl ? [project.featuredImageUrl] : []);
     setFormData({
       title: project.title || '',
       shortDescription: project.shortDescription || '',
       description: project.description || '',
       category: project.category || '',
       featuredImageUrl: project.featuredImageUrl || '',
+      imageUrls: imageUrls.join(','),
       youtubeUrl: project.youtubeVideoId ? `https://youtu.be/${project.youtubeVideoId}` : '',
       year: project.year || '',
       location: project.location || '',
       technologies: (project.technologies || []).join(', '),
       status: project.status,
     });
-    setImagePreview(project.featuredImageUrl || null);
-    setSelectedImageFile(null);
+    setImagePreviews(imageUrls);
+    setSelectedImageFiles([]);
     setShowForm(true);
   };
 
@@ -349,25 +397,63 @@ const ProjectsManager: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-white text-sm font-medium mb-2">Featured Image</label>
-                {(imagePreview || formData.featuredImageUrl) && (
-                  <div className="mb-3 relative">
-                    <img
-                      src={imagePreview || formData.featuredImageUrl}
-                      alt="Preview"
-                      className="w-full h-48 object-cover rounded-lg border border-white/20"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition-colors"
-                    >
-                      ✕
-                    </button>
+                <label className="block text-white text-sm font-medium mb-2">Project Images (Multiple)</label>
+                
+                {/* Existing Images Preview */}
+                {formData.imageUrls && (
+                  <div className="mb-4">
+                    <p className="text-xs text-gray-300 mb-2">Existing Images:</p>
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                      {formData.imageUrls.split(',').filter(Boolean).map((url, index) => (
+                        <div key={index} className="relative flex-shrink-0">
+                          <img
+                            src={url.trim()}
+                            alt={`Preview ${index + 1}`}
+                            className="w-24 h-24 object-cover rounded-lg border border-white/20"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveExistingImage(url.trim())}
+                            className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
+
+                {/* New Images Preview */}
+                {(imagePreviews.length > 0 || selectedImageFiles.length > 0) && (
+                  <div className="mb-4">
+                    <p className="text-xs text-gray-300 mb-2">New Images to Upload:</p>
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                      {selectedImageFiles.map((file, index) => (
+                        <div key={index} className="relative flex-shrink-0">
+                          <img
+                            src={imagePreviews[index] || URL.createObjectURL(file)}
+                            alt={`Preview ${index + 1}`}
+                            className="w-24 h-24 object-cover rounded-lg border border-white/20"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index)}
+                            className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700 transition-colors"
+                          >
+                            ✕
+                          </button>
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-1 py-0.5 text-center truncate">
+                            {file.name}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <input
                     ref={fileInputRef}
@@ -377,6 +463,7 @@ const ProjectsManager: React.FC = () => {
                     className="hidden"
                     id="project-image-upload"
                     disabled={uploadingImage}
+                    multiple
                   />
                   <label
                     htmlFor="project-image-upload"
@@ -389,14 +476,14 @@ const ProjectsManager: React.FC = () => {
                     {uploadingImage ? (
                       <div className="flex items-center space-x-2 text-white">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00aeef]" />
-                        <span>Uploading and compressing image...</span>
+                        <span>Uploading and compressing images...</span>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center space-y-2 text-white">
                         <span className="text-sm">
-                          {selectedImageFile
-                            ? `Selected: ${selectedImageFile.name} (${getFileSizeMB(selectedImageFile).toFixed(2)}MB)`
-                            : 'Click to upload image (JPEG, PNG, WebP)'}
+                          {selectedImageFiles.length > 0
+                            ? `${selectedImageFiles.length} image(s) selected - Click to add more`
+                            : 'Click to upload images (JPEG, PNG, WebP) - Multiple selection allowed'}
                         </span>
                         <span className="text-xs text-gray-400">
                           Stored securely in projects/images (auto-compressed)
@@ -410,15 +497,21 @@ const ProjectsManager: React.FC = () => {
               <div>
                 <label className="block text-white text-sm font-medium mb-2">YouTube URL (optional)</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.youtubeUrl}
                   onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
+                  placeholder="https://www.youtube.com/watch?v=VIDEO_ID or youtu.be/VIDEO_ID"
                 />
                 <p className="text-xs text-gray-300 mt-1">
                   Accepts youtube.com/watch?v= or youtu.be links. We store only the video ID.
                 </p>
+
+                {formData.youtubeUrl && !isValidYouTubeUrl(formData.youtubeUrl) && (
+                  <p className="text-xs text-yellow-300 mt-1">
+                    ⚠️ Could not extract video ID from this URL. Please check the format.
+                  </p>
+                )}
 
                 {formData.youtubeUrl && isValidYouTubeUrl(formData.youtubeUrl) && (
                   <div className="mt-3 aspect-video rounded-lg overflow-hidden border border-white/10 bg-black/40">

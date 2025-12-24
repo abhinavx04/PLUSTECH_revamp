@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Navbar,
@@ -13,6 +13,7 @@ import {
 import Footer from '../components/Footer';
 import { useProjectsFirestore, type Project } from '../hooks/useProjectsFirestore';
 import { buildYouTubeEmbedUrl } from '../lib/youtube';
+import './ProjectDetailPage.css';
 
 const ProjectDetailPage: React.FC = () => {
   const { projectId } = useParams();
@@ -22,6 +23,39 @@ const ProjectDetailPage: React.FC = () => {
   const [notFound, setNotFound] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
+  const imageGalleryRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Check scroll buttons visibility
+  const checkScrollButtons = useCallback(() => {
+    if (imageGalleryRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = imageGalleryRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  }, []);
+
+  // Set up scroll listeners when project changes
+  useEffect(() => {
+    if (!project) return;
+    
+    const imageUrls = project.imageUrls || (project.featuredImageUrl ? [project.featuredImageUrl] : []);
+    if (imageUrls.length === 0) return;
+
+    // Initial check
+    setTimeout(() => checkScrollButtons(), 100);
+
+    const gallery = imageGalleryRef.current;
+    if (gallery) {
+      gallery.addEventListener('scroll', checkScrollButtons);
+      window.addEventListener('resize', checkScrollButtons);
+      return () => {
+        gallery.removeEventListener('scroll', checkScrollButtons);
+        window.removeEventListener('resize', checkScrollButtons);
+      };
+    }
+  }, [project?.id, project?.imageUrls, project?.featuredImageUrl, checkScrollButtons]);
 
   const cn = (...classes: (string | undefined | null | false)[]): string => {
     return classes.filter(Boolean).join(' ');
@@ -49,28 +83,52 @@ const ProjectDetailPage: React.FC = () => {
 
   useEffect(() => {
     const loadProject = async () => {
-      if (!projectId) return;
-
-      const cached = getProjectById(projectId);
-      if (cached) {
-        if (cached.status !== 'published') {
-          setNotFound(true);
-        } else {
-          setProject(cached);
-          document.title = `${cached.title} | Projects`;
-        }
+      if (!projectId) {
         setLoading(false);
+        setNotFound(true);
         return;
       }
 
-      const remote = await fetchProjectById(projectId);
-      if (!remote || remote.status !== 'published') {
+      try {
+        setLoading(true);
+        setNotFound(false);
+        
+        // Try to get from cache first
+        const cached = getProjectById(projectId);
+        if (cached) {
+          console.log('[ProjectDetail] Found in cache:', cached);
+          if (cached.status !== 'published') {
+            console.log('[ProjectDetail] Project not published:', cached.status);
+            setNotFound(true);
+          } else {
+            setProject(cached);
+            document.title = `${cached.title} | Projects`;
+          }
+          setLoading(false);
+          return;
+        }
+
+        // Fetch from Firestore
+        console.log('[ProjectDetail] Fetching from Firestore:', projectId);
+        const remote = await fetchProjectById(projectId);
+        console.log('[ProjectDetail] Fetched project:', remote);
+        
+        if (!remote) {
+          console.log('[ProjectDetail] Project not found');
+          setNotFound(true);
+        } else if (remote.status !== 'published') {
+          console.log('[ProjectDetail] Project not published:', remote.status);
+          setNotFound(true);
+        } else {
+          setProject(remote);
+          document.title = `${remote.title} | Projects`;
+        }
+      } catch (error) {
+        console.error('[ProjectDetail] Error loading project:', error);
         setNotFound(true);
-      } else {
-        setProject(remote);
-        document.title = `${remote.title} | Projects`;
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     loadProject();
@@ -222,8 +280,9 @@ const ProjectDetailPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-8 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-lg">
-              {project.youtubeVideoId ? (
+            {/* YouTube Video */}
+            {project.youtubeVideoId && (
+              <div className="mt-8 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-lg">
                 <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
                   <iframe
                     title={project.title}
@@ -234,20 +293,122 @@ const ProjectDetailPage: React.FC = () => {
                     className="absolute inset-0 w-full h-full"
                   />
                 </div>
-              ) : project.featuredImageUrl ? (
-                <img
-                  src={project.featuredImageUrl}
-                  alt={project.title}
-                  className="w-full h-full max-h-[640px] object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : (
-                <div className="h-64 w-full bg-gradient-to-br from-slate-100 to-blue-50 flex items-center justify-center text-slate-500">
-                  No media available
+              </div>
+            )}
+
+            {/* Image Gallery with Manual Scroll Buttons */}
+            {project && (() => {
+              const imageUrls = project.imageUrls || (project.featuredImageUrl ? [project.featuredImageUrl] : []);
+              if (imageUrls.length === 0) return null;
+
+              const scrollLeft = () => {
+                if (imageGalleryRef.current) {
+                  const scrollAmount = imageGalleryRef.current.clientWidth * 0.8;
+                  imageGalleryRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                }
+              };
+
+              const scrollRight = () => {
+                if (imageGalleryRef.current) {
+                  const scrollAmount = imageGalleryRef.current.clientWidth * 0.8;
+                  imageGalleryRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                }
+              };
+
+              return (
+                <div className="mt-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-semibold text-slate-900">Project Images</h3>
+                    {imageUrls.length > 1 && (
+                      <div className="text-sm text-slate-500">
+                        {imageUrls.length} image{imageUrls.length !== 1 ? 's' : ''}
+                      </div>
+                    )}
+                  </div>
+                  <div className="relative">
+                    {/* Left Scroll Button */}
+                    {imageUrls.length > 1 && canScrollLeft && (
+                      <button
+                        onClick={scrollLeft}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 border border-slate-200"
+                        aria-label="Scroll left"
+                      >
+                        <svg
+                          className="w-5 h-5 md:w-6 md:h-6 text-slate-700"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                    )}
+
+                    {/* Image Gallery Container */}
+                    <div
+                      ref={imageGalleryRef}
+                      className="overflow-x-auto pb-4 -mx-4 px-4 project-image-scroll-container snap-x snap-mandatory"
+                      style={{
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
+                      }}
+                    >
+                      <div className="flex gap-4" style={{ width: 'max-content', minHeight: '200px' }}>
+                        {imageUrls.map((imageUrl, index) => (
+                          <div
+                            key={`image-${index}-${imageUrl}`}
+                            className="flex-shrink-0 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-md hover:shadow-lg transition-shadow snap-start bg-slate-50"
+                            style={{ 
+                              width: 'min(85vw, 600px)',
+                              scrollSnapAlign: 'start',
+                              minHeight: '200px'
+                            }}
+                          >
+                            <img
+                              src={imageUrl}
+                              alt={`${project.title} - Image ${index + 1}`}
+                              className="w-full h-auto object-contain max-h-[60vh] md:max-h-[600px]"
+                              loading={index < 3 ? 'eager' : 'lazy'}
+                              decoding="async"
+                              onLoad={() => {
+                                // Trigger scroll button check after image loads
+                                setTimeout(() => checkScrollButtons(), 100);
+                              }}
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400 text-sm">Image failed to load</div>';
+                                }
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Right Scroll Button */}
+                    {imageUrls.length > 1 && canScrollRight && (
+                      <button
+                        onClick={scrollRight}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 border border-slate-200"
+                        aria-label="Scroll right"
+                      >
+                        <svg
+                          className="w-5 h-5 md:w-6 md:h-6 text-slate-700"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
+              );
+            })()}
 
             <div className="mt-10 grid lg:grid-cols-[1.4fr_0.6fr] gap-10">
               <div className="space-y-6">

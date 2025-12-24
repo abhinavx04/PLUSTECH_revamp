@@ -8,6 +8,8 @@ interface Props {
 
 const ProjectCard: React.FC<Props> = ({ project }) => {
   const hasVideo = Boolean(project.youtubeVideoId);
+  const imageUrls = project.imageUrls || (project.featuredImageUrl ? [project.featuredImageUrl] : []);
+  const hasImages = imageUrls.length > 0;
 
   return (
     <a
@@ -15,9 +17,9 @@ const ProjectCard: React.FC<Props> = ({ project }) => {
       className="group bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-100 hover:-translate-y-1 hover:shadow-xl transition duration-300 flex flex-col"
     >
       <div className="relative h-52 bg-slate-100 overflow-hidden">
-        {project.featuredImageUrl ? (
+        {hasImages ? (
           <img
-            src={project.featuredImageUrl}
+            src={imageUrls[0]}
             alt={project.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
@@ -37,6 +39,12 @@ const ProjectCard: React.FC<Props> = ({ project }) => {
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-100 to-blue-50" />
+        )}
+
+        {hasImages && imageUrls.length > 1 && (
+          <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+            +{imageUrls.length - 1} more
+          </div>
         )}
 
         {hasVideo && (

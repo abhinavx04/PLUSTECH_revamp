@@ -22,7 +22,8 @@ export interface Project {
   shortDescription: string;
   description: string;
   category?: string;
-  featuredImageUrl?: string;
+  featuredImageUrl?: string; // Keep for backward compatibility
+  imageUrls?: string[]; // New: array of image URLs
   youtubeVideoId?: string;
   year?: string;
   location?: string;
@@ -37,7 +38,8 @@ export interface CreateProjectData {
   shortDescription: string;
   description: string;
   category?: string;
-  featuredImageUrl?: string;
+  featuredImageUrl?: string; // Keep for backward compatibility
+  imageUrls?: string[]; // New: array of image URLs
   youtubeVideoId?: string;
   year?: string;
   location?: string;
@@ -153,6 +155,7 @@ export const useProjectsFirestore = () => {
             description: data.description || '',
             category: data.category,
             featuredImageUrl: data.featuredImageUrl,
+            imageUrls: data.imageUrls || (data.featuredImageUrl ? [data.featuredImageUrl] : []), // Support both old and new format
             youtubeVideoId: data.youtubeVideoId,
             year: data.year,
             location: data.location,
@@ -251,14 +254,17 @@ export const useProjectsFirestore = () => {
       const { id, ...updateData } = projectData;
       const projectDoc = doc(db, COLLECTION_NAME, id);
 
-      // Delete old image if replaced
+      // Delete old images if replaced
       const currentDoc = await getDoc(projectDoc);
       if (currentDoc.exists()) {
         const currentData = currentDoc.data();
-        const oldImageUrl = currentData?.featuredImageUrl;
-        const newImageUrl = updateData.featuredImageUrl;
-        if (oldImageUrl && newImageUrl && oldImageUrl !== newImageUrl) {
-          await deleteImageFromStorage(oldImageUrl, ['projects/images/', 'news/images/']);
+        const oldImageUrls = currentData?.imageUrls || (currentData?.featuredImageUrl ? [currentData.featuredImageUrl] : []);
+        const newImageUrls = updateData.imageUrls || (updateData.featuredImageUrl ? [updateData.featuredImageUrl] : []);
+        
+        // Delete images that are no longer in the new array
+        const imagesToDelete = oldImageUrls.filter((url: string) => !newImageUrls.includes(url));
+        for (const imageUrl of imagesToDelete) {
+          await deleteImageFromStorage(imageUrl, ['projects/images/', 'news/images/']);
         }
       }
 
@@ -305,8 +311,9 @@ export const useProjectsFirestore = () => {
 
       if (docSnapshot.exists()) {
         const projectData = docSnapshot.data();
-        if (projectData?.featuredImageUrl) {
-          await deleteImageFromStorage(projectData.featuredImageUrl, ['projects/images/', 'news/images/']);
+        const imageUrls = projectData?.imageUrls || (projectData?.featuredImageUrl ? [projectData.featuredImageUrl] : []);
+        for (const imageUrl of imageUrls) {
+          await deleteImageFromStorage(imageUrl, ['projects/images/', 'news/images/']);
         }
       }
 
@@ -353,6 +360,7 @@ export const useProjectsFirestore = () => {
         description: data.description || '',
         category: data.category,
         featuredImageUrl: data.featuredImageUrl,
+        imageUrls: data.imageUrls || (data.featuredImageUrl ? [data.featuredImageUrl] : []), // Support both old and new format
         youtubeVideoId: data.youtubeVideoId,
         year: data.year,
         location: data.location,
