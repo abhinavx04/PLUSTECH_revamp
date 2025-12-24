@@ -16,12 +16,35 @@ import {
 import { db } from '../lib/firebase';
 import { deleteImageFromStorage } from '../lib/storageUtils';
 
+export const PROCESS_OPTIONS = [
+  'Ovens and Forced Coolers',
+  'Air Supply with and without Temperature and Humidity Control with BLDC Blowers',
+  'Integration with Material Handling System',
+  'Integration with Robotic & Auto Applicators',
+  'Paint Circulation, Sealer & U/B Circulation Systems',
+  'Energy Saving Equipment - Heat Pumps, RTO, Heat Recovery Systems',
+  'Robotic Skids and C Hanger Cleaning',
+  'Spray/Dip Pretreatment Plants with Accessories and Auxiliary Systems',
+  'Electrodeposition Plants with Accessories and Auxiliary Systems',
+  'Autophoretic Plants with Accessories and Auxiliary Systems',
+  'Paintbooths with Circulation and Recirculation System - Wet Type/ Dry Type',
+  'Paint Sludge Separation System (Common and Individual)',
+] as const;
+
+export const SURFACE_OPTIONS = [
+  'Sheet-Metal',
+  'ABS/PP',
+  'Special Surfaces',
+] as const;
+
 export interface Project {
   id: string;
   title: string;
   shortDescription: string;
   description: string;
   category?: string;
+  processes?: string[];
+  surfaces?: string[];
   featuredImageUrl?: string; // Keep for backward compatibility
   imageUrls?: string[]; // New: array of image URLs
   youtubeVideoId?: string;
@@ -38,6 +61,8 @@ export interface CreateProjectData {
   shortDescription: string;
   description: string;
   category?: string;
+  processes?: string[];
+  surfaces?: string[];
   featuredImageUrl?: string; // Keep for backward compatibility
   imageUrls?: string[]; // New: array of image URLs
   youtubeVideoId?: string;
@@ -154,6 +179,8 @@ export const useProjectsFirestore = () => {
             shortDescription: data.shortDescription || '',
             description: data.description || '',
             category: data.category,
+            processes: data.processes || [],
+            surfaces: data.surfaces || [],
             featuredImageUrl: data.featuredImageUrl,
             imageUrls: data.imageUrls || (data.featuredImageUrl ? [data.featuredImageUrl] : []), // Support both old and new format
             youtubeVideoId: data.youtubeVideoId,
@@ -216,6 +243,8 @@ export const useProjectsFirestore = () => {
       const now = Timestamp.now();
       const payload = sanitizeForFirestore({
         ...projectData,
+        processes: projectData.processes || [],
+        surfaces: projectData.surfaces || [],
         createdAt: now,
         updatedAt: now,
       });
@@ -225,6 +254,8 @@ export const useProjectsFirestore = () => {
         id: docRef.id,
         ...projectData,
         technologies: projectData.technologies || [],
+        processes: projectData.processes || [],
+        surfaces: projectData.surfaces || [],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -281,6 +312,8 @@ export const useProjectsFirestore = () => {
                 ...project,
                 ...updateData,
                 technologies: updateData.technologies || project.technologies,
+                processes: updateData.processes || project.processes,
+                surfaces: updateData.surfaces || project.surfaces,
                 updatedAt: new Date(),
               }
             : project
@@ -359,6 +392,8 @@ export const useProjectsFirestore = () => {
         shortDescription: data.shortDescription || '',
         description: data.description || '',
         category: data.category,
+        processes: data.processes || [],
+        surfaces: data.surfaces || [],
         featuredImageUrl: data.featuredImageUrl,
         imageUrls: data.imageUrls || (data.featuredImageUrl ? [data.featuredImageUrl] : []), // Support both old and new format
         youtubeVideoId: data.youtubeVideoId,

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { useProjectsFirestore, type Project } from '../hooks/useProjectsFirestore';
+import { useProjectsFirestore, type Project, PROCESS_OPTIONS, SURFACE_OPTIONS } from '../hooks/useProjectsFirestore';
 import { uploadImageToStorage } from '../lib/storageUtils';
 import { buildYouTubeEmbedUrl, extractYouTubeId, isValidYouTubeUrl } from '../lib/youtube';
 
@@ -10,6 +10,8 @@ interface ProjectFormState {
   shortDescription: string;
   description: string;
   category: string;
+  processes: string[];
+  surfaces: string[];
   featuredImageUrl: string;
   imageUrls: string; // Comma-separated for form, will be converted to array
   youtubeUrl: string;
@@ -24,6 +26,8 @@ const defaultFormState: ProjectFormState = {
   shortDescription: '',
   description: '',
   category: '',
+  processes: [],
+  surfaces: [],
   featuredImageUrl: '',
   imageUrls: '',
   youtubeUrl: '',
@@ -184,6 +188,8 @@ const ProjectsManager: React.FC = () => {
         shortDescription: formData.shortDescription.trim(),
         description: formData.description.trim(),
         category: formData.category.trim() || undefined,
+        processes: formData.processes,
+        surfaces: formData.surfaces,
         featuredImageUrl, // Keep for backward compatibility
         imageUrls: allImageUrls.length > 0 ? allImageUrls : undefined,
         youtubeVideoId: videoId || undefined,
@@ -218,6 +224,8 @@ const ProjectsManager: React.FC = () => {
       shortDescription: project.shortDescription || '',
       description: project.description || '',
       category: project.category || '',
+      processes: project.processes || [],
+      surfaces: project.surfaces || [],
       featuredImageUrl: project.featuredImageUrl || '',
       imageUrls: imageUrls.join(','),
       youtubeUrl: project.youtubeVideoId ? `https://youtu.be/${project.youtubeVideoId}` : '',
@@ -348,6 +356,58 @@ const ProjectsManager: React.FC = () => {
                   placeholder="Robotics, PLC, IoT"
                 />
                 <p className="text-xs text-gray-300 mt-1">Comma separated</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="block text-white text-sm font-medium">Processes (select all that apply)</label>
+                <div className="max-h-60 overflow-y-auto border border-white/20 rounded-lg p-3 space-y-2">
+                  {PROCESS_OPTIONS.map((process) => (
+                    <label key={process} className="flex items-start gap-2 text-sm text-gray-100 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.processes.includes(process)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData((prev) => ({
+                            ...prev,
+                            processes: checked
+                              ? [...prev.processes, process]
+                              : prev.processes.filter((p) => p !== process),
+                          }));
+                        }}
+                        className="mt-1 w-4 h-4 text-[#00aeef] bg-transparent border-white/40 rounded focus:ring-[#00aeef]"
+                      />
+                      <span>{process}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-white text-sm font-medium">Surfaces (select all that apply)</label>
+                <div className="border border-white/20 rounded-lg p-3 space-y-2">
+                  {SURFACE_OPTIONS.map((surface) => (
+                    <label key={surface} className="flex items-center gap-2 text-sm text-gray-100 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.surfaces.includes(surface)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData((prev) => ({
+                            ...prev,
+                            surfaces: checked
+                              ? [...prev.surfaces, surface]
+                              : prev.surfaces.filter((s) => s !== surface),
+                          }));
+                        }}
+                        className="w-4 h-4 text-[#00aeef] bg-transparent border-white/40 rounded focus:ring-[#00aeef]"
+                      />
+                      <span>{surface}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
 

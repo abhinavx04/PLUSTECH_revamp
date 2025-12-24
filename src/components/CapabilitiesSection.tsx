@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 
 interface CapabilityItem {
   id: string;
@@ -14,14 +14,14 @@ interface CapabilityItem {
 
 const capabilitiesData: CapabilityItem[] = [
   {
-    id: 'material-handling',
-    title: 'Automated Material Handling',
-    description: 'Plustech deploys fully or partially automated handling solutions across various sections and operations of paint shops to boost productivity, efficiency, and optimize the plant footprint.',
+    id: 'turnkey-paintshop',
+    title: 'Turnkey Paintshop Solutions for Surface Finishing Plants',
+    description: 'End-to-end paintshop delivery—from 3D layout to commissioning—covering process, utilities, automation, safety, quality, and sustainability to meet production and compliance goals.',
     features: [],
     images: [
-      '/automated-customised-materialhandling/1.png',
-      '/automated-customised-materialhandling/2.png',
-      '/automated-customised-materialhandling/3.png'
+      '/home/NAHAR_1.png',
+      '/home/NAHAR_2.png',
+      '/home/UNITED.PNG'
     ],
     bgColor: 'bg-white',
     textColor: 'text-black',
@@ -47,6 +47,20 @@ const capabilitiesData: CapabilityItem[] = [
     bgColor: 'bg-gradient-to-r from-blue-50 to-blue-100',
     textColor: 'text-black',
     animationDirection: 'right'
+  },
+  {
+    id: 'material-handling',
+    title: 'Automated Material Handling',
+    description: 'Plustech deploys fully or partially automated handling solutions across various sections and operations of paint shops to boost productivity, efficiency, and optimize the plant footprint.',
+    features: [],
+    images: [
+      '/automated-customised-materialhandling/1.png',
+      '/automated-customised-materialhandling/2.png',
+      '/automated-customised-materialhandling/3.png'
+    ],
+    bgColor: 'bg-white',
+    textColor: 'text-black',
+    animationDirection: 'left'
   },
   {
     id: 'digitization',
@@ -188,6 +202,85 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const isItemInView = useInView(itemRef, { once: false, margin: "-50px" });
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const imageRef = useRef<HTMLImageElement>(null);
+
+  // Reset zoom and pan when image changes
+  useEffect(() => {
+    if (selectedImage) {
+      setZoomLevel(1);
+      setPanPosition({ x: 0, y: 0 });
+    }
+  }, [selectedImage]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!selectedImage) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedImage(null);
+      } else if (e.key === '+' || e.key === '=') {
+        e.preventDefault();
+        setZoomLevel(prev => Math.min(prev + 0.25, 5));
+      } else if (e.key === '-') {
+        e.preventDefault();
+        setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
+      } else if (e.key === '0') {
+        e.preventDefault();
+        setZoomLevel(1);
+        setPanPosition({ x: 0, y: 0 });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImage]);
+
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.25, 5));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
+  };
+
+  const handleResetZoom = () => {
+    setZoomLevel(1);
+    setPanPosition({ x: 0, y: 0 });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (zoomLevel > 1) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - panPosition.x, y: e.clientY - panPosition.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isPanning && zoomLevel > 1) {
+      setPanPosition({
+        x: e.clientX - panStart.x,
+        y: e.clientY - panStart.y,
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsPanning(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (selectedImage) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setZoomLevel(prev => Math.max(0.5, Math.min(5, prev + delta)));
+    }
+  };
 
   return (
     <motion.div
@@ -245,7 +338,49 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
             className="relative"
             variants={imageVariants}
           >
-            {capability.id === 'robotic-applications' ? (
+            {capability.id === 'turnkey-paintshop' ? (
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {capability.images.map((image, idx) => (
+                    <div
+                      key={image}
+                      className="relative overflow-hidden rounded-2xl shadow-2xl border border-white/60 bg-gradient-to-br from-white via-[#e8f4ff] to-[#cfe1ff] group"
+                    >
+                      <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(0,174,239,0.25), transparent 35%), radial-gradient(circle at 80% 0%, rgba(79,70,229,0.18), transparent 40%)' }} />
+                      <img
+                        src={image}
+                        alt={`Turnkey paintshop visual ${idx + 1}`}
+                        className="relative w-full h-[260px] md:h-[320px] object-contain bg-white/50 cursor-pointer transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onClick={() => setSelectedImage(image)}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      <div className="absolute bottom-3 left-3 right-3 bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 text-sm font-semibold text-[#0f172a] shadow pointer-events-none">
+                        Plant Visual {idx + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-gradient-to-r from-[#e0f7ff] via-white to-[#d7e9ff] shadow-2xl p-6">
+                  <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 10% 10%, rgba(0,174,239,0.2), transparent 35%), radial-gradient(circle at 90% 30%, rgba(99,102,241,0.15), transparent 45%)' }} />
+                  <div className="relative flex flex-col md:flex-row items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-white/80 border border-white/60 shadow-inner flex items-center justify-center text-[#00aeef] font-semibold">
+                      ▶
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-lg font-semibold text-[#0f172a]">Feature Video Placeholder</div>
+                      <p className="text-sm text-slate-600 mt-1">
+                        Upload a walkthrough video of the 3D plant after the visuals—optimized for inline playback.
+                      </p>
+                    </div>
+                    <div className="w-full md:w-64 h-32 rounded-xl border border-dashed border-[#00aeef]/50 bg-white/70 flex items-center justify-center text-[#00aeef] text-sm font-medium">
+                      Upload Video
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : capability.id === 'robotic-applications' ? (
               // Robotic applications with carousel (buttons only, no counter)
               <RoboticImageCarousel images={capability.images} />
             ) : capability.id === 'material-handling' ? (
@@ -302,6 +437,108 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
           </motion.div>
         </div>
       </div>
+
+      {/* Image Lightbox Modal */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            {/* Close Button */}
+            <motion.button
+              className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-10"
+              onClick={() => setSelectedImage(null)}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </motion.button>
+
+            {/* Zoom Controls */}
+            <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleZoomIn();
+                }}
+                className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors"
+                title="Zoom In (+)"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleZoomOut();
+                }}
+                className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors"
+                title="Zoom Out (-)"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleResetZoom();
+                }}
+                className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors text-xs font-semibold"
+                title="Reset Zoom (0)"
+              >
+                1:1
+              </button>
+            </div>
+
+            {/* Zoom Level Display */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white text-sm font-medium z-10">
+              {Math.round(zoomLevel * 100)}%
+            </div>
+
+            {/* Image Container */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="max-w-[95vw] max-h-[95vh] relative"
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onWheel={handleWheel}
+              style={{ cursor: zoomLevel > 1 ? (isPanning ? 'grabbing' : 'grab') : 'default' }}
+            >
+              <img
+                ref={imageRef}
+                src={selectedImage}
+                alt="Full size plant visual"
+                className="max-w-full max-h-[95vh] w-auto h-auto object-contain rounded-lg shadow-2xl"
+                style={{
+                  transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`,
+                  transformOrigin: 'center center',
+                  transition: isPanning ? 'none' : 'transform 0.2s ease-out',
+                }}
+              />
+            </motion.div>
+
+            {/* Keyboard Hints */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white text-xs flex gap-4 z-10">
+              <span>+/- Zoom</span>
+              <span>0 Reset</span>
+              <span>ESC Close</span>
+              {zoomLevel > 1 && <span>Drag to Pan</span>}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

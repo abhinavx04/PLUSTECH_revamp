@@ -12,11 +12,15 @@ import {
 import Footer from '../components/Footer';
 import ProjectCard from '../components/projects/ProjectCard';
 import { useProjectsFirestore } from '../hooks/useProjectsFirestore';
+import ProjectFilters from '../components/projects/ProjectFilters';
 
 const ProjectsPage: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [selectedProcesses, setSelectedProcesses] = useState<string[]>([]);
+  const [selectedSurfaces, setSelectedSurfaces] = useState<string[]>([]);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const { getPublishedProjects, loading, error } = useProjectsFirestore();
 
   const cn = (...classes: (string | undefined | null | false)[]): string => {
@@ -43,10 +47,48 @@ const ProjectsPage: React.FC = () => {
     { name: 'Contact', link: '/contact' },
   ];
 
+  // All published projects (sorted)
   const publishedProjects = useMemo(() => {
     const list = getPublishedProjects();
     return [...list].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }, [getPublishedProjects]);
+
+  // Apply filters (client-side)
+  const filteredProjects = useMemo(() => {
+    return publishedProjects.filter((project) => {
+      if (selectedProcesses.length > 0) {
+        const matchProcess = selectedProcesses.some((p) => project.processes?.includes(p));
+        if (!matchProcess) return false;
+      }
+      if (selectedSurfaces.length > 0) {
+        const matchSurface = selectedSurfaces.some((s) => project.surfaces?.includes(s));
+        if (!matchSurface) return false;
+      }
+      return true;
+    });
+  }, [publishedProjects, selectedProcesses, selectedSurfaces]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [selectedProcesses, selectedSurfaces]);
+
+  const handleProcessToggle = (process: string) => {
+    setSelectedProcesses((prev) =>
+      prev.includes(process) ? prev.filter((p) => p !== process) : [...prev, process]
+    );
+  };
+
+  const handleSurfaceToggle = (surface: string) => {
+    setSelectedSurfaces((prev) =>
+      prev.includes(surface) ? prev.filter((s) => s !== surface) : [...prev, surface]
+    );
+  };
+
+  const handleClearFilters = () => {
+    setSelectedProcesses([]);
+    setSelectedSurfaces([]);
+  };
 
   useEffect(() => {
     document.title = 'Projects | PlusTech';
@@ -186,6 +228,47 @@ const ProjectsPage: React.FC = () => {
 
         <section className="relative px-6 md:px-12 lg:px-16 pb-16 md:pb-20">
           <div className="max-w-6xl mx-auto">
+            {/* Mobile filters toggle */}
+            <div className="md:hidden mb-6 flex items-center justify-between">
+              <button
+                onClick={() => setShowMobileFilters(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filters
+                {(selectedProcesses.length + selectedSurfaces.length) > 0 && (
+                  <span className="bg-[#00aeef] text-white text-xs rounded-full px-2 py-0.5">
+                    {selectedProcesses.length + selectedSurfaces.length}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Mobile filter overlay */}
+            {showMobileFilters && (
+              <>
+                <div
+                  className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                  onClick={() => setShowMobileFilters(false)}
+                />
+                <div className="md:hidden">
+                  <ProjectFilters
+                    selectedProcesses={selectedProcesses}
+                    selectedSurfaces={selectedSurfaces}
+                    onProcessToggle={handleProcessToggle}
+                    onSurfaceToggle={handleSurfaceToggle}
+                    onClearFilters={handleClearFilters}
+                    allProjects={publishedProjects}
+                    filteredCount={filteredProjects.length}
+                    isMobile
+                    onClose={() => setShowMobileFilters(false)}
+                  />
+                </div>
+              </>
+            )}
+
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
                 <div className="font-semibold">Error loading projects</div>
@@ -193,35 +276,66 @@ const ProjectsPage: React.FC = () => {
               </div>
             )}
 
-            {loading && publishedProjects.length === 0 ? (
+            {loading && filteredProjects.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#00aeef]" />
               </div>
             ) : null}
 
-            {!loading && publishedProjects.length === 0 && !error && (
+            {!loading && filteredProjects.length === 0 && !error && (
               <div className="text-center py-12 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                <div className="text-2xl font-semibold text-slate-800">No projects yet</div>
-                <p className="text-slate-600 mt-2">Published projects will appear here automatically.</p>
+                <div className="text-2xl font-semibold text-slate-800">No projects found</div>
+                <p className="text-slate-600 mt-2">
+                  {selectedProcesses.length > 0 || selectedSurfaces.length > 0
+                    ? 'Try adjusting your filters to see more results.'
+                    : 'Published projects will appear here automatically.'}
+                </p>
+                {(selectedProcesses.length > 0 || selectedSurfaces.length > 0) && (
+                  <button
+                    onClick={handleClearFilters}
+                    className="mt-4 text-[#00aeef] hover:text-[#0099d4] font-medium underline"
+                  >
+                    Clear all filters
+                  </button>
+                )}
               </div>
             )}
 
-            <div className="grid gap-8 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-              {publishedProjects.slice(0, visibleCount).map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+            <div className="flex gap-8">
+              {/* Desktop filter sidebar */}
+              <aside className="hidden md:block w-80 flex-shrink-0">
+                <ProjectFilters
+                  selectedProcesses={selectedProcesses}
+                  selectedSurfaces={selectedSurfaces}
+                  onProcessToggle={handleProcessToggle}
+                  onSurfaceToggle={handleSurfaceToggle}
+                  onClearFilters={handleClearFilters}
+                  allProjects={publishedProjects}
+                  filteredCount={filteredProjects.length}
+                />
+              </aside>
+
+              {/* Projects grid */}
+              <div className="flex-1 min-w-0">
+                <div className="grid gap-8 lg:grid-cols-2 grid-cols-1">
+                  {filteredProjects.slice(0, visibleCount).map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+
+                {visibleCount < filteredProjects.length && (
+                  <div className="flex justify-center mt-10">
+                    <button
+                      onClick={() => setVisibleCount((prev) => prev + 6)}
+                      className="px-6 py-3 rounded-xl bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:-translate-y-0.5 transition-transform"
+                    >
+                      Load more projects ({filteredProjects.length - visibleCount} remaining)
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {visibleCount < publishedProjects.length && (
-              <div className="flex justify-center mt-10">
-                <button
-                  onClick={() => setVisibleCount((prev) => prev + 6)}
-                  className="px-6 py-3 rounded-xl bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:-translate-y-0.5 transition-transform"
-                >
-                  Load more projects
-                </button>
-              </div>
-            )}
           </div>
         </section>
       </main>

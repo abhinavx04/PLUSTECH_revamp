@@ -294,10 +294,6 @@ const HomePage: React.FC = () => {
               <h1 className="text-black/60 text-3xl md:text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
                 DEVELOPING SOLUTION<br />DELIVERING QUALITY
               </h1>
-              <p className="mt-4 text-black/50 text-base md:text-lg max-w-3xl mx-auto font-body text-justify" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.2)' }}>
-                At PlusTech, we design, engineer, and deliver precision systems that connect
-                people, processes, and products—so your operations run smarter, faster, and safer.
-              </p>
             </div>
           </div>
           <Threads color={[0, 0.8, 1]} amplitude={1.6} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
@@ -342,6 +338,15 @@ const HomePage: React.FC = () => {
       {/* Capabilities Section */}
       <div className="bg-white">
         <CapabilitiesSection />
+      </div>
+
+      {/* Brand Promise Text moved below capabilities */}
+      <div className="w-full px-6 md:px-12 lg:px-16 py-10 bg-white">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="text-black/70 text-base md:text-lg font-body leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+            At PlusTech, we design, engineer, and deliver precision systems that connect people, processes, and products—so your operations run smarter, faster, and safer.
+          </p>
+        </div>
       </div>
 
       {/* News Section – Latest News & Updates */}
