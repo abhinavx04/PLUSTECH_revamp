@@ -115,7 +115,7 @@ const ServicesPage: React.FC = () => {
                   <div key={`mobile-link-${idx}`}>
                     <div
                       className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                      style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
+                  style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
                       onClick={() => {
                         if (hasSubmenu) {
                           setOpenMobileDropdown(isOpen ? null : item.name);
@@ -153,8 +153,8 @@ const ServicesPage: React.FC = () => {
                             className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
                           >
                             {subItem.title}
-                          </a>
-                        ))}
+                </a>
+              ))}
                       </div>
                     )}
                   </div>

@@ -235,7 +235,7 @@ const HomePage: React.FC = () => {
                     <div key={`mobile-link-${idx}`}>
                       <div
                         className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                        style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
+                    style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
                         onClick={() => {
                           if (hasSubmenu) {
                             setOpenMobileDropdown(isOpen ? null : item.name);
@@ -273,8 +273,8 @@ const HomePage: React.FC = () => {
                               className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
                             >
                               {subItem.title}
-                            </a>
-                          ))}
+                  </a>
+                ))}
                         </div>
                       )}
                     </div>
@@ -292,7 +292,7 @@ const HomePage: React.FC = () => {
           <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
             <div className="text-center px-4 md:px-6 lg:px-8 max-w-5xl">
               <h1 className="text-black/60 text-3xl md:text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
-                DEVELOPING SOLUTION<br />DELIVERING QUALITY
+                DEVELOPING SOLUTIONS<br />DELIVERING QUALITY
               </h1>
             </div>
           </div>
@@ -338,21 +338,21 @@ const HomePage: React.FC = () => {
       {/* Capabilities Section */}
       <div className="bg-white">
         <CapabilitiesSection />
-      </div>
+            </div>
 
       {/* Brand Promise Text moved below capabilities */}
       <div className="w-full px-6 md:px-12 lg:px-16 py-10 bg-white">
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-black/70 text-base md:text-lg font-body leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
             At PlusTech, we design, engineer, and deliver precision systems that connect people, processes, and products—so your operations run smarter, faster, and safer.
-          </p>
-        </div>
-      </div>
+                </p>
+              </div>
+            </div>
 
       {/* News Section – Latest News & Updates */}
       <div className="bg-slate-50 border-t border-slate-200">
         <SimpleNewsSection />
-      </div>
+        </div>
 
       {/* Company Logos Animation – Trusted by leading companies */}
       <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-r from-blue-50 via-blue-100 to-blue-200">

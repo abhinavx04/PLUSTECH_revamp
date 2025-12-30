@@ -125,7 +125,7 @@ const ProjectsPage: React.FC = () => {
                   <div key={`mobile-link-${idx}`}>
                     <div
                       className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                      style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
+                  style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
                       onClick={() => {
                         if (hasSubmenu) {
                           setOpenMobileDropdown(isOpen ? null : item.name);
@@ -163,8 +163,8 @@ const ProjectsPage: React.FC = () => {
                             className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
                           >
                             {subItem.title}
-                          </a>
-                        ))}
+                </a>
+              ))}
                       </div>
                     )}
                   </div>
@@ -319,20 +319,20 @@ const ProjectsPage: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="grid gap-8 lg:grid-cols-2 grid-cols-1">
                   {filteredProjects.slice(0, visibleCount).map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))}
-                </div>
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
 
                 {visibleCount < filteredProjects.length && (
-                  <div className="flex justify-center mt-10">
-                    <button
-                      onClick={() => setVisibleCount((prev) => prev + 6)}
-                      className="px-6 py-3 rounded-xl bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:-translate-y-0.5 transition-transform"
-                    >
+              <div className="flex justify-center mt-10">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 6)}
+                  className="px-6 py-3 rounded-xl bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:-translate-y-0.5 transition-transform"
+                >
                       Load more projects ({filteredProjects.length - visibleCount} remaining)
-                    </button>
-                  </div>
-                )}
+                </button>
+              </div>
+            )}
               </div>
             </div>
 
