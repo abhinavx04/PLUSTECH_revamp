@@ -20,9 +20,9 @@ const sections: OfficeSection[] = [
     title: 'Welcome',
     subtitle: 'Where Innovation Begins',
     images: {
-      background: '/office/welcome.jpg',
-      midground: '/office/welcome.jpg',
-      foreground: '/office/welcome.jpg',
+      background: '/office/entrance/entrance.jpeg',
+      midground: '/office/entrance/entrance.jpeg',
+      foreground: '/office/entrance/entrance.jpeg',
     },
     description: 'Step into our modern facility and experience excellence',
     highlights: ['Modern Design', 'Welcoming Space', 'Professional Environment'],
