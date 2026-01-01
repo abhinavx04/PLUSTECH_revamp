@@ -21,6 +21,10 @@
   }
   body {
     font-family: var(--font-body);
+    /* Optimize font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   :root {
     --background: 0 0% 100%;

@@ -39,11 +39,22 @@
     <link rel="preconnect" href="https://www.googleapis.com" />
     <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
     
-    <!-- Fonts loaded asynchronously to avoid render blocking -->
-    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- Preload critical font files -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/jura/v32/z7NOdRfA0J_3YJNsnvHwQ.woff2" as="font" type="font/woff2" crossorigin>
+    
+    <!-- Fonts loaded asynchronously with font-display: swap (reduced weights: 400,500,600,700) -->
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
     </noscript>
+    
+    <!-- Preload critical above-the-fold image -->
+    <link rel="preload" as="image" href="/office/entrance/entrance.jpeg" fetchpriority="high">
+    
+    <!-- Prefetch likely next pages -->
+    <link rel="prefetch" href="/about">
+    <link rel="prefetch" href="/services">
+    <link rel="prefetch" href="/projects">
     
     <!-- Structured Data (JSON-LD) for better SEO -->
     <script type="application/ld+json">

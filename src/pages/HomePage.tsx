@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import Threads from '../components/Threads';
+import React, { useState, lazy, Suspense } from 'react';
+// Lazy load Threads component (WebGL is heavy)
+const Threads = lazy(() => import('../components/Threads'));
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import SimpleNewsSection from '../components/SimpleNewsSection';
-import CapabilitiesSection from '../components/CapabilitiesSection';
+// Lazy load CapabilitiesSection (contains Framer Motion)
+const CapabilitiesSection = lazy(() => import('../components/CapabilitiesSection'));
 import Footer from '../components/Footer';
 import { SEO } from '../components/SEO';
 import { OptimizedImage } from '../components/OptimizedImage';
@@ -68,7 +70,9 @@ const HomePage: React.FC = () => {
               </h1>
             </div>
           </div>
-          <Threads color={[0, 0.8, 1]} amplitude={1.6} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
+          <Suspense fallback={<div className="w-full h-full bg-gradient-to-b from-blue-50 to-blue-100" />}>
+            <Threads color={[0, 0.8, 1]} amplitude={1.6} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
+          </Suspense>
         </div>
       </div>
 
@@ -123,8 +127,14 @@ const HomePage: React.FC = () => {
 
       {/* Capabilities Section */}
       <div id="capabilities" className="bg-white">
-        <CapabilitiesSection />
-            </div>
+        <Suspense fallback={
+          <div className="w-full py-20 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00aeef]"></div>
+          </div>
+        }>
+          <CapabilitiesSection />
+        </Suspense>
+      </div>
 
       {/* Brand Promise Text moved below capabilities */}
       <div className="w-full px-6 md:px-12 lg:px-16 py-10 bg-white">

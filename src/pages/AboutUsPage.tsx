@@ -145,7 +145,15 @@ const AboutUsPage: React.FC = () => {
             <div className="max-w-7xl mx-auto w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                 <div className="w-full">
-                  <video className="w-full rounded-2xl shadow-[0_12px_36px_rgba(0,0,0,0.25)]" src="/home/aboutvideo.mp4" autoPlay muted loop playsInline />
+                  <video 
+                    className="w-full rounded-2xl shadow-[0_12px_36px_rgba(0,0,0,0.25)]" 
+                    src="/home/aboutvideo.mp4" 
+                    autoPlay 
+                    muted 
+                    loop 
+                    playsInline
+                    preload="metadata"
+                  />
                 </div>
                 <div className="space-y-5">
                   <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">ABOUT US</h3>
