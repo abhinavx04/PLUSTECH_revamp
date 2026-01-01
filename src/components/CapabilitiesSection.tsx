@@ -40,10 +40,10 @@ const capabilitiesData: CapabilityItem[] = [
     ],
     images: [
       '/robotic/indoor-painting_and_door_opening.webp',
-      '/robotic/2-wheeler-fueltanks_plaSTIC.png',
+      '/robotic/2-wheeler-fueltanks_plaSTIC.webp',
       '/robotic/scooter-metal_plastic-part.webp',
-      '/robotic/sealer_application.png',
-      '/robotic/underbody_application.png'
+      '/robotic/sealer_application.webp',
+      '/robotic/underbody_application.webp'
     ],
     bgColor: 'bg-gradient-to-r from-blue-50 to-blue-100',
     textColor: 'text-black',
