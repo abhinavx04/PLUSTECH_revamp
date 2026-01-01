@@ -367,7 +367,7 @@ const CSRManager: React.FC = () => {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value as CSRCategory })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
                 >
                   {categoryOptions.map((category) => (
                     <option key={category} value={category}>
@@ -381,7 +381,7 @@ const CSRManager: React.FC = () => {
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as CSRStatus })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
                 >
                   {statusOptions.map((status) => (
                     <option key={status} value={status}>
