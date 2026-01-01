@@ -16,24 +16,18 @@ const Footer = () => {
           <div className="flex flex-col items-start space-y-2 md:col-span-2">
             <div className="flex items-center space-x-2">
               <img
-                src="/newlogo.png"
+                src="/PLUSTECH NEW.png"
                 alt="Plustech Logo"
                 className="h-10 w-auto brightness-110 contrast-110"
                 width="195"
                 height="210"
                 loading="lazy"
-              />
-              <span
-                className="font-bold text-base tracking-wider"
-                style={{
-                  fontFamily: 'Orbitron, Arial, sans-serif',
-                  fontWeight: 800,
-                  letterSpacing: '0.1em',
-                  color: '#00aeef',
+                onError={(e) => {
+                  // Fallback if image doesn't exist
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
                 }}
-              >
-                PLUSTECH
-              </span>
+              />
             </div>
             <p className="text-xs text-gray-300">
               Building intelligent solutions for modern manufacturing.

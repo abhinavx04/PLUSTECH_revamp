@@ -174,12 +174,17 @@ export const NavbarLogo = ({ className }: NavbarLogoProps) => {
   return (
     <a href="/" className={cn("flex items-center space-x-3", className)}>
       <img
-        src="/newlogo.png"
+        src="/PLUSTECH NEW.png"
         alt="PlusTech Logo"
         className="h-8 w-auto brightness-110 contrast-110"
         width="195"
         height="210"
         loading="eager"
+        onError={(e) => {
+          // Fallback if image doesn't exist
+          const target = e.target as HTMLImageElement;
+          target.style.display = 'none';
+        }}
       />
     </a>
   );
