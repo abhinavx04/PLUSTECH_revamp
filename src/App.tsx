@@ -9,6 +9,7 @@ import CertificationsPage from './pages/about/CertificationsPage';
 import HistoryPage from './pages/about/HistoryPage';
 import AnnualReturnsPage from './pages/about/AnnualReturnsPage';
 import CSRActivitiesPage from './pages/about/CSRActivitiesPage';
+import CSRActivityDetailPage from './pages/about/CSRActivityDetailPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoutes';
@@ -27,6 +28,7 @@ function App() {
       <Route path="/news" element={<NewsPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/facility" element={<OfficeTourPage />} />
+      <Route path="/about/csr-activities/:activityId" element={<CSRActivityDetailPage />} />
       <Route path="/about" element={<AboutUsPage />}>
         <Route path="corporate-beliefs" element={<CorporateBeliefsPage />} />
         <Route path="industry-focus" element={<IndustryFocusPage />} />

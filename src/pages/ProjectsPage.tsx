@@ -205,20 +205,38 @@ const ProjectsPage: React.FC = () => {
             <div className="relative">
               <div className="absolute -inset-6 bg-white/60 rounded-[28px] blur-xl border border-white/40" />
               <div className="relative rounded-[28px] border border-white/80 shadow-2xl shadow-blue-900/10 overflow-hidden bg-gradient-to-br from-white via-[#e0f4ff] to-[#cfe7ff] p-8 space-y-4 text-[#0f172a]">
-                <div className="text-sm uppercase tracking-[0.12em] text-slate-500">What you can expect</div>
-                <div className="text-2xl font-extrabold">Published-only portfolio</div>
-                <p className="text-slate-700">
-                  Projects shown on the website are filtered to status = &ldquo;published&rdquo;. Admins can
-                  publish or unpublish anytime from the dashboard.
+                <div className="text-sm uppercase tracking-[0.12em] text-slate-500">How to use filters</div>
+                <div className="text-2xl font-extrabold">Find Your Desired Projects</div>
+                <p className="text-slate-700 leading-relaxed">
+                  Use the filter sidebar to narrow down projects based on your specific requirements. You can filter by <strong>Process</strong> (e.g., Painting, Coating, Anodizing) and <strong>Surface</strong> (e.g., Metal, Plastic, Wood) to find exactly what you&apos;re looking for.
                 </p>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="p-3 rounded-2xl bg-white shadow border border-slate-100">
-                    <div className="text-xl font-bold text-[#00aeef]">{publishedProjects.length}</div>
-                    <div className="text-slate-700">Live projects</div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-white/50 border border-slate-200">
+                    <svg className="w-5 h-5 text-[#00aeef] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <div>
+                      <div className="font-semibold text-slate-900 mb-1">Select Multiple Filters</div>
+                      <div className="text-slate-600">Click on any Process or Surface option to filter. You can select multiple options to refine your search further.</div>
+                    </div>
                   </div>
-                  <div className="p-3 rounded-2xl bg-white shadow border border-slate-100">
-                    <div className="text-xl font-bold text-[#00aeef]">Inline video</div>
-                    <div className="text-slate-700">YouTube embeds with privacy mode</div>
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-white/50 border border-slate-200">
+                    <svg className="w-5 h-5 text-[#00aeef] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    <div>
+                      <div className="font-semibold text-slate-900 mb-1">See Project Counts</div>
+                      <div className="text-slate-600">Each filter option shows the number of matching projects, helping you understand what&apos;s available.</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 rounded-xl bg-white/50 border border-slate-200">
+                    <svg className="w-5 h-5 text-[#00aeef] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <div>
+                      <div className="font-semibold text-slate-900 mb-1">Clear Filters Anytime</div>
+                      <div className="text-slate-600">Use the &ldquo;Clear all&rdquo; button to reset filters and view all projects again.</div>
+                    </div>
                   </div>
                 </div>
               </div>

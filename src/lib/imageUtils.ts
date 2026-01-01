@@ -6,13 +6,17 @@
 /**
  * Compress an image file to target size (1-2MB)
  * Uses canvas API for compression
+ * Handles images of any size by automatically resizing and compressing
  */
 export async function compressImage(
   file: File,
-  _targetSizeMB: number = 1.5,
+  targetSizeMB: number = 1.5,
   maxWidthOrHeight: number = 1920
 ): Promise<File> {
   return new Promise((resolve, reject) => {
+    const originalSizeMB = file.size / (1024 * 1024);
+    console.log(`[ImageUtils] Compressing image: ${originalSizeMB.toFixed(2)}MB`);
+    
     const reader = new FileReader();
     
     reader.onload = (e) => {
@@ -22,6 +26,16 @@ export async function compressImage(
         // Calculate new dimensions
         let width = img.width;
         let height = img.height;
+        const originalWidth = width;
+        const originalHeight = height;
+        
+        // For very large images, be more aggressive with resizing
+        // If original is huge, reduce max dimension further
+        if (originalSizeMB > 20) {
+          maxWidthOrHeight = 1600; // Smaller for very large files
+        } else if (originalSizeMB > 10) {
+          maxWidthOrHeight = 1800;
+        }
         
         if (width > maxWidthOrHeight || height > maxWidthOrHeight) {
           if (width > height) {
@@ -32,6 +46,8 @@ export async function compressImage(
             height = maxWidthOrHeight;
           }
         }
+        
+        console.log(`[ImageUtils] Resizing from ${originalWidth}x${originalHeight} to ${Math.round(width)}x${Math.round(height)}`);
         
         // Create canvas
         const canvas = document.createElement('canvas');
@@ -44,13 +60,17 @@ export async function compressImage(
           return;
         }
         
+        // Use better image smoothing for quality
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
         // Draw and compress
         ctx.drawImage(img, 0, 0, width, height);
         
         // Try different quality levels to get target size
-        let quality = 0.92; // Start with high quality
+        let quality = 0.85; // Start with good quality
         let attempts = 0;
-        const maxAttempts = 10;
+        const maxAttempts = 15; // More attempts for larger files
         
         const tryCompress = () => {
           canvas.toBlob(
@@ -62,8 +82,9 @@ export async function compressImage(
               
               const sizeMB = blob.size / (1024 * 1024);
               
-              // If size is within target range (1-2MB), we're done
-              if (sizeMB >= 1 && sizeMB <= 2) {
+              // If size is within target range (0.8-2MB), we're done
+              if (sizeMB >= 0.8 && sizeMB <= 2) {
+                console.log(`[ImageUtils] Compression successful: ${originalSizeMB.toFixed(2)}MB → ${sizeMB.toFixed(2)}MB (${((1 - sizeMB/originalSizeMB) * 100).toFixed(1)}% reduction)`);
                 const compressedFile = new File(
                   [blob],
                   file.name,
@@ -74,15 +95,15 @@ export async function compressImage(
               }
               
               // If too large and we can reduce quality more
-              if (sizeMB > 2 && quality > 0.7 && attempts < maxAttempts) {
-                quality -= 0.05;
+              if (sizeMB > 2 && quality > 0.6 && attempts < maxAttempts) {
+                quality -= 0.03; // Smaller steps for better control
                 attempts++;
                 tryCompress();
                 return;
               }
               
               // If too small, increase quality slightly
-              if (sizeMB < 1 && quality < 0.95 && attempts < maxAttempts) {
+              if (sizeMB < 0.8 && quality < 0.95 && attempts < maxAttempts) {
                 quality = Math.min(0.95, quality + 0.02);
                 attempts++;
                 tryCompress();
@@ -90,6 +111,7 @@ export async function compressImage(
               }
               
               // Accept current result if close enough or max attempts reached
+              console.log(`[ImageUtils] Compression complete: ${originalSizeMB.toFixed(2)}MB → ${sizeMB.toFixed(2)}MB (${((1 - sizeMB/originalSizeMB) * 100).toFixed(1)}% reduction)`);
               const compressedFile = new File(
                 [blob],
                 file.name,
@@ -123,6 +145,7 @@ export function getFileSizeMB(file: File): number {
 
 /**
  * Validate image file
+ * Note: No size limit - images will be compressed automatically
  */
 export function validateImageFile(file: File): { valid: boolean; error?: string } {
   // Check file type
@@ -134,13 +157,11 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
     };
   }
   
-  // Check file size (max 10MB before compression)
-  const maxSizeMB = 10;
-  if (getFileSizeMB(file) > maxSizeMB) {
-    return {
-      valid: false,
-      error: `File is too large. Maximum size is ${maxSizeMB}MB before compression.`,
-    };
+  // No size limit - compression will handle large files
+  // Just warn if file is extremely large (over 100MB) as it might cause browser issues
+  const sizeMB = getFileSizeMB(file);
+  if (sizeMB > 100) {
+    console.warn(`[ImageUtils] Very large image file detected: ${sizeMB.toFixed(2)}MB. Compression may take longer.`);
   }
   
   return { valid: true };

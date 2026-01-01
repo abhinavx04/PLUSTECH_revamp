@@ -1,53 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-
-interface Certification {
-  id: string;
-  name: string;
-  issuingBody: string;
-  description: string;
-  validUntil: string;
-  category: 'quality' | 'financial' | 'compliance';
-  icon: string;
-  color: string;
-  status: 'active' | 'pending' | 'renewed';
-}
-
-const certificationsData: Certification[] = [
-  {
-    id: 'crisil-rating',
-    name: 'CRISIL Rated Organization',
-    issuingBody: 'CRISIL Limited',
-    description: 'CRISIL rated organization from 2019-20 for good financial strength, demonstrating our robust financial position and creditworthiness.',
-    validUntil: '2024-12-31',
-    category: 'financial',
-    icon: '',
-    color: 'from-blue-500 to-blue-700',
-    status: 'active'
-  },
-  {
-    id: 'iso-9001',
-    name: 'ISO 9001:2015',
-    issuingBody: 'International Organization for Standardization',
-    description: 'Certified for Quality Management Systems, ensuring consistent quality in all our processes and deliverables across all operations.',
-    validUntil: '2025-12-15',
-    category: 'quality',
-    icon: '',
-    color: 'from-green-500 to-green-700',
-    status: 'active'
-  },
-  {
-    id: 'dun-bradstreet',
-    name: 'Dun & Bradstreet Certification',
-    issuingBody: 'Dun & Bradstreet India',
-    description: 'Dun and Bradstreet certification for credit rating of 4A3, reflecting our strong financial credibility and business reliability.',
-    validUntil: '2024-12-31',
-    category: 'compliance',
-    icon: '',
-    color: 'from-purple-500 to-purple-700',
-    status: 'active'
-  }
-];
+import { useCertificationsFirestore, type Certification } from '../../hooks/useCertificationsFirestore';
 
 const categoryColors = {
   quality: 'bg-green-100 text-green-800 border-green-200',
@@ -63,18 +16,21 @@ const statusColors = {
 
 const CertificationsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
+  const [selectedCertification, setSelectedCertification] = useState<Certification | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const isInView = useInView(sectionRef, { once: false, margin: '-100px' });
+  const { loading, error, getPublishedCertifications } = useCertificationsFirestore();
 
-  const categories = ['all', ...Array.from(new Set(certificationsData.map(cert => cert.category)))];
-  const statuses = ['all', ...Array.from(new Set(certificationsData.map(cert => cert.status)))];
+  const certificationsData = useMemo(
+    () => getPublishedCertifications(),
+    [getPublishedCertifications]
+  );
 
-  const filteredCertifications = certificationsData.filter(cert => {
-    const categoryMatch = selectedCategory === 'all' || cert.category === selectedCategory;
-    const statusMatch = selectedStatus === 'all' || cert.status === selectedStatus;
-    return categoryMatch && statusMatch;
-  });
+  const parseDate = (value?: string) => {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -133,80 +89,12 @@ const CertificationsSection: React.FC = () => {
         </motion.p>
       </motion.div>
 
-      {/* Dashboard Metrics */}
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-      >
-        {[
-          { label: 'Active Certifications', value: '3', color: 'bg-green-500' },
-          { label: 'Years of Compliance', value: '5+', color: 'bg-blue-500' },
-          { label: 'Credit Rating', value: '4A3', color: 'bg-purple-500' },
-          { label: 'Renewal Success', value: '100%', color: 'bg-orange-500' }
-        ].map((metric, index) => (
-          <motion.div
-            key={index}
-            className="bg-white rounded-xl shadow-lg p-6 text-center"
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 + (index * 0.1) }}
-          >
-            <div className={`w-12 h-12 ${metric.color} rounded-full mx-auto mb-4 flex items-center justify-center`}>
-              <span className="text-white text-xl font-bold">{metric.value}</span>
-            </div>
-            <div className="text-sm text-gray-600 font-medium">{metric.label}</div>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Filter Controls */}
-      <motion.div 
-        className="flex flex-wrap justify-center gap-4 mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        <div className="flex flex-wrap gap-2">
-          <span className="text-sm font-semibold text-gray-600 mr-4">Category:</span>
-          {categories.map((category) => (
-            <motion.button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                selectedCategory === category
-                  ? 'bg-[#00aeef] text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {category === 'all' ? 'All' : category.charAt(0).toUpperCase() + category.slice(1)}
-            </motion.button>
-          ))}
+      {/* Error Banner */}
+      {error && (
+        <div className="mb-6 bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          Unable to load live certifications. Showing fallback data. Details: {error}
         </div>
-        
-        <div className="flex flex-wrap gap-2">
-          <span className="text-sm font-semibold text-gray-600 mr-4">Status:</span>
-          {statuses.map((status) => (
-            <motion.button
-              key={status}
-              onClick={() => setSelectedStatus(status)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                selectedStatus === status
-                  ? 'bg-[#00aeef] text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-            </motion.button>
-          ))}
-        </div>
-      </motion.div>
+      )}
 
       {/* Certifications Grid */}
       <motion.div 
@@ -215,79 +103,78 @@ const CertificationsSection: React.FC = () => {
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
       >
-        {filteredCertifications.map((certification) => (
-          <motion.div
-            key={certification.id}
-            variants={cardVariants}
-            className="group cursor-pointer"
-            whileHover={{ 
-              y: -10,
-              transition: { duration: 0.3 }
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <div className="relative h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100">
-              {/* Header */}
-              <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                <div className="flex items-center justify-end mb-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[certification.status]}`}>
-                    {certification.status}
-                  </span>
+        {loading && certificationsData.length === 0 ? (
+          <div className="col-span-full flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00aeef]" />
+          </div>
+        ) : certificationsData.length === 0 ? (
+          <div className="col-span-full text-center text-gray-600">
+            No certifications found. Check admin dashboard to add items.
+          </div>
+        ) : (
+          certificationsData.map((certification) => {
+            const descriptionPreview = certification.description.length > 100 
+              ? certification.description.substring(0, 100) + '...'
+              : certification.description;
+            
+            return (
+            <motion.div
+              key={certification.id}
+              variants={cardVariants}
+              className="flex flex-col h-full cursor-pointer"
+              whileHover={{ 
+                y: -5,
+                transition: { duration: 0.3 }
+              }}
+              onClick={() => {
+                setSelectedCertification(certification);
+                setShowDetailModal(true);
+              }}
+            >
+              <div className="relative h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col">
+                {/* Header */}
+                <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                  <h3 className="text-xl font-bold font-heading text-black mb-2">
+                    {certification.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {certification.issuingBody}
+                  </p>
                 </div>
                 
-                <h3 className="text-xl font-bold font-heading text-black mb-2">
-                  {certification.name}
-                </h3>
+                {/* Content */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <p className="text-gray-600 leading-relaxed text-sm mb-6">
+                    {descriptionPreview}
+                  </p>
+                  
+                  {/* Valid Until */}
+                  <div className="mb-6">
+                    <div className="text-xs text-gray-500 mb-1">Valid Until:</div>
+                    <div className="text-lg font-semibold text-[#00aeef]">
+                      {parseDate(certification.validUntil)?.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      }) || '—'}
+                    </div>
+                  </div>
+
+                  {/* View Details Button */}
+                  <div className="mt-auto pt-4">
+                    <button className="w-full px-4 py-2 bg-[#00aeef] text-white rounded-lg hover:bg-[#0099d4] transition-colors text-sm font-medium">
+                      View Details
+                    </button>
+                  </div>
+                </div>
                 
-                <p className="text-sm text-gray-500 mb-4">
-                  {certification.issuingBody}
-                </p>
-                
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold border ${categoryColors[certification.category]}`}>
-                  {certification.category}
-                </span>
+                {/* Gradient Overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${certification.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500 pointer-events-none`} />
               </div>
-              
-              {/* Content */}
-              <div className="p-6">
-                <p className="text-gray-600 leading-relaxed mb-6 text-sm">
-                  {certification.description}
-                </p>
-                
-                {/* Valid Until */}
-                <div className="space-y-2">
-                  <div className="text-xs text-gray-500">Valid Until:</div>
-                  <div className="text-lg font-semibold text-[#00aeef]">
-                    {new Date(certification.validUntil).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </div>
-                </div>
-                
-                {/* Progress Bar */}
-                <div className="mt-4">
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>Validity</span>
-                    <span>100%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <motion.div 
-                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: "100%" }}
-                      transition={{ duration: 1, delay: 0.5 }}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Gradient Overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${certification.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+            );
+          })
+        )}
       </motion.div>
 
       {/* Compliance Summary */}
@@ -307,6 +194,86 @@ const CertificationsSection: React.FC = () => {
           </p>
         </div>
       </motion.div>
+
+      {/* Detail Modal */}
+      {showDetailModal && selectedCertification && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setShowDetailModal(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${categoryColors[selectedCertification.category]}`}>
+                      {selectedCertification.category}
+                    </span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[selectedCertification.status]}`}>
+                      {selectedCertification.status}
+                    </span>
+                  </div>
+                  <h2 className="text-3xl font-bold font-heading text-black mb-2">
+                    {selectedCertification.name}
+                  </h2>
+                  <p className="text-gray-600 text-lg">
+                    {selectedCertification.issuingBody}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="bg-white hover:bg-gray-100 text-gray-800 rounded-full p-2 transition-colors"
+                  aria-label="Close modal"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Description</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {selectedCertification.description}
+                </p>
+              </div>
+
+              {/* Valid Until */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="text-sm text-gray-500 mb-2">Valid Until:</div>
+                <div className="text-2xl font-semibold text-[#00aeef]">
+                  {parseDate(selectedCertification.validUntil)?.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) || '—'}
+                </div>
+              </div>
+
+              {/* Image if available */}
+              {selectedCertification.imageUrl && (
+                <div className="mb-6">
+                  <img
+                    src={selectedCertification.imageUrl}
+                    alt={selectedCertification.name}
+                    className="w-full rounded-lg shadow-md"
+                  />
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

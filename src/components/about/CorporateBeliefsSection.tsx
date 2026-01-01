@@ -100,7 +100,7 @@ const CorporateBeliefsSection: React.FC = () => {
           Corporate Beliefs Dashboard
         </motion.h2>
         <motion.p 
-          className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+          className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed text-justify"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -182,7 +182,7 @@ const CorporateBeliefsSection: React.FC = () => {
                  {/* Content */}
                  <div className="flex-1 relative z-10 p-6">
                    <p 
-                     className="text-gray-900 mb-6 text-left text-lg leading-relaxed"
+                     className="text-gray-900 mb-6 text-justify text-lg leading-relaxed"
                    >
                      {belief.description}
                    </p>
@@ -232,7 +232,7 @@ const CorporateBeliefsSection: React.FC = () => {
           Our Commitment
         </h3>
         <blockquote 
-          className="text-2xl text-gray-900 max-w-4xl mx-auto leading-relaxed italic"
+          className="text-2xl text-gray-900 max-w-4xl mx-auto leading-relaxed italic text-justify"
         >
           "Our associates take pride and comfort in their engagement with Plustech. 
           We believe in not just meeting customer expectations but exceeding them."

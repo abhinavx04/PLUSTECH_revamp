@@ -4,24 +4,34 @@ import { useAdminAuth } from '../hooks/useAdminAuth';
 import NewsManagerSimple from '../components/NewsManagerSimple';
 import AnnualReturnManager from '../components/AnnualReturnManager';
 import ProjectsManager from '../components/ProjectsManager';
+import CertificationManager from '../components/CertificationManager';
+import CSRManager from '../components/CSRManager';
 import { useProjectsFirestore } from '../hooks/useProjectsFirestore';
 import { useNewsFirestore } from '../hooks/useNewsFirestore';
 import { useAnnualReturnsFirestore } from '../hooks/useAnnualReturnsFirestore';
+import { useCertificationsFirestore } from '../hooks/useCertificationsFirestore';
+import { useCSRActivitiesFirestore } from '../hooks/useCSRActivitiesFirestore';
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'news' | 'annualReturns'>('dashboard');
+  const [activeTab, setActiveTab] = useState<
+    'dashboard' | 'projects' | 'news' | 'annualReturns' | 'certifications' | 'csr'
+  >('dashboard');
 
   // Load live data for quick stats
   const { projects, loading: projectsLoading } = useProjectsFirestore();
   const { news, loading: newsLoading } = useNewsFirestore();
   const { annualReturns, loading: returnsLoading } = useAnnualReturnsFirestore();
+  const { certifications, loading: certificationsLoading } = useCertificationsFirestore();
+  const { activities: csrActivities, loading: csrLoading } = useCSRActivitiesFirestore();
 
   const publishedProjectsCount = projects.filter((p) => p.status === 'published').length;
   const publishedNewsCount = news.filter((n) => n.published).length;
   const publishedReturnsCount = annualReturns.filter((r) => r.status === 'published').length;
-  const isStatsLoading = projectsLoading || newsLoading || returnsLoading;
+  const publishedCertificationsCount = certifications.filter((c) => c.published).length;
+  const publishedCSRCount = csrActivities.filter((c) => c.published).length;
+  const isStatsLoading = projectsLoading || newsLoading || returnsLoading || certificationsLoading || csrLoading;
 
   const handleLogout = async () => {
     try {
@@ -112,6 +122,26 @@ const AdminDashboard: React.FC = () => {
             >
               Annual Return
             </button>
+            <button
+              onClick={() => setActiveTab('certifications')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'certifications'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              Certifications
+            </button>
+            <button
+              onClick={() => setActiveTab('csr')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'csr'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              CSR Activities
+            </button>
           </nav>
         </div>
       </div>
@@ -166,12 +196,38 @@ const AdminDashboard: React.FC = () => {
               </button>
             </div>
           </div>
+          {/* Certifications Card */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <h3 className="text-xl font-semibold text-white mb-4">Certifications</h3>
+            <p className="text-gray-300 mb-4">Manage compliance and accreditation data</p>
+            <div className="space-y-2">
+              <button
+                onClick={() => setActiveTab('certifications')}
+                className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+              >
+                Manage Certifications
+              </button>
+            </div>
+          </div>
+          {/* CSR Card */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <h3 className="text-xl font-semibold text-white mb-4">CSR Activities</h3>
+            <p className="text-gray-300 mb-4">Manage CSR initiatives and impact stories</p>
+            <div className="space-y-2">
+              <button
+                onClick={() => setActiveTab('csr')}
+                className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+              >
+                Manage CSR
+              </button>
+            </div>
+          </div>
         </div>
 
             {/* Quick Stats (live data) */}
             <div className="mt-8 bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
               <h2 className="text-2xl font-bold text-white mb-6">Quick Stats</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-[#00aeef]">
                     {isStatsLoading ? '—' : publishedProjectsCount}
@@ -190,6 +246,18 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   <div className="text-gray-300">Published Annual Returns</div>
                 </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#00aeef]">
+                    {isStatsLoading ? '—' : publishedCertificationsCount}
+                  </div>
+                  <div className="text-gray-300">Published Certifications</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#00aeef]">
+                    {isStatsLoading ? '—' : publishedCSRCount}
+                  </div>
+                  <div className="text-gray-300">Published CSR Activities</div>
+                </div>
               </div>
             </div>
           </>
@@ -197,8 +265,12 @@ const AdminDashboard: React.FC = () => {
           <ProjectsManager />
         ) : activeTab === 'news' ? (
           <NewsManagerSimple />
-        ) : (
+        ) : activeTab === 'annualReturns' ? (
           <AnnualReturnManager />
+        ) : activeTab === 'certifications' ? (
+          <CertificationManager />
+        ) : (
+          <CSRManager />
         )}
       </main>
     </div>

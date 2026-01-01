@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, where, Timestamp, getDoc, Query } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { deletePDFFromStorage } from '../lib/storageUtils';
 
 // Shared query for published annual returns - matches Firestore security rules
 // This ensures queries align with rules: resource.data.status == "published"
@@ -352,8 +353,12 @@ export const useAnnualReturnsFirestore = () => {
       // Delete the PDF from Storage if it exists
       if (documentUrl) {
         console.log('[AnnualReturns] Deleting associated PDF from Storage...');
-        // Note: PDF deletion will be implemented separately
-        console.warn('[AnnualReturns] PDF deletion not yet implemented');
+        try {
+          await deletePDFFromStorage(documentUrl, ['annualReturns/pdfs/', 'csr/pdfs/']);
+        } catch (pdfError) {
+          // Log but don't fail the deletion if PDF deletion fails
+          console.warn('[AnnualReturns] Failed to delete PDF, continuing with document deletion:', pdfError);
+        }
       }
       
       // Delete the Firestore document
