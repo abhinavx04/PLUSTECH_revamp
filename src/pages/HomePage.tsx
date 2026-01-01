@@ -12,6 +12,43 @@ import { ImageViewer } from '../components/ui/ImageViewer';
 const HomePage: React.FC = () => {
   const [selectedWelcomeImage, setSelectedWelcomeImage] = useState<number | null>(null);
   const welcomeImages = ['/office/entrance/entrance.jpeg'];
+
+  // Smooth scroll function with dynamic speed based on distance
+  const smoothScrollTo = (targetId: string) => {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    
+    // Calculate duration based on distance (min 800ms, max 2000ms)
+    // For short distances, use longer duration to make it more visible
+    const baseDuration = Math.abs(distance) < 500 ? 1200 : 800;
+    const duration = Math.min(2000, Math.max(baseDuration, Math.abs(distance) / 2));
+    
+    let start: number | null = null;
+
+    const animation = (currentTime: number) => {
+      if (start === null) start = currentTime;
+      const timeElapsed = currentTime - start;
+      const progress = Math.min(timeElapsed / duration, 1);
+      
+      // Easing function for smooth deceleration
+      const easeInOutCubic = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      
+      window.scrollTo(0, startPosition + distance * easeInOutCubic);
+      
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation);
+      }
+    };
+
+    requestAnimationFrame(animation);
+  };
+
   return (
     <>
       <SEO 
@@ -38,11 +75,14 @@ const HomePage: React.FC = () => {
       {/* CTAs */}
       <div className="w-full hidden md:flex items-center justify-center mt-8 md:mt-12">
         <div className="flex items-center justify-center gap-6">
-          <a href="#contact" className="px-8 md:px-10 py-4 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_8px_24px_rgba(0,174,239,0.3)] hover:bg-[#0099d4] transition-all duration-300 text-lg transform hover:scale-105">
+          <button 
+            onClick={() => smoothScrollTo('capabilities')}
+            className="px-8 md:px-10 py-4 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_8px_24px_rgba(0,174,239,0.3)] hover:bg-[#0099d4] transition-all duration-300 text-lg transform hover:scale-105 cursor-pointer"
+          >
             Get Started
-          </a>
+          </button>
           <a href="/about" className="px-8 md:px-10 py-4 rounded-full bg-white text-[#00aeef] font-semibold hover:bg-gray-50 transition-all duration-300 text-lg shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-[#00aeef]/20 transform hover:scale-105">
-            Learn More
+            Discover Our Company
           </a>
         </div>
       </div>
@@ -82,7 +122,7 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Capabilities Section */}
-      <div className="bg-white">
+      <div id="capabilities" className="bg-white">
         <CapabilitiesSection />
             </div>
 
