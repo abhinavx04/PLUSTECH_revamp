@@ -98,12 +98,14 @@ const ContactPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700">
                 <div className="rounded-2xl border border-white/60 bg-white/80 shadow-md p-4">
                   <div className="text-xs uppercase tracking-[0.12em] text-slate-500">Email</div>
-                  <div className="text-base font-semibold text-[#0f172a]">info@plustech.com</div>
+                  <div className="text-base font-semibold text-[#0f172a]">info@plustech.co.in</div>
                 </div>
                 <div className="rounded-2xl border border-white/60 bg-white/80 shadow-md p-4">
                   <div className="text-xs uppercase tracking-[0.12em] text-slate-500">Phone</div>
                   <div className="text-base font-semibold text-[#0f172a]">+91 20 26114961</div>
                   <div className="text-base font-semibold text-[#0f172a]">+91 20 26056366</div>
+                  <div className="text-base font-semibold text-[#0f172a]">+91 87999 08452</div>
+                  <div className="text-base font-semibold text-[#0f172a]">+91 87999 08453</div>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700">
@@ -114,7 +116,7 @@ const ContactPage: React.FC = () => {
                     <br />
                     Station Rd, opp. Old Zilla Parishad, Mangalwar Peth,
                     <br />
-                    Pune, Maharashtra 411001
+                    Pune, Maharashtra 411011
                   </div>
                 </div>
                 <div className="rounded-2xl border border-white/60 bg-white/80 shadow-md p-4">

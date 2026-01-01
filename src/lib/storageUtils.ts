@@ -66,7 +66,7 @@ function extractStoragePathFromURL(downloadURL: string): string | null {
     }
     
     // Extract the path from the URL
-    const pathMatch = url.pathname.match(/\/o\/(.+)$/);
+    const pathMatch = url.pathname && typeof url.pathname === 'string' ? url.pathname.match(/\/o\/(.+)$/) : null;
     if (!pathMatch) {
       return null;
     }

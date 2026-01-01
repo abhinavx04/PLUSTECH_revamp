@@ -63,11 +63,11 @@ const Footer = () => {
             <ul className="space-y-1.5 text-xs text-gray-300">
               <li>
                 <a
-                  href="mailto:info@plustech.com"
+                  href="mailto:info@plustech.co.in"
                   className="hover:text-[#00aeef] transition-colors duration-200"
                   aria-label="Email Plustech"
                 >
-                  info@plustech.com
+                  info@plustech.co.in
                 </a>
               </li>
               <li>
@@ -88,8 +88,26 @@ const Footer = () => {
                   +91 20 26056366
                 </a>
               </li>
+              <li>
+                <a
+                  href="tel:+918799908452"
+                  className="hover:text-[#00aeef] transition-colors duration-200"
+                  aria-label="Call Plustech"
+                >
+                  +91 87999 08452
+                </a>
+              </li>
+              <li>
+                <a
+                  href="tel:+918799908453"
+                  className="hover:text-[#00aeef] transition-colors duration-200"
+                  aria-label="Call Plustech"
+                >
+                  +91 87999 08453
+                </a>
+              </li>
               <li className="text-gray-300 leading-tight">
-                Office no. 412, Antariksh Towers, 9th Floor, Building B, Station Rd, opp. Old Zilla Parishad, Mangalwar Peth, Pune, Maharashtra 411001
+                Office no. 412, Antariksh Towers, 9th Floor, Building B, Station Rd, opp. Old Zilla Parishad, Mangalwar Peth, Pune, Maharashtra 411011
               </li>
             </ul>
           </div>

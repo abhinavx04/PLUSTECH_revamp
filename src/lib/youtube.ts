@@ -44,7 +44,8 @@ export function buildYouTubeEmbedUrl(videoId: string): string {
  * Convert a user-supplied URL into a normalized embed URL if valid.
  */
 export function normalizeYouTubeEmbedUrl(input: string | undefined | null): string | null {
-  const id = extractYouTubeId(input || '');
+  if (!input) return null;
+  const id = extractYouTubeId(input);
   return id ? buildYouTubeEmbedUrl(id) : null;
 }
 

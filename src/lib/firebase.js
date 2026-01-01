@@ -2,6 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 
 // Firebase configuration for PlusTech project
 const firebaseConfig = {
@@ -34,12 +35,24 @@ const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName])
 if (missingVars.length > 0) {
   console.error('[Firebase] Missing environment variables:', missingVars);
   console.error('[Firebase] Check Vercel environment variables or .env file');
+  
+  // Create mock auth object as fallback
+  auth = {
+    __disabled: true,
+    currentUser: null,
+    onAuthStateChanged: (callback) => {
+      setTimeout(() => callback(null), 0);
+      return () => {};
+    },
+    signInWithEmailAndPassword: () => Promise.reject(new Error('Firebase authentication is not configured.')),
+    signOut: () => Promise.resolve(),
+  };
 } else {
   try {
     // Initialize Firebase with the real configuration
     app = initializeApp(firebaseConfig);
-    // Auth is lazy-loaded - only initialize when needed (admin pages)
-    // This reduces initial bundle size and blocking time
+    // Initialize auth immediately so it's available when needed
+    auth = getAuth(app);
     db = getFirestore(app);
     storage = getStorage(app);
     
@@ -66,10 +79,7 @@ if (missingVars.length > 0) {
 // Export db and storage (always initialized)
 export { db, storage };
 
-// Auth is initialized lazily - only when getAuth() is called
-// Since useAdminAuth imports from 'firebase/auth' and calls getAuth(),
-// auth will only initialize when admin pages (which are lazy-loaded) actually load
-// This prevents loading auth iframe (91KB) on public pages
+// Export auth (initialized or fallback mock)
 export { auth };
 
 // Provide basic type declarations for TS when importing from JS file

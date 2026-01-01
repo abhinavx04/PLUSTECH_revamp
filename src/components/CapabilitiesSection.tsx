@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useInView, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ImageViewer } from './ui/ImageViewer';
 
 interface CapabilityItem {
   id: string;
@@ -103,75 +104,6 @@ const CapabilitiesSection: React.FC = () => {
     return 30 * (1 - progress);
   });
 
-  const getAnimationVariants = (direction: 'left' | 'right' | 'up') => {
-    const baseVariants = {
-      hidden: { 
-        opacity: 0,
-        transition: { duration: 0.6, ease: "easeIn" }
-      },
-      visible: { 
-        opacity: 1,
-        transition: { duration: 0.8, ease: "easeOut" }
-      }
-    };
-
-    switch (direction) {
-      case 'left':
-        return {
-          hidden: { 
-            ...baseVariants.hidden, 
-            x: -100, 
-            rotateY: -15 
-          },
-          visible: { 
-            ...baseVariants.visible, 
-            x: 0, 
-            rotateY: 0 
-          }
-        };
-      case 'right':
-        return {
-          hidden: { 
-            ...baseVariants.hidden, 
-            x: 100, 
-            rotateY: 15 
-          },
-          visible: { 
-            ...baseVariants.visible, 
-            x: 0, 
-            rotateY: 0 
-          }
-        };
-      case 'up':
-        return {
-          hidden: { 
-            ...baseVariants.hidden, 
-            y: 50, 
-            rotateX: 10 
-          },
-          visible: { 
-            ...baseVariants.visible, 
-            y: 0, 
-            rotateX: 0 
-          }
-        };
-      default:
-        return baseVariants;
-    }
-  };
-
-  const imageVariants = {
-    hidden: { 
-      opacity: 0, 
-      scale: 0.8,
-      transition: { duration: 0.5, ease: "easeIn" }
-    },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
-  };
 
   return (
     <div ref={sectionRef} id="capabilities" className="w-full relative overflow-hidden">
@@ -217,12 +149,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const [maxProgress, setMaxProgress] = useState(0);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
-  const [isPanning, setIsPanning] = useState(false);
-  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
-  const imageRef = useRef<HTMLImageElement>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   // Scroll progress tracking - component enters from bottom, exits from top
   const { scrollYProgress } = useScroll({
@@ -343,78 +270,6 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
     return 0.8 + (0.2 * progress);
   });
 
-  // Reset zoom and pan when image changes
-  useEffect(() => {
-    if (selectedImage) {
-      setZoomLevel(1);
-      setPanPosition({ x: 0, y: 0 });
-    }
-  }, [selectedImage]);
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    if (!selectedImage) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setSelectedImage(null);
-      } else if (e.key === '+' || e.key === '=') {
-        e.preventDefault();
-        setZoomLevel(prev => Math.min(prev + 0.25, 5));
-      } else if (e.key === '-') {
-        e.preventDefault();
-        setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
-      } else if (e.key === '0') {
-        e.preventDefault();
-        setZoomLevel(1);
-        setPanPosition({ x: 0, y: 0 });
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedImage]);
-
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.25, 5));
-  };
-
-  const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
-  };
-
-  const handleResetZoom = () => {
-    setZoomLevel(1);
-    setPanPosition({ x: 0, y: 0 });
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (zoomLevel > 1) {
-      setIsPanning(true);
-      setPanStart({ x: e.clientX - panPosition.x, y: e.clientY - panPosition.y });
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isPanning && zoomLevel > 1) {
-      setPanPosition({
-        x: e.clientX - panStart.x,
-        y: e.clientY - panStart.y,
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsPanning(false);
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    if (selectedImage) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setZoomLevel(prev => Math.max(0.5, Math.min(5, prev + delta)));
-    }
-  };
 
   return (
     <motion.div
@@ -483,7 +338,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                         alt={`Turnkey paintshop visual ${idx + 1}`}
                         className="relative w-full h-[260px] md:h-[320px] object-contain bg-white/50 cursor-pointer transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
-                        onClick={() => setSelectedImage(image)}
+                        onClick={() => setSelectedImageIndex(idx)}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                       <div className="absolute bottom-3 left-3 right-3 bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 text-sm font-semibold text-[#0f172a] shadow pointer-events-none">
@@ -513,7 +368,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
               </div>
             ) : capability.id === 'robotic-applications' ? (
               // Robotic applications with carousel (buttons only, no counter)
-              <RoboticImageCarousel images={capability.images} />
+              <RoboticImageCarousel images={capability.images} onImageClick={(index) => setSelectedImageIndex(index)} />
             ) : capability.id === 'material-handling' ? (
               // 3-column responsive grid for material handling (no horizontal scroll)
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -525,8 +380,9 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[260px] md:h-[320px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-[260px] md:h-[320px] object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                       loading="lazy"
+                      onClick={() => setSelectedImageIndex(imageIndex)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
@@ -543,8 +399,9 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                       loading="lazy"
+                      onClick={() => setSelectedImageIndex(imageIndex)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
@@ -555,112 +412,21 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
         </div>
       </div>
 
-      {/* Image Lightbox Modal */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
-            onClick={() => setSelectedImage(null)}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-          >
-            {/* Close Button */}
-            <motion.button
-              className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-10"
-              onClick={() => setSelectedImage(null)}
-              whileHover={{ scale: 1.1, rotate: 90 }}
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </motion.button>
-
-            {/* Zoom Controls */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleZoomIn();
-                }}
-                className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors"
-                title="Zoom In (+)"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleZoomOut();
-                }}
-                className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors"
-                title="Zoom Out (-)"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                </svg>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleResetZoom();
-                }}
-                className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors text-xs font-semibold"
-                title="Reset Zoom (0)"
-              >
-                1:1
-              </button>
-            </div>
-
-            {/* Zoom Level Display */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white text-sm font-medium z-10">
-              {Math.round(zoomLevel * 100)}%
-            </div>
-
-            {/* Image Container */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="max-w-[95vw] max-h-[95vh] relative"
-              onClick={(e) => e.stopPropagation()}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onWheel={handleWheel}
-              style={{ cursor: zoomLevel > 1 ? (isPanning ? 'grabbing' : 'grab') : 'default' }}
-            >
-              <img
-                ref={imageRef}
-                src={selectedImage}
-                alt="Full size plant visual"
-                className="max-w-full max-h-[95vh] w-auto h-auto object-contain rounded-lg shadow-2xl"
-                style={{
-                  transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`,
-                  transformOrigin: 'center center',
-                  transition: isPanning ? 'none' : 'transform 0.2s ease-out',
-                }}
-              />
-            </motion.div>
-
-            {/* Keyboard Hints */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 text-white text-xs flex gap-4 z-10">
-              <span>+/- Zoom</span>
-              <span>0 Reset</span>
-              <span>ESC Close</span>
-              {zoomLevel > 1 && <span>Drag to Pan</span>}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Image Viewer */}
+      {selectedImageIndex !== null && (
+        <ImageViewer
+          images={capability.images}
+          currentIndex={selectedImageIndex}
+          onClose={() => setSelectedImageIndex(null)}
+          onNavigate={(index) => setSelectedImageIndex(index)}
+          alt={capability.title}
+        />
+      )}
     </motion.div>
   );
 };
 
-const RoboticImageCarousel: React.FC<{ images: string[] }> = ({ images }) => {
+const RoboticImageCarousel: React.FC<{ images: string[]; onImageClick: (index: number) => void }> = ({ images, onImageClick }) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -725,8 +491,9 @@ const RoboticImageCarousel: React.FC<{ images: string[] }> = ({ images }) => {
               <img 
                 src={image} 
                 alt={`Robotic application ${i + 1}`}
-                className="w-full h-[350px] md:h-[400px] object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-[350px] md:h-[400px] object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                 loading="lazy"
+                onClick={() => onImageClick(i)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import SimpleNewsSection from '../components/SimpleNewsSection';
@@ -7,8 +7,11 @@ import Footer from '../components/Footer';
 import { SEO } from '../components/SEO';
 import { OptimizedImage } from '../components/OptimizedImage';
 import { PageLayout } from '../components/PageLayout';
+import { ImageViewer } from '../components/ui/ImageViewer';
 
 const HomePage: React.FC = () => {
+  const [selectedWelcomeImage, setSelectedWelcomeImage] = useState<number | null>(null);
+  const welcomeImages = ['/office/entrance/entrance.jpeg'];
   return (
     <>
       <SEO 
@@ -23,7 +26,7 @@ const HomePage: React.FC = () => {
         <div className="w-full h-[50vh] md:h-[60vh] relative">
           <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
             <div className="text-center px-4 md:px-6 lg:px-8 max-w-5xl">
-              <h1 className="text-black/60 text-3xl md:text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+              <h1 className="text-black/60 text-3xl md:text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)', fontWeight: 950 }}>
                 DEVELOPING SOLUTIONS<br />DELIVERING QUALITY
               </h1>
             </div>
@@ -59,7 +62,10 @@ const HomePage: React.FC = () => {
               </p>
             </div>
             <div className="flex justify-center items-center">
-              <div className="w-full max-w-2xl aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
+              <div 
+                className="w-full max-w-2xl aspect-[4/3] rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
+                onClick={() => setSelectedWelcomeImage(0)}
+              >
                 <OptimizedImage
                   src="/office/entrance/entrance.jpeg"
                   alt="Plustech Entrance"
@@ -103,6 +109,16 @@ const HomePage: React.FC = () => {
 
         <Footer />
       </PageLayout>
+
+      {/* Welcome Image Viewer */}
+      {selectedWelcomeImage !== null && (
+        <ImageViewer
+          images={welcomeImages}
+          currentIndex={selectedWelcomeImage}
+          onClose={() => setSelectedWelcomeImage(null)}
+          alt="Plustech Entrance"
+        />
+      )}
     </>
   );
 };
