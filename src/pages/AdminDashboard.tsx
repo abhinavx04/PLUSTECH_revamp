@@ -36,7 +36,7 @@ const AdminDashboard: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/');
+      navigate('/admin/login');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -51,7 +51,7 @@ const AdminDashboard: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
               <img 
-                src="/newlogo.png" 
+                src="/PLUSTECH NEW.png" 
                 alt="PlusTech Logo" 
                 className="h-10 w-auto brightness-110 contrast-110"
                 width="195"

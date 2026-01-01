@@ -28,7 +28,7 @@ const AdminLogin: React.FC = () => {
       <div className="max-w-md w-full space-y-8 p-8 bg-white/10 backdrop-blur-lg rounded-xl border border-white/20">
         <div className="text-center">
           <img 
-            src="/newlogo.png" 
+            src="/PLUSTECH NEW.png" 
             alt="PlusTech Logo" 
             className="h-16 w-auto mx-auto brightness-110 contrast-110"
             width="195"
