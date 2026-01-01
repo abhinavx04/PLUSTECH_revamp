@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
 interface CapabilityItem {
   id: string;
@@ -85,7 +85,23 @@ const capabilitiesData: CapabilityItem[] = [
 
 const CapabilitiesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
+  const headerRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll progress for header - appears when entering viewport from bottom
+  const { scrollYProgress: headerScrollProgress } = useScroll({
+    target: headerRef,
+    offset: ["start 0.8", "start 0.3"]
+  });
+  
+  // Calculate opacity: fade in from 0 to 1 as scrolling down, but don't fade out when scrolling back up
+  const headerOpacity = useTransform(headerScrollProgress, (latest) => {
+    // Use the maximum value reached to prevent fading out
+    return Math.min(1, Math.max(0, latest));
+  });
+  const headerY = useTransform(headerScrollProgress, (latest) => {
+    const progress = Math.min(1, Math.max(0, latest));
+    return 30 * (1 - progress);
+  });
 
   const getAnimationVariants = (direction: 'left' | 'right' | 'up') => {
     const baseVariants = {
@@ -161,10 +177,12 @@ const CapabilitiesSection: React.FC = () => {
     <div ref={sectionRef} id="capabilities" className="w-full relative overflow-hidden">
       {/* Section Header */}
       <motion.div 
+        ref={headerRef}
         className="py-12 px-6"
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        style={{
+          opacity: headerOpacity,
+          y: headerY
+        }}
       >
         <div className="max-w-7xl mx-auto space-y-3 text-center">
           <h2 className="text-4xl md:text-5xl font-extrabold font-heading text-black leading-tight">
@@ -177,12 +195,11 @@ const CapabilitiesSection: React.FC = () => {
       </motion.div>
 
       {/* Capability Items */}
-      {capabilitiesData.map((capability) => (
+      {capabilitiesData.map((capability, index) => (
         <CapabilityItem 
           key={capability.id}
           capability={capability}
-          variants={getAnimationVariants(capability.animationDirection)}
-          imageVariants={imageVariants}
+          index={index}
         />
       ))}
     </div>
@@ -191,23 +208,140 @@ const CapabilitiesSection: React.FC = () => {
 
 interface CapabilityItemProps {
   capability: CapabilityItem;
-  variants: any;
-  imageVariants: any;
+  index: number;
 }
 
 const CapabilityItem: React.FC<CapabilityItemProps> = ({ 
   capability, 
-  variants, 
-  imageVariants
+  index
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
-  const isItemInView = useInView(itemRef, { once: false, margin: "-50px" });
+  const [maxProgress, setMaxProgress] = useState(0);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const imageRef = useRef<HTMLImageElement>(null);
+
+  // Scroll progress tracking - component enters from bottom, exits from top
+  const { scrollYProgress } = useScroll({
+    target: itemRef,
+    offset: ["start 0.85", "start 0.15"]
+  });
+
+  // Track maximum scroll progress to determine if we've scrolled past this component
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      setMaxProgress(prev => Math.max(prev, latest));
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
+
+  // Calculate progress value based on scroll position - used for all transforms
+  const progressValue = useTransform(scrollYProgress, (latest) => {
+    // If we've scrolled past this component significantly (reached high progress)
+    if (maxProgress > 0.6) {
+      const disappearThreshold = 0.35 + (index * 0.08);
+      
+      // Smooth transition: prevents jump at boundary
+      if (latest < disappearThreshold) {
+        // Fade out: progress goes from 1 to 0 as latest goes from disappearThreshold to 0
+        return Math.max(0, latest / disappearThreshold);
+      } else if (latest >= disappearThreshold && latest <= 0.5) {
+        // Keep fully visible in this range (smooth transition zone prevents flicker)
+        return 1;
+      } else {
+        // Use normal fade-in logic when scrolling down from top
+        return Math.min(1, Math.max(0, (latest - 0.1) / 0.4));
+      }
+    }
+    
+    // Normal progress when scrolling down (haven't scrolled past yet)
+    return Math.min(1, Math.max(0, (latest - 0.1) / 0.4));
+  });
+
+  // Calculate opacity: fade in when scrolling down, fade out when scrolling back up past threshold
+  const opacity = progressValue;
+
+  const x = useTransform(progressValue, (progress) => {
+    const invProgress = 1 - progress;
+    
+    if (capability.animationDirection === 'left') {
+      return -100 * invProgress;
+    } else if (capability.animationDirection === 'right') {
+      return 100 * invProgress;
+    }
+    return 0;
+  });
+
+  const y = useTransform(progressValue, (progress) => {
+    const invProgress = 1 - progress;
+    
+    if (capability.animationDirection === 'up') {
+      return 50 * invProgress;
+    }
+    return 0;
+  });
+
+  const rotateY = useTransform(progressValue, (progress) => {
+    const invProgress = 1 - progress;
+    
+    if (capability.animationDirection === 'left') {
+      return -15 * invProgress;
+    } else if (capability.animationDirection === 'right') {
+      return 15 * invProgress;
+    }
+    return 0;
+  });
+
+  const rotateX = useTransform(progressValue, (progress) => {
+    const invProgress = 1 - progress;
+    
+    if (capability.animationDirection === 'up') {
+      return 10 * invProgress;
+    }
+    return 0;
+  });
+
+  // Image opacity and scale
+  const imageOpacity = useTransform(scrollYProgress, (latest) => {
+    if (maxProgress > 0.6) {
+      const disappearThreshold = 0.35 + (index * 0.08);
+      
+      if (latest < disappearThreshold) {
+        return Math.max(0, latest / disappearThreshold);
+      } else if (latest >= disappearThreshold && latest <= 0.5) {
+        // Keep fully visible in transition zone
+        return 1;
+      } else {
+        return Math.min(1, Math.max(0, (latest - 0.15) / 0.35));
+      }
+    }
+    
+    return Math.min(1, Math.max(0, (latest - 0.15) / 0.35));
+  });
+
+  const imageScale = useTransform(scrollYProgress, (latest) => {
+    if (maxProgress > 0.6) {
+      const disappearThreshold = 0.35 + (index * 0.08);
+      let progress: number;
+      
+      if (latest < disappearThreshold) {
+        progress = latest / disappearThreshold;
+        return 0.8 + (0.2 * progress);
+      } else if (latest >= disappearThreshold && latest <= 0.5) {
+        // Keep fully visible in transition zone
+        return 1;
+      } else {
+        progress = Math.min(1, Math.max(0, (latest - 0.15) / 0.35));
+        return 0.8 + (0.2 * progress);
+      }
+    }
+    
+    const progress = Math.min(1, Math.max(0, (latest - 0.15) / 0.35));
+    return 0.8 + (0.2 * progress);
+  });
 
   // Reset zoom and pan when image changes
   useEffect(() => {
@@ -286,17 +420,18 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
     <motion.div
       ref={itemRef}
       className={`w-full py-16 px-6 ${capability.bgColor}`}
-      initial="hidden"
-      animate={isItemInView ? "visible" : "hidden"}
-      variants={variants}
+      style={{
+        opacity,
+        x,
+        y,
+        rotateY,
+        rotateX,
+      }}
     >
       <div className="max-w-7xl mx-auto">
         <div className="space-y-16">
           {/* Content Section */}
-          <motion.div 
-            className="text-left max-w-5xl"
-            variants={variants}
-          >
+          <div className="text-left max-w-5xl">
             <div className="space-y-6">
               <h3 className={`text-2xl md:text-3xl font-semibold font-heading leading-tight ${capability.textColor}`}>
                 {capability.title}
@@ -313,30 +448,26 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {capability.features.map((feature, featureIndex) => (
-                    <motion.div
+                    <div
                       key={featureIndex}
                       className={`flex items-start space-x-4 p-4 rounded-xl ${capability.textColor === 'text-white' ? 'bg-white/10' : 'bg-gray-100'}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isItemInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                      transition={{ 
-                        delay: isItemInView ? 0.3 + (featureIndex * 0.1) : 0,
-                        duration: 0.5,
-                        ease: isItemInView ? "easeOut" : "easeIn"
-                      }}
                     >
                       <div className={`w-3 h-3 rounded-full mt-2 flex-shrink-0 ${capability.textColor === 'text-white' ? 'bg-blue-400' : 'bg-[#00aeef]'}`} />
                       <span className={`text-base leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>{feature}</span>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
 
           {/* Images Section */}
           <motion.div 
             className="relative"
-            variants={imageVariants}
+            style={{
+              opacity: imageOpacity,
+              scale: imageScale,
+            }}
           >
             {capability.id === 'turnkey-paintshop' ? (
               <div className="space-y-8">
@@ -387,16 +518,9 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
               // 3-column responsive grid for material handling (no horizontal scroll)
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {capability.images.map((image, imageIndex) => (
-                  <motion.div
+                  <div
                     key={imageIndex}
                     className="relative overflow-hidden rounded-2xl shadow-2xl group"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={isItemInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-                    transition={{ 
-                      delay: isItemInView ? 0.2 + (imageIndex * 0.1) : 0,
-                      duration: 0.6,
-                      ease: isItemInView ? "easeOut" : "easeIn"
-                    }}
                   >
                     <img 
                       src={image} 
@@ -405,23 +529,16 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             ) : (
               // Large 2-column grid for digitization (2 images)
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {capability.images.map((image, imageIndex) => (
-                  <motion.div
+                  <div
                     key={imageIndex}
                     className="relative overflow-hidden rounded-2xl shadow-2xl group"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={isItemInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-                    transition={{ 
-                      delay: isItemInView ? 0.2 + (imageIndex * 0.1) : 0,
-                      duration: 0.6,
-                      ease: isItemInView ? "easeOut" : "easeIn"
-                    }}
                   >
                     <img 
                       src={image} 
@@ -430,7 +547,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             )}
