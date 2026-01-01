@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
 
 interface Milestone {
@@ -333,9 +333,23 @@ const TimelineMilestone: React.FC<{
     setOffsetTop(milestoneRect.top - containerRect.top + containerEl.scrollTop);
   }, [timelinePx, timelineContainerRef]);
 
+  const maxProgressRef = useRef(0);
+  
+  // Track max progress for this milestone
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      if (latest > maxProgressRef.current) {
+        maxProgressRef.current = latest;
+      }
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
+  
   const reached = useTransform(scrollYProgress, (p) => {
     const ratio = timelinePx > 0 ? offsetTop / timelinePx : 1;
-    return p >= ratio ? 1 : 0;
+    // Use max scroll progress to prevent reverse animation - once reached, stay reached
+    const progress = Math.max(p, maxProgressRef.current);
+    return progress >= ratio ? 1 : 0;
   }) as MotionValue<number>;
   const reachedSpring = useSpring(reached as MotionValue<number>, { stiffness: 260, damping: 30 });
   const cardOpacity = reachedSpring;
@@ -508,6 +522,7 @@ const HistoryMilestonesSection: React.FC = () => {
   const timelineRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-200px" });
   const [timelinePx, setTimelinePx] = useState(0);
+  const maxScrollProgressRef = useRef(0);
   
   // Scroll-based animations for timeline
   const { scrollYProgress } = useScroll({
@@ -515,8 +530,22 @@ const HistoryMilestonesSection: React.FC = () => {
     offset: ["start end", "end start"]
   });
   
-  // Transform scroll progress to timeline line height
-  const lineFillPx = useTransform(scrollYProgress, [0, 1], [0, timelinePx]);
+  // Track maximum scroll progress to prevent reverse animation
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      if (latest > maxScrollProgressRef.current) {
+        maxScrollProgressRef.current = latest;
+      }
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
+  
+  // Transform max scroll progress to timeline line height (no reverse animation)
+  // Use ref directly in transform for immediate updates
+  const lineFillPx = useTransform(scrollYProgress, (latest) => {
+    const progress = Math.max(latest, maxScrollProgressRef.current);
+    return progress * timelinePx;
+  });
 
   useLayoutEffect(() => {
     const el = timelineRef.current;
@@ -624,9 +653,9 @@ const HistoryMilestonesSection: React.FC = () => {
                     hasMultipleMilestones={hasMultipleMilestones}
                     categoryConfig={categoryConfig}
                     timelineContainerRef={timelineRef}
-                    scrollYProgress={scrollYProgress}
-                    timelinePx={timelinePx}
-                  />
+              scrollYProgress={scrollYProgress}
+              timelinePx={timelinePx}
+            />
                 </div>
               );
             })}
