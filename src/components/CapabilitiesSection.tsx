@@ -19,9 +19,9 @@ const capabilitiesData: CapabilityItem[] = [
     description: 'End-to-end paintshop delivery—from 3D layout to commissioning—covering process, utilities, automation, safety, quality, and sustainability to meet production and compliance goals.',
     features: [],
     images: [
-      '/home/NAHAR_1.png',
-      '/home/NAHAR_2.png',
-      '/home/UNITED.PNG'
+      '/home/NAHAR_1.webp',
+      '/home/NAHAR_2.webp',
+      '/home/UNITED.webp'
     ],
     bgColor: 'bg-white',
     textColor: 'text-black',
@@ -74,8 +74,8 @@ const capabilitiesData: CapabilityItem[] = [
       'Machine learning optimization'
     ],
     images: [
-      '/digitization-smartfactory/1.jpg',
-      '/digitization-smartfactory/2.jpg'
+      '/digitization-smartfactory/1.webp',
+      '/digitization-smartfactory/2.webp'
     ],
     bgColor: 'bg-white',
     textColor: 'text-black',

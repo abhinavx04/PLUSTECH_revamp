@@ -133,7 +133,7 @@ const CSRActivitiesSection: React.FC = () => {
             // Get images - support both new (imageUrls) and legacy (imageUrl) formats
             const images = activity.imageUrls && activity.imageUrls.length > 0 
               ? activity.imageUrls 
-              : (activity.imageUrl ? [activity.imageUrl] : ['/aboutus/2.png']);
+              : (activity.imageUrl ? [activity.imageUrl] : ['/aboutus/2.webp']);
             const primaryImage = images[0];
             
             return (

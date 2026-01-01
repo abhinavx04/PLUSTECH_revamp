@@ -181,12 +181,6 @@ export const NavbarLogo = ({ className }: NavbarLogoProps) => {
         height="210"
         loading="eager"
       />
-      <span
-        className="font-bold text-lg text-[#00aeef]"
-        style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}
-      >
-        PLUSTECH
-      </span>
     </a>
   );
 };

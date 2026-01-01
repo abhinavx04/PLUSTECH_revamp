@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  Navbar,
-  NavBody,
-  NavItems,
-  MobileNav,
-  NavbarLogo,
-  MobileNavHeader,
-  MobileNavToggle,
-  MobileNavMenu,
-} from '../../components/ui/resizable-navbar';
 import Footer from '../../components/Footer';
 import { useCSRActivitiesFirestore } from '../../hooks/useCSRActivitiesFirestore';
+import { PageLayout } from '../../components/PageLayout';
 
 const CSRActivityDetailPage: React.FC = () => {
   const { activityId } = useParams<{ activityId: string }>();
@@ -20,30 +11,8 @@ const CSRActivityDetailPage: React.FC = () => {
   const { loading, getCSRActivityById } = useCSRActivitiesFirestore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPDF, setShowPDF] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
 
   const activity = activityId ? getCSRActivityById(activityId) : null;
-
-  const navItems = [
-    { name: 'Home', link: '/' },
-    { 
-      name: 'About', 
-      link: '/about',
-      submenu: [
-        { title: 'About Us', path: '/about' },
-        { title: 'Corporate Beliefs', path: '/about/corporate-beliefs' },
-        { title: 'Industry Focus', path: '/about/industry-focus' },
-        { title: 'Certifications', path: '/about/certifications' },
-        { title: 'History & Milestones', path: '/about/history' },
-        { title: 'Annual Returns', path: '/about/annual-returns' },
-        { title: 'CSR Activities', path: '/about/csr-activities' },
-      ]
-    },
-    { name: 'Projects', link: '/projects' },
-    { name: 'Services', link: '/services' },
-    { name: 'Contact', link: '/contact' },
-  ];
 
   useEffect(() => {
     if (!loading && activityId && !activity) {
@@ -52,20 +21,15 @@ const CSRActivityDetailPage: React.FC = () => {
     }
   }, [activity, activityId, loading, navigate]);
 
-  const cn = (...classes: (string | undefined | null | false)[]): string => {
-    return classes.filter(Boolean).join(' ');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-white pt-16">
         <Navbar>
           <NavBody>
             <NavbarLogo />
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-center mr-24">
               <NavItems items={navItems} />
             </div>
-            <div className="w-24"></div>
           </NavBody>
           <MobileNav>
             <MobileNavHeader>
@@ -153,10 +117,9 @@ const CSRActivityDetailPage: React.FC = () => {
         <Navbar>
           <NavBody>
             <NavbarLogo />
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-center mr-24">
               <NavItems items={navItems} />
             </div>
-            <div className="w-24"></div>
           </NavBody>
           <MobileNav>
             <MobileNavHeader>
@@ -248,92 +211,11 @@ const CSRActivityDetailPage: React.FC = () => {
 
   const images = activity.imageUrls && activity.imageUrls.length > 0 
     ? activity.imageUrls 
-    : (activity.imageUrl ? [activity.imageUrl] : ['/aboutus/2.png']);
+    : (activity.imageUrl ? [activity.imageUrl] : ['/aboutus/2.webp']);
   const hasMultipleImages = images.length > 1;
 
   return (
-    <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-gray-50 pt-16">
-      {/* Navbar */}
-      <Navbar>
-        <NavBody>
-          <NavbarLogo />
-          <div className="flex-1 flex justify-center">
-            <NavItems items={navItems} />
-          </div>
-          <div className="w-24"></div>
-        </NavBody>
-        <MobileNav>
-          <MobileNavHeader>
-            <NavbarLogo />
-            {!isMobileMenuOpen && (
-              <MobileNavToggle
-                isOpen={isMobileMenuOpen}
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
-            )}
-          </MobileNavHeader>
-          <MobileNavMenu
-            isOpen={isMobileMenuOpen}
-            onClose={() => setIsMobileMenuOpen(false)}
-          >
-            <div className="space-y-2">
-              {navItems.map((item, idx) => {
-                const hasSubmenu = item.submenu && item.submenu.length > 0;
-                const isOpen = openMobileDropdown === item.name;
-                
-                return (
-                  <div key={`mobile-link-${idx}`}>
-                    <div
-                      className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                      style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
-                      onClick={() => {
-                        if (hasSubmenu) {
-                          setOpenMobileDropdown(isOpen ? null : item.name);
-                        } else {
-                          setIsMobileMenuOpen(false);
-                          window.location.href = item.link;
-                        }
-                      }}
-                    >
-                      <span>{item.name}</span>
-                      {hasSubmenu && (
-                        <svg 
-                          className={cn(
-                            "w-5 h-5 transition-transform duration-200",
-                            isOpen && "rotate-180"
-                          )} 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      )}
-                    </div>
-                    {hasSubmenu && isOpen && (
-                      <div className="pl-6 pr-4 pb-2 space-y-1">
-                        {item.submenu.map((subItem, subIdx) => (
-                          <a
-                            key={`mobile-submenu-${idx}-${subIdx}`}
-                            href={subItem.path}
-                            onClick={() => {
-                              setIsMobileMenuOpen(false);
-                              setOpenMobileDropdown(null);
-                            }}
-                            className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
-                          >
-                            {subItem.title}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </MobileNavMenu>
-        </MobileNav>
-      </Navbar>
+    <PageLayout className="bg-gray-50 pt-16">
 
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
@@ -556,7 +438,7 @@ const CSRActivityDetailPage: React.FC = () => {
 
       {/* Footer */}
       <Footer />
-    </div>
+    </PageLayout>
   );
 };
 

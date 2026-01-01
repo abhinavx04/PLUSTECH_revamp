@@ -1,17 +1,8 @@
-import React, { useState } from 'react';
-import {
-  Navbar,
-  NavBody,
-  NavItems,
-  MobileNav,
-  NavbarLogo,
-  MobileNavHeader,
-  MobileNavToggle,
-  MobileNavMenu,
-} from '../components/ui/resizable-navbar';
+import React from 'react';
 import Footer from '../components/Footer';
 import { SEO } from '../components/SEO';
 import { OptimizedImage } from '../components/OptimizedImage';
+import { PageLayout } from '../components/PageLayout';
 
 const services = [
   {
@@ -44,7 +35,7 @@ const services = [
     title: 'Productivity Improvement',
     description:
       'Delivering smarter throughput with automation, modernization, and process tuning without compromising quality.',
-    image: '/digitization-smartfactory/2.jpg',
+    image: '/digitization-smartfactory/2.webp',
     bullets: [
       'Process and capacity enhancement programs',
       'Modernisation with low-downtime execution',
@@ -56,32 +47,6 @@ const services = [
 ];
 
 const ServicesPage: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
-
-  const cn = (...classes: (string | undefined | null | false)[]): string => {
-    return classes.filter(Boolean).join(' ');
-  };
-
-  const navItems = [
-    { name: 'Home', link: '/' },
-    { 
-      name: 'About', 
-      link: '/about',
-      submenu: [
-        { title: 'About Us', path: '/about' },
-        { title: 'Corporate Beliefs', path: '/about/corporate-beliefs' },
-        { title: 'Industry Focus', path: '/about/industry-focus' },
-        { title: 'Certifications', path: '/about/certifications' },
-        { title: 'History & Milestones', path: '/about/history' },
-        { title: 'Annual Returns', path: '/about/annual-returns' },
-        { title: 'CSR Activities', path: '/about/csr-activities' },
-      ]
-    },
-    { name: 'Projects', link: '/projects' },
-    { name: 'Services', link: '/services' },
-    { name: 'Contact', link: '/contact' },
-  ];
 
   return (
     <>
@@ -91,88 +56,7 @@ const ServicesPage: React.FC = () => {
         url="/services"
         keywords="surface finishing services, technical consultancy, maintenance contracts, productivity improvement, automation solutions"
       />
-      <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
-      <Navbar>
-        <NavBody>
-          <NavbarLogo />
-          <div className="flex-1 flex justify-center">
-            <NavItems items={navItems} />
-          </div>
-          <div className="w-24" />
-        </NavBody>
-
-        <MobileNav>
-          <MobileNavHeader>
-            <NavbarLogo />
-            {!isMobileMenuOpen && (
-              <MobileNavToggle
-                isOpen={isMobileMenuOpen}
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
-            )}
-          </MobileNavHeader>
-          <MobileNavMenu
-            isOpen={isMobileMenuOpen}
-            onClose={() => setIsMobileMenuOpen(false)}
-          >
-            <div className="space-y-2">
-              {navItems.map((item, idx) => {
-                const hasSubmenu = item.submenu && item.submenu.length > 0;
-                const isOpen = openMobileDropdown === item.name;
-                
-                return (
-                  <div key={`mobile-link-${idx}`}>
-                    <div
-                      className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                  style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
-                      onClick={() => {
-                        if (hasSubmenu) {
-                          setOpenMobileDropdown(isOpen ? null : item.name);
-                        } else {
-                          setIsMobileMenuOpen(false);
-                          window.location.href = item.link;
-                        }
-                      }}
-                    >
-                      <span>{item.name}</span>
-                      {hasSubmenu && (
-                        <svg 
-                          className={cn(
-                            "w-5 h-5 transition-transform duration-200",
-                            isOpen && "rotate-180"
-                          )} 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      )}
-                    </div>
-                    {hasSubmenu && isOpen && (
-                      <div className="pl-6 pr-4 pb-2 space-y-1">
-                        {item.submenu.map((subItem, subIdx) => (
-                          <a
-                            key={`mobile-submenu-${idx}-${subIdx}`}
-                            href={subItem.path}
-                            onClick={() => {
-                              setIsMobileMenuOpen(false);
-                              setOpenMobileDropdown(null);
-                            }}
-                            className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
-                          >
-                            {subItem.title}
-                </a>
-              ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </MobileNavMenu>
-        </MobileNav>
-      </Navbar>
+      <PageLayout className="bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
 
       <main className="flex-1 w-full overflow-hidden">
         {/* Hero */}
@@ -429,7 +313,7 @@ const ServicesPage: React.FC = () => {
       </main>
 
       <Footer />
-      </div>
+      </PageLayout>
     </>
   );
 };

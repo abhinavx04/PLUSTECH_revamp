@@ -1,14 +1,4 @@
-import React, { useState } from 'react';
-import {
-  Navbar,
-  NavBody,
-  NavItems,
-  MobileNav,
-  NavbarLogo,
-  MobileNavHeader,
-  MobileNavToggle,
-  MobileNavMenu,
-} from '../components/ui/resizable-navbar';
+import React from 'react';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import SimpleNewsSection from '../components/SimpleNewsSection';
@@ -16,35 +6,9 @@ import CapabilitiesSection from '../components/CapabilitiesSection';
 import Footer from '../components/Footer';
 import { SEO } from '../components/SEO';
 import { OptimizedImage } from '../components/OptimizedImage';
+import { PageLayout } from '../components/PageLayout';
 
 const HomePage: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
-
-  const cn = (...classes: (string | undefined | null | false)[]): string => {
-    return classes.filter(Boolean).join(' ');
-  };
-
-  const navItems = [
-    { name: "Home", link: "/" },
-    { 
-      name: "About", 
-      link: "/about",
-      submenu: [
-        { title: 'About Us', path: '/about' },
-        { title: 'Corporate Beliefs', path: '/about/corporate-beliefs' },
-        { title: 'Industry Focus', path: '/about/industry-focus' },
-        { title: 'Certifications', path: '/about/certifications' },
-        { title: 'History & Milestones', path: '/about/history' },
-        { title: 'Annual Returns', path: '/about/annual-returns' },
-        { title: 'CSR Activities', path: '/about/csr-activities' },
-      ]
-    },
-    { name: "Projects", link: "/projects" },
-    { name: "Services", link: "/services" },
-    { name: "Contact", link: "/contact" },
-  ];
-
   return (
     <>
       <SEO 
@@ -52,94 +16,7 @@ const HomePage: React.FC = () => {
         description="At Plustech, we design and build surface finishing plants for automotive and general industries. With expertise in engineering, automation, and commissioning, we deliver customized solutions that combine innovation, efficiency, and quality."
         url="/"
       />
-      <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-gradient-to-b from-white via-blue-50 to-white">
-        {/* Resizable Navbar */}
-      <div className="relative w-full">
-        <Navbar>
-          {/* Desktop Navigation */}
-          <NavBody>
-            <NavbarLogo />
-            <div className="flex-1 flex justify-center">
-              <NavItems items={navItems} />
-            </div>
-            <div className="w-24"></div>
-          </NavBody>
-
-          {/* Mobile Navigation */}
-          <MobileNav>
-            <MobileNavHeader>
-              <NavbarLogo />
-              {!isMobileMenuOpen && (
-                <MobileNavToggle
-                  isOpen={isMobileMenuOpen}
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                />
-              )}
-            </MobileNavHeader>
-
-            <MobileNavMenu
-              isOpen={isMobileMenuOpen}
-              onClose={() => setIsMobileMenuOpen(false)}
-            >
-              <div className="space-y-2">
-                {navItems.map((item, idx) => {
-                  const hasSubmenu = item.submenu && item.submenu.length > 0;
-                  const isOpen = openMobileDropdown === item.name;
-                  
-                  return (
-                    <div key={`mobile-link-${idx}`}>
-                      <div
-                        className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                    style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
-                        onClick={() => {
-                          if (hasSubmenu) {
-                            setOpenMobileDropdown(isOpen ? null : item.name);
-                          } else {
-                            setIsMobileMenuOpen(false);
-                            window.location.href = item.link;
-                          }
-                        }}
-                      >
-                        <span>{item.name}</span>
-                        {hasSubmenu && (
-                          <svg 
-                            className={cn(
-                              "w-5 h-5 transition-transform duration-200",
-                              isOpen && "rotate-180"
-                            )} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        )}
-                      </div>
-                      {hasSubmenu && isOpen && (
-                        <div className="pl-6 pr-4 pb-2 space-y-1">
-                          {item.submenu.map((subItem, subIdx) => (
-                            <a
-                              key={`mobile-submenu-${idx}-${subIdx}`}
-                              href={subItem.path}
-                              onClick={() => {
-                                setIsMobileMenuOpen(false);
-                                setOpenMobileDropdown(null);
-                              }}
-                              className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
-                            >
-                              {subItem.title}
-                  </a>
-                ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </MobileNavMenu>
-          </MobileNav>
-        </Navbar>
-        </div>
+      <PageLayout className="bg-gradient-to-b from-white via-blue-50 to-white">
 
       {/* Threads Hero */}
       <div className="w-full flex items-center justify-center pt-20">
@@ -225,7 +102,7 @@ const HomePage: React.FC = () => {
       </section>
 
         <Footer />
-      </div>
+      </PageLayout>
     </>
   );
 };
