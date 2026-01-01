@@ -125,9 +125,9 @@ const NewsPage: React.FC = () => {
                     )}
                   </div>
                   <div className="p-6 flex-1 flex flex-col space-y-4">
-                    <h4 className="text-xl font-bold text-slate-900 leading-snug line-clamp-2 tracking-tight">
+                    <h3 className="text-xl font-bold text-slate-900 leading-snug line-clamp-2 tracking-tight">
                       {article.title}
-                    </h4>
+                    </h3>
                     <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
                       {article.excerpt}
                     </p>

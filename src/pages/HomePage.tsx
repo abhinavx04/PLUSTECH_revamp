@@ -57,6 +57,7 @@ const HomePage: React.FC = () => {
         url="/"
       />
       <PageLayout className="bg-gradient-to-b from-white via-blue-50 to-white">
+      <main>
 
       {/* Threads Hero */}
       <div className="w-full flex items-center justify-center pt-20">
@@ -77,11 +78,11 @@ const HomePage: React.FC = () => {
         <div className="flex items-center justify-center gap-6">
           <button 
             onClick={() => smoothScrollTo('capabilities')}
-            className="px-8 md:px-10 py-4 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_8px_24px_rgba(0,174,239,0.3)] hover:bg-[#0099d4] transition-all duration-300 text-lg transform hover:scale-105 cursor-pointer"
+            className="px-8 md:px-10 py-4 rounded-full bg-[#00aeef] text-black font-semibold shadow-[0_8px_24px_rgba(0,174,239,0.3)] hover:bg-[#0099d4] transition-all duration-300 text-lg transform hover:scale-105 cursor-pointer"
           >
             Get Started
           </button>
-          <a href="/about" className="px-8 md:px-10 py-4 rounded-full bg-white text-[#00aeef] font-semibold hover:bg-gray-50 transition-all duration-300 text-lg shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-[#00aeef]/20 transform hover:scale-105">
+          <a href="/about" className="px-8 md:px-10 py-4 rounded-full bg-white text-[#0077a8] font-semibold hover:bg-gray-50 transition-all duration-300 text-lg shadow-[0_8px_24px_rgba(0,0,0,0.1)] border-2 border-[#00aeef] transform hover:scale-105">
             Discover Our Company
           </a>
         </div>
@@ -148,6 +149,7 @@ const HomePage: React.FC = () => {
       </section>
 
         <Footer />
+      </main>
       </PageLayout>
 
       {/* Welcome Image Viewer */}

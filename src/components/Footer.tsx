@@ -36,7 +36,7 @@ const Footer = () => {
 
           {/* Navigation Links */}
           <div className="flex flex-col space-y-2">
-            <h4 className="text-sm md:text-base font-semibold text-white">Explore</h4>
+            <h2 className="text-sm md:text-base font-semibold text-white">Explore</h2>
             <ul className="space-y-1.5 text-sm">
               {[
                 { label: 'Home', href: '/' },
@@ -59,7 +59,7 @@ const Footer = () => {
 
           {/* Contact Info - Main Office */}
           <div className="flex flex-col space-y-2">
-            <h4 className="text-sm md:text-base font-semibold text-white">Contact</h4>
+            <h2 className="text-sm md:text-base font-semibold text-white">Contact</h2>
             <ul className="space-y-1.5 text-xs text-gray-300">
               <li>
                 <a
@@ -73,7 +73,7 @@ const Footer = () => {
               <li>
                 <a
                   href="tel:+912026114961"
-                  className="hover:text-[#00aeef] transition-colors duration-200"
+                  className="hover:text-[#00aeef] transition-colors duration-200 inline-block min-h-[44px] min-w-[44px] flex items-center"
                   aria-label="Call Plustech"
                 >
                   +91 20 26114961
@@ -82,7 +82,7 @@ const Footer = () => {
               <li>
                 <a
                   href="tel:+912026056366"
-                  className="hover:text-[#00aeef] transition-colors duration-200"
+                  className="hover:text-[#00aeef] transition-colors duration-200 inline-block min-h-[44px] min-w-[44px] flex items-center"
                   aria-label="Call Plustech"
                 >
                   +91 20 26056366
@@ -91,7 +91,7 @@ const Footer = () => {
               <li>
                 <a
                   href="tel:+918799908452"
-                  className="hover:text-[#00aeef] transition-colors duration-200"
+                  className="hover:text-[#00aeef] transition-colors duration-200 inline-block min-h-[44px] min-w-[44px] flex items-center"
                   aria-label="Call Plustech"
                 >
                   +91 87999 08452
@@ -100,7 +100,7 @@ const Footer = () => {
               <li>
                 <a
                   href="tel:+918799908453"
-                  className="hover:text-[#00aeef] transition-colors duration-200"
+                  className="hover:text-[#00aeef] transition-colors duration-200 inline-block min-h-[44px] min-w-[44px] flex items-center"
                   aria-label="Call Plustech"
                 >
                   +91 87999 08453
@@ -114,12 +114,12 @@ const Footer = () => {
 
           {/* Sales Office */}
           <div className="flex flex-col space-y-2">
-            <h4 className="text-sm md:text-base font-semibold text-white">Sales Office</h4>
+            <h2 className="text-sm md:text-base font-semibold text-white">Sales Office</h2>
             <ul className="space-y-1.5 text-xs text-gray-300">
               <li>
                 <a
                   href="tel:+919910115755"
-                  className="hover:text-[#00aeef] transition-colors duration-200"
+                  className="hover:text-[#00aeef] transition-colors duration-200 inline-block min-h-[44px] min-w-[44px] flex items-center"
                   aria-label="Call Sales Office"
                 >
                   +91 99 10115755

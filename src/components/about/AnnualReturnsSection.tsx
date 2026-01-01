@@ -383,8 +383,8 @@ const AnnualReturnsSection: React.FC = () => {
                       <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
                         <p className="text-sm text-slate-700 mb-2"><strong>Contact Information:</strong></p>
                         <p className="text-sm text-slate-600">Email: <a href="mailto:info@plustech.com" className="text-[#00aeef] hover:underline">info@plustech.com</a></p>
-                        <p className="text-sm text-slate-600">Phone: <a href="tel:+912026114961" className="text-[#00aeef] hover:underline">+91 20 26114961</a></p>
-                        <p className="text-sm text-slate-600">Phone: <a href="tel:+912026056366" className="text-[#00aeef] hover:underline">+91 20 26056366</a></p>
+                        <p className="text-sm text-slate-600">Phone: <a href="tel:+912026114961" className="text-[#00aeef] hover:underline inline-block min-h-[44px] min-w-[44px] flex items-center">+91 20 26114961</a></p>
+                        <p className="text-sm text-slate-600">Phone: <a href="tel:+912026056366" className="text-[#00aeef] hover:underline inline-block min-h-[44px] min-w-[44px] flex items-center">+91 20 26056366</a></p>
                       </div>
                       <div className="flex gap-3">
                         <a

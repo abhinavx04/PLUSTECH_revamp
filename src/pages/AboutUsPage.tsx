@@ -51,6 +51,7 @@ const AboutUsPage: React.FC = () => {
 
   return (
     <PageLayout className="bg-white pt-16">
+      <main>
 
       {/* Timeline sidebar removed to match requested design */}
 
@@ -174,6 +175,7 @@ const AboutUsPage: React.FC = () => {
 
       {/* Footer */}
       <Footer />
+      </main>
     </PageLayout>
   );
 };
