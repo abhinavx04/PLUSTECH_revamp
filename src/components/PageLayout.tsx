@@ -117,7 +117,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) =
                           </svg>
                         )}
                       </div>
-                      {hasSubmenu && isOpen && (
+                      {hasSubmenu && isOpen && item.submenu && (
                         <div className="pl-6 pr-4 pb-2 space-y-1">
                           {item.submenu.map((subItem, subIdx) => (
                             <a

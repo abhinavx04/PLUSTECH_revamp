@@ -23,176 +23,17 @@ const CSRActivityDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-white pt-16">
-        <Navbar>
-          <NavBody>
-            <NavbarLogo />
-            <div className="flex-1 flex justify-center mr-24">
-              <NavItems items={navItems} />
-            </div>
-          </NavBody>
-          <MobileNav>
-            <MobileNavHeader>
-              <NavbarLogo />
-              {!isMobileMenuOpen && (
-                <MobileNavToggle
-                  isOpen={isMobileMenuOpen}
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                />
-              )}
-            </MobileNavHeader>
-            <MobileNavMenu
-              isOpen={isMobileMenuOpen}
-              onClose={() => setIsMobileMenuOpen(false)}
-            >
-              <div className="space-y-2">
-                {navItems.map((item, idx) => {
-                  const hasSubmenu = item.submenu && item.submenu.length > 0;
-                  const isOpen = openMobileDropdown === item.name;
-                  
-                  return (
-                    <div key={`mobile-link-${idx}`}>
-                      <div
-                        className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                        style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
-                        onClick={() => {
-                          if (hasSubmenu) {
-                            setOpenMobileDropdown(isOpen ? null : item.name);
-                          } else {
-                            setIsMobileMenuOpen(false);
-                            window.location.href = item.link;
-                          }
-                        }}
-                      >
-                        <span>{item.name}</span>
-                        {hasSubmenu && (
-                          <svg 
-                            className={cn(
-                              "w-5 h-5 transition-transform duration-200",
-                              isOpen && "rotate-180"
-                            )} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        )}
-                      </div>
-                      {hasSubmenu && isOpen && (
-                        <div className="pl-6 pr-4 pb-2 space-y-1">
-                          {item.submenu.map((subItem, subIdx) => (
-                            <a
-                              key={`mobile-submenu-${idx}-${subIdx}`}
-                              href={subItem.path}
-                              onClick={() => {
-                                setIsMobileMenuOpen(false);
-                                setOpenMobileDropdown(null);
-                              }}
-                              className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
-                            >
-                              {subItem.title}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </MobileNavMenu>
-          </MobileNav>
-        </Navbar>
+      <PageLayout className="bg-white pt-16">
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00aeef]" />
         </div>
-        <Footer />
-      </div>
+      </PageLayout>
     );
   }
 
   if (!activity) {
     return (
-      <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-white pt-16">
-        <Navbar>
-          <NavBody>
-            <NavbarLogo />
-            <div className="flex-1 flex justify-center mr-24">
-              <NavItems items={navItems} />
-            </div>
-          </NavBody>
-          <MobileNav>
-            <MobileNavHeader>
-              <NavbarLogo />
-              {!isMobileMenuOpen && (
-                <MobileNavToggle
-                  isOpen={isMobileMenuOpen}
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                />
-              )}
-            </MobileNavHeader>
-            <MobileNavMenu
-              isOpen={isMobileMenuOpen}
-              onClose={() => setIsMobileMenuOpen(false)}
-            >
-              <div className="space-y-2">
-                {navItems.map((item, idx) => {
-                  const hasSubmenu = item.submenu && item.submenu.length > 0;
-                  const isOpen = openMobileDropdown === item.name;
-                  
-                  return (
-                    <div key={`mobile-link-${idx}`}>
-                      <div
-                        className="flex items-center justify-between text-[#222222] hover:text-[#333333] transition-colors py-4 px-4 rounded-lg hover:bg-black/5 font-semibold text-lg border-b cursor-pointer"
-                        style={{ borderBottomColor: 'rgba(0,0,0,0.08)' }}
-                        onClick={() => {
-                          if (hasSubmenu) {
-                            setOpenMobileDropdown(isOpen ? null : item.name);
-                          } else {
-                            setIsMobileMenuOpen(false);
-                            window.location.href = item.link;
-                          }
-                        }}
-                      >
-                        <span>{item.name}</span>
-                        {hasSubmenu && (
-                          <svg 
-                            className={cn(
-                              "w-5 h-5 transition-transform duration-200",
-                              isOpen && "rotate-180"
-                            )} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        )}
-                      </div>
-                      {hasSubmenu && isOpen && (
-                        <div className="pl-6 pr-4 pb-2 space-y-1">
-                          {item.submenu.map((subItem, subIdx) => (
-                            <a
-                              key={`mobile-submenu-${idx}-${subIdx}`}
-                              href={subItem.path}
-                              onClick={() => {
-                                setIsMobileMenuOpen(false);
-                                setOpenMobileDropdown(null);
-                              }}
-                              className="block text-[#666666] hover:text-[#00aeef] transition-colors py-2 px-4 rounded-lg hover:bg-black/5 text-base"
-                            >
-                              {subItem.title}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </MobileNavMenu>
-          </MobileNav>
-        </Navbar>
+      <PageLayout className="bg-white pt-16">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Activity Not Found</h1>
@@ -205,7 +46,7 @@ const CSRActivityDetailPage: React.FC = () => {
           </div>
         </div>
         <Footer />
-      </div>
+      </PageLayout>
     );
   }
 

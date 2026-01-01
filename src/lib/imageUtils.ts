@@ -24,8 +24,6 @@ export async function compressImage(
         // Calculate new dimensions
         let width = img.width;
         let height = img.height;
-        const originalWidth = width;
-        const originalHeight = height;
         
         // For very large images, be more aggressive with resizing
         // If original is huge, reduce max dimension further
