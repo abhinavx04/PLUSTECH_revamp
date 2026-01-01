@@ -49,5 +49,7 @@ export default defineConfig({
     assetsInlineLimit: 4096, // Inline assets smaller than 4kb
     // Enable source maps for production debugging (optional, disable for smaller builds)
     sourcemap: false,
+    // CSS code splitting for better performance
+    cssCodeSplit: true,
   },
 })

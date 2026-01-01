@@ -34,8 +34,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Fonts with display=swap for performance -->
-    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+    <!-- Fonts loaded asynchronously to avoid render blocking -->
+    <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+    </noscript>
   </head>
   <body>
     <div id="root"></div>

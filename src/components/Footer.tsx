@@ -20,6 +20,8 @@ const Footer = () => {
                 src="/newlogo.png"
                 alt="Plustech Logo"
                 className="h-10 w-auto brightness-110 contrast-110"
+                width="195"
+                height="210"
                 loading="lazy"
               />
               <span
