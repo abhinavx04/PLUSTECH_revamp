@@ -17,9 +17,6 @@ export default defineConfig({
     port: 4173,
     open: true,
   },
-  optimizeDeps: {
-    include: ['firebase'],
-  },
   build: {
     // Optimize chunk splitting for better caching
     rollupOptions: {
