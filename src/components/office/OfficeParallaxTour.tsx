@@ -212,63 +212,70 @@ export const OfficeParallaxTour: React.FC = () => {
         <ParallaxSection
           key={section.id}
           section={section}
-          index={index}
           onVisible={() => setActiveSection(index)}
         />
       ))}
 
-      {/* Floating Info Card - Elegant light design */}
-      <div className="fixed bottom-8 left-8 z-40 max-w-md hidden md:block">
-        <motion.div
-          key={activeSection}
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -30, scale: 0.95 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/50"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-1.5 h-8 rounded-full bg-[#00aeef]" />
-            <div>
-              <span className="text-xs font-medium text-[#00aeef] uppercase tracking-wider">
-                {String(activeSection + 1).padStart(2, '0')} / {String(sections.length).padStart(2, '0')}
-              </span>
-              <h3 className="text-xl font-bold text-slate-900">
-                {sections[activeSection].title}
-              </h3>
-            </div>
+      {/* Floating Info Card - Dynamic position based on section */}
+      {(() => {
+        // Cycle through corners: 0=top-left, 1=top-right, 2=bottom-right, 3=bottom-left
+        const cornerIndex = activeSection % 4;
+        const positionClasses = [
+          'top-8 left-8',      // top-left
+          'top-8 right-8',     // top-right
+          'bottom-8 right-8',  // bottom-right
+          'bottom-8 left-8',    // bottom-left
+        ];
+        
+        return (
+          <div className={`fixed ${positionClasses[cornerIndex]} z-40 max-w-md hidden md:block`}>
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -30, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/50"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-1.5 h-8 rounded-full bg-[#00aeef]" />
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    {sections[activeSection].title}
+                  </h3>
+                </div>
+              </div>
+              <p className="text-slate-600 mb-4 text-sm leading-relaxed pl-5">
+                {sections[activeSection].description}
+              </p>
+              <div className="flex flex-wrap gap-2 pl-5">
+                {sections[activeSection].highlights.map((highlight, idx) => (
+                  <motion.span
+                    key={highlight}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="px-3 py-1.5 bg-slate-100 rounded-full text-xs text-slate-700 font-medium"
+                  >
+                    {highlight}
+                  </motion.span>
+                ))}
+              </div>
+            </motion.div>
           </div>
-          <p className="text-slate-600 mb-4 text-sm leading-relaxed pl-5">
-            {sections[activeSection].description}
-          </p>
-          <div className="flex flex-wrap gap-2 pl-5">
-            {sections[activeSection].highlights.map((highlight, idx) => (
-              <motion.span
-                key={highlight}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.1 }}
-                className="px-3 py-1.5 bg-slate-100 rounded-full text-xs text-slate-700 font-medium"
-              >
-                {highlight}
-              </motion.span>
-            ))}
-          </div>
-        </motion.div>
-      </div>
+        );
+      })()}
     </div>
   );
 };
 
 interface ParallaxSectionProps {
   section: OfficeSection;
-  index: number;
   onVisible: () => void;
 }
 
 const ParallaxSection: React.FC<ParallaxSectionProps> = ({
   section,
-  index,
   onVisible,
 }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -329,18 +336,6 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {/* Section number badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 border border-white/20"
-          >
-            <span className="text-sm font-medium text-white/80">
-              Section {String(index + 1).padStart(2, '0')}
-            </span>
-          </motion.div>
-
           <motion.h2
             className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-4 leading-tight"
             style={{

@@ -28,6 +28,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Industry Focus', path: '/about/industry-focus' },
       { title: 'Certifications', path: '/about/certifications' },
       { title: 'History & Milestones', path: '/about/history' },
+      { title: 'Facilities', path: '/facility' },
       { title: 'Annual Returns', path: '/about/annual-returns' },
       { title: 'CSR Activities', path: '/about/csr-activities' },
     ],
