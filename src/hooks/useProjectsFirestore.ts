@@ -122,9 +122,6 @@ export const useProjectsFirestore = () => {
         setLoading(true);
         setError(null);
 
-        console.log('[Projects] Loading projects from Firestore...');
-        console.log('[Projects] Using query with status filter to match security rules');
-
         // Use shared query that filters by status to match security rules
         const publishedQuery = getPublishedProjectsQuery(db);
         
@@ -136,30 +133,18 @@ export const useProjectsFirestore = () => {
         try {
           // Query with status filter - matches security rules: resource.data.status == "published"
           querySnapshot = await getDocs(publishedQuery);
-          console.log('[Projects] Query executed successfully with status filter');
         } catch (indexError: any) {
           // If index doesn't exist for status + createdAt combination, try with status only
           if (indexError?.code === 'failed-precondition') {
-            console.warn('[Projects] Composite index missing, trying status-only query');
-            console.warn('[Projects] Error details:', indexError.message);
-            
             // Fallback: query with status filter only (no orderBy)
             const statusOnlyQuery = query(
               collection(db, COLLECTION_NAME),
               where('status', '==', 'published')
             );
             querySnapshot = await getDocs(statusOnlyQuery);
-            
-            console.log('[Projects] Status-only query succeeded, will sort client-side');
           } else {
             throw indexError;
           }
-        }
-
-        console.log('[Projects] Loaded', querySnapshot.size, 'published documents');
-        
-        if (querySnapshot.empty) {
-          console.warn('[Projects] No published documents found. Check that documents have status="published" (lowercase)');
         }
 
         const projectData: Project[] = [];
@@ -169,7 +154,6 @@ export const useProjectsFirestore = () => {
           // Validate status field exists and is correct
           const status = data.status || 'draft';
           if (status !== 'published') {
-            console.warn(`[Projects] Document ${docSnap.id} has status "${status}", expected "published". Skipping.`);
             return; // Skip non-published documents (shouldn't happen with query filter, but safety check)
           }
           
@@ -196,7 +180,6 @@ export const useProjectsFirestore = () => {
         // Ensure consistent ordering by createdAt (if not already sorted by query)
         projectData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         setProjects(projectData);
-        console.log('[Projects] Processed', projectData.length, 'published projects');
       } catch (err: any) {
         console.error('[Projects] Error loading projects:', err);
         console.error('[Projects] Error code:', err?.code);

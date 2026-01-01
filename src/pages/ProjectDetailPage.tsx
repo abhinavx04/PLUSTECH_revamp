@@ -96,9 +96,7 @@ const ProjectDetailPage: React.FC = () => {
         // Try to get from cache first
         const cached = getProjectById(projectId);
         if (cached) {
-          console.log('[ProjectDetail] Found in cache:', cached);
           if (cached.status !== 'published') {
-            console.log('[ProjectDetail] Project not published:', cached.status);
             setNotFound(true);
           } else {
             setProject(cached);
@@ -109,15 +107,11 @@ const ProjectDetailPage: React.FC = () => {
         }
 
         // Fetch from Firestore
-        console.log('[ProjectDetail] Fetching from Firestore:', projectId);
         const remote = await fetchProjectById(projectId);
-        console.log('[ProjectDetail] Fetched project:', remote);
         
         if (!remote) {
-          console.log('[ProjectDetail] Project not found');
           setNotFound(true);
         } else if (remote.status !== 'published') {
-          console.log('[ProjectDetail] Project not published:', remote.status);
           setNotFound(true);
         } else {
           setProject(remote);

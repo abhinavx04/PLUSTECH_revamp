@@ -10,12 +10,10 @@
  */
 export async function compressImage(
   file: File,
-  _targetSizeMB: number = 1.5,
   maxWidthOrHeight: number = 1920
 ): Promise<File> {
   return new Promise((resolve, reject) => {
     const originalSizeMB = file.size / (1024 * 1024);
-    console.log(`[ImageUtils] Compressing image: ${originalSizeMB.toFixed(2)}MB`);
     
     const reader = new FileReader();
     
@@ -46,8 +44,6 @@ export async function compressImage(
             height = maxWidthOrHeight;
           }
         }
-        
-        console.log(`[ImageUtils] Resizing from ${originalWidth}x${originalHeight} to ${Math.round(width)}x${Math.round(height)}`);
         
         // Create canvas
         const canvas = document.createElement('canvas');
@@ -84,7 +80,6 @@ export async function compressImage(
               
               // If size is within target range (0.8-2MB), we're done
               if (sizeMB >= 0.8 && sizeMB <= 2) {
-                console.log(`[ImageUtils] Compression successful: ${originalSizeMB.toFixed(2)}MB → ${sizeMB.toFixed(2)}MB (${((1 - sizeMB/originalSizeMB) * 100).toFixed(1)}% reduction)`);
                 const compressedFile = new File(
                   [blob],
                   file.name,
@@ -111,7 +106,6 @@ export async function compressImage(
               }
               
               // Accept current result if close enough or max attempts reached
-              console.log(`[ImageUtils] Compression complete: ${originalSizeMB.toFixed(2)}MB → ${sizeMB.toFixed(2)}MB (${((1 - sizeMB/originalSizeMB) * 100).toFixed(1)}% reduction)`);
               const compressedFile = new File(
                 [blob],
                 file.name,
@@ -155,13 +149,6 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
       valid: false,
       error: 'Invalid file type. Please upload a JPEG, PNG, or WebP image.',
     };
-  }
-  
-  // No size limit - compression will handle large files
-  // Just warn if file is extremely large (over 100MB) as it might cause browser issues
-  const sizeMB = getFileSizeMB(file);
-  if (sizeMB > 100) {
-    console.warn(`[ImageUtils] Very large image file detected: ${sizeMB.toFixed(2)}MB. Compression may take longer.`);
   }
   
   return { valid: true };

@@ -24,17 +24,7 @@ export async function uploadImageToStorage(
 
   try {
     // Compress image first
-    console.log('[Storage] Compressing image...', {
-      originalSize: (file.size / (1024 * 1024)).toFixed(2) + 'MB',
-      fileName: file.name,
-    });
-
     const compressedFile = await compressImage(file);
-    
-    console.log('[Storage] Image compressed', {
-      compressedSize: (compressedFile.size / (1024 * 1024)).toFixed(2) + 'MB',
-      reduction: (((file.size - compressedFile.size) / file.size) * 100).toFixed(1) + '%',
-    });
 
     // Generate unique filename
     const timestamp = Date.now();
@@ -47,12 +37,10 @@ export async function uploadImageToStorage(
     const storageRef = ref(storage, storagePath);
 
     // Upload file
-    console.log('[Storage] Uploading to:', storagePath);
     await uploadBytes(storageRef, compressedFile);
 
     // Get download URL
     const downloadURL = await getDownloadURL(storageRef);
-    console.log('[Storage] Upload successful:', downloadURL);
 
     return downloadURL;
   } catch (error: any) {
@@ -74,14 +62,12 @@ function extractStoragePathFromURL(downloadURL: string): string | null {
     
     if (url.hostname !== 'firebasestorage.googleapis.com') {
       // Not a Firebase Storage URL, return null
-      console.warn('[Storage] Not a Firebase Storage URL:', url.hostname);
       return null;
     }
     
     // Extract the path from the URL
     const pathMatch = url.pathname.match(/\/o\/(.+)$/);
     if (!pathMatch) {
-      console.warn('[Storage] Could not match path pattern in URL:', url.pathname);
       return null;
     }
     
@@ -98,11 +84,9 @@ function extractStoragePathFromURL(downloadURL: string): string | null {
       }
     } catch (e) {
       // If decoding fails, use the original
-      console.warn('[Storage] Failed to decode path, using as-is:', encodedPath);
       decodedPath = encodedPath;
     }
     
-    console.log('[Storage] Extracted path from URL:', { original: encodedPath, decoded: decodedPath });
     return decodedPath;
   } catch (error) {
     console.error('[Storage] Error extracting path from URL:', error, downloadURL);
@@ -120,7 +104,6 @@ export async function deleteImageFromStorage(
   allowedPaths: string[] = ['news/images/', 'projects/images/', 'certifications/images/', 'csr/images/']
 ): Promise<boolean> {
   if (!storage) {
-    console.warn('[Storage] Firebase Storage is not initialized');
     return false;
   }
 
@@ -138,7 +121,6 @@ export async function deleteImageFromStorage(
     } else if (imageUrl.startsWith('https://')) {
       // Firebase Storage download URL
       storagePath = extractStoragePathFromURL(imageUrl);
-      console.log('[Storage] Extracted path from URL:', storagePath);
     } else if (imageUrl.startsWith('/') || imageUrl.includes('/')) {
       // Assume it's a storage path (remove leading slash if present)
       storagePath = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
@@ -154,15 +136,10 @@ export async function deleteImageFromStorage(
 
     // Normalize the path (handle URL encoding)
     storagePath = decodeURIComponent(storagePath);
-    console.log('[Storage] Normalized storage path:', storagePath);
 
     // Only delete if it matches an allowed prefix (security)
     const isAllowedPath = allowedPaths.some(prefix => {
-      const matches = storagePath?.startsWith(prefix);
-      if (!matches) {
-        console.log(`[Storage] Path "${storagePath}" does not start with "${prefix}"`);
-      }
-      return matches;
+      return storagePath?.startsWith(prefix);
     });
     
     if (!isAllowedPath) {
@@ -173,15 +150,12 @@ export async function deleteImageFromStorage(
       return false;
     }
 
-    console.log('[Storage] Deleting image from path:', storagePath);
     const storageRef = ref(storage, storagePath);
     await deleteObject(storageRef);
-    console.log('[Storage] Image deleted successfully from:', storagePath);
     return true;
   } catch (error: any) {
     // If file doesn't exist, that's okay (might have been deleted already)
     if (error?.code === 'storage/object-not-found') {
-      console.log('[Storage] Image not found (may have been deleted already)');
       return true; // Consider it successful
     }
     
@@ -218,7 +192,6 @@ export async function deletePDFFromStorage(
   allowedPaths: string[] = ['annualReturns/pdfs/', 'csr/pdfs/']
 ): Promise<boolean> {
   if (!storage) {
-    console.warn('[Storage] Firebase Storage is not initialized');
     return false;
   }
 
@@ -242,33 +215,26 @@ export async function deletePDFFromStorage(
     }
 
     if (!storagePath) {
-      console.warn('[Storage] Could not extract storage path from URL:', pdfUrl);
       return false;
     }
 
     // Only delete if it matches an allowed prefix (security)
     const isAllowedPath = allowedPaths.some(prefix => storagePath?.startsWith(prefix));
     if (!isAllowedPath) {
-      console.warn('[Storage] Path not in allowed list, skipping deletion:', storagePath);
       return false;
     }
 
-    console.log('[Storage] Deleting PDF from path:', storagePath);
     const storageRef = ref(storage, storagePath);
     await deleteObject(storageRef);
-    console.log('[Storage] PDF deleted successfully');
     return true;
   } catch (error: any) {
     // If file doesn't exist, that's okay (might have been deleted already)
     if (error?.code === 'storage/object-not-found') {
-      console.log('[Storage] PDF not found (may have been deleted already)');
       return true; // Consider it successful
     }
     
-    // If permission denied, log warning but don't throw
+    // If permission denied, return false but don't throw
     if (error?.code === 'storage/unauthorized') {
-      console.warn('[Storage] Permission denied - Storage rules may not allow delete. Update Firebase Storage rules to include "allow delete".');
-      console.warn('[Storage] See FIRESTORE_RULES.md for updated Storage rules');
       return false; // Return false but don't throw
     }
     

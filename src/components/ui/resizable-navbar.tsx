@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Utility function to combine class names
 const cn = (...classes: (string | undefined | null | false)[]): string => {

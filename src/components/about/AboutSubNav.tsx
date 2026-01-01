@@ -40,4 +40,3 @@ const AboutSubNav: React.FC = () => {
 
 export default AboutSubNav;
 
-

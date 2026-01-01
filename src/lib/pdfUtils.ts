@@ -65,12 +65,10 @@ export async function uploadPDFToStorage(
     const storageRef = ref(storage, storagePath);
 
     // Upload file
-    console.log('[PDF] Uploading to:', storagePath);
     await uploadBytes(storageRef, file);
 
     // Get download URL
     const downloadURL = await getDownloadURL(storageRef);
-    console.log('[PDF] Upload successful:', downloadURL);
 
     return {
       url: downloadURL,
@@ -238,15 +236,11 @@ export function parseAnnualReturnData(text: string): ExtractedAnnualReturnData {
  */
 export async function extractAnnualReturnDataFromPDF(file: File): Promise<ExtractedAnnualReturnData> {
   try {
-    console.log('[PDF] Starting extraction from PDF:', file.name);
-    
     // Extract text from PDF
     const text = await extractTextFromPDF(file);
-    console.log('[PDF] Extracted text length:', text.length);
     
     // Parse the extracted text
     const extractedData = parseAnnualReturnData(text);
-    console.log('[PDF] Extracted data:', extractedData);
     
     return extractedData;
   } catch (error: any) {

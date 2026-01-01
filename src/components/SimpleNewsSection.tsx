@@ -18,12 +18,8 @@ const SimpleNewsSection: React.FC = () => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const { news, loading, error } = useNewsFirestore();
 
-  // Debug logging
-  console.log('[SimpleNewsSection] News data:', { news: news.length, loading, error });
-
   const publishedNews = news.filter(article => article.published);
   const latestPublished = publishedNews.slice(0, 3); // show only latest few on homepage
-  console.log('[SimpleNewsSection] Published news:', publishedNews.length);
 
   // Show error state
   if (error) {

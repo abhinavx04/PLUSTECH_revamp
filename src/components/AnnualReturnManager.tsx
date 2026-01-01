@@ -102,7 +102,6 @@ const AnnualReturnManager: React.FC = () => {
         setFormData(prev => ({ ...prev, boardMeetingsHeld: extractedData.boardMeetingsHeld!.toString() }));
       }
       
-      console.log('[AnnualReturn] Data extracted from PDF:', extractedData);
     } catch (extractError: any) {
       console.error('[AnnualReturn] Extraction error:', extractError);
       setFormError(`PDF extraction failed: ${extractError.message}. You can still fill the form manually.`);
@@ -180,7 +179,6 @@ const AnnualReturnManager: React.FC = () => {
           finalDocumentUrl = uploadResult.url;
           finalDocumentSize = uploadResult.size;
           finalDocumentUploadedAt = new Date();
-          console.log('[AnnualReturn] PDF uploaded:', finalDocumentUrl);
         } catch (uploadError: any) {
           setUploadingPDF(false);
           throw new Error(`Failed to upload PDF: ${uploadError.message}`);

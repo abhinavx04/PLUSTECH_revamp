@@ -178,8 +178,7 @@ export const OfficeParallaxTour: React.FC = () => {
 
     Promise.all(imagePromises)
       .then(() => setImagesLoaded(true))
-      .catch((err) => {
-        console.warn('Some images failed to load:', err);
+      .catch(() => {
         setImagesLoaded(true);
       });
   }, []);

@@ -24,13 +24,8 @@ export const useAdminAuth = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if debug logging is enabled
-    const debugEnabled = import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true';
-    if (debugEnabled) console.log('[Auth] Setting up auth state listener...');
-    
     // Check if auth is disabled
     if (auth && typeof auth === 'object' && '__disabled' in auth) {
-      if (debugEnabled) console.warn('[Auth] Firebase authentication is disabled');
       setLoading(false);
       return;
     }
@@ -38,8 +33,6 @@ export const useAdminAuth = () => {
     try {
       // Simple auth state listener without complex type casting
       const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
-        if (debugEnabled) console.log('[Auth] Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
-
         if (firebaseUser) {
           const verifyAdmin = async () => {
             try {
@@ -48,14 +41,6 @@ export const useAdminAuth = () => {
               const claimAdmin = Boolean(tokenResult?.claims?.admin || tokenResult?.claims?.role === 'admin');
               const emailAdmin = ADMIN_EMAILS.includes(firebaseUser.email || '');
               const isAdmin = claimAdmin || emailAdmin || ALLOW_ALL_AUTH_USERS_AS_ADMIN;
-
-              if (debugEnabled) {
-                console.log('[Auth] User authenticated');
-                console.log('[Auth] Token admin claim:', claimAdmin);
-                console.log('[Auth] Email allowlist admin:', emailAdmin);
-                console.log('[Auth] Fallback all-auth-users admin:', ALLOW_ALL_AUTH_USERS_AS_ADMIN);
-                console.log('[Auth] Is admin:', isAdmin);
-              }
 
               setUser({
                 uid: firebaseUser.uid,
@@ -83,7 +68,6 @@ export const useAdminAuth = () => {
       });
 
       return () => {
-        if (debugEnabled) console.log('[Auth] Cleaning up auth listener');
         unsubscribe();
       };
     } catch (error) {
@@ -108,16 +92,12 @@ export const useAdminAuth = () => {
         throw new Error('Invalid email format');
       }
       
-      const debugEnabled = import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true';
-      if (debugEnabled) console.log('[Auth] Login attempt for:', email);
-      
       // Check if auth is disabled
       if (auth && typeof auth === 'object' && '__disabled' in auth) {
         throw new Error('Firebase authentication is not configured.');
       }
       
       await signInWithEmailAndPassword(auth, email, password);
-      if (debugEnabled) console.log('[Auth] Login successful');
     } catch (err: unknown) {
       console.error('[Auth] Login error:', err);
       const message = err && typeof err === 'object' && 'message' in err ? String((err as { message?: string }).message) : 'Login failed';
@@ -130,19 +110,14 @@ export const useAdminAuth = () => {
 
   const logout = async () => {
     try {
-      const debugEnabled = import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true';
-      if (debugEnabled) console.log('[Auth] Logout attempt');
-      
       // Check if auth is disabled
       if (auth && typeof auth === 'object' && '__disabled' in auth) {
-        if (debugEnabled) console.warn('[Auth] Firebase authentication is disabled - skipping logout');
         setUser(null);
         return;
       }
       
       await signOut(auth);
       setUser(null);
-      if (debugEnabled) console.log('[Auth] Logout successful');
     } catch (err: unknown) {
       console.error('[Auth] Logout error:', err);
       const message = err && typeof err === 'object' && 'message' in err ? String((err as { message?: string }).message) : 'Logout failed';

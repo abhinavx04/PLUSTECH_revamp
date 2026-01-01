@@ -145,7 +145,6 @@ const CSRActivitiesSection: React.FC = () => {
               <div 
                 className="relative bg-white rounded-2xl shadow-lg overflow-hidden group border border-gray-100 flex flex-col h-full cursor-pointer"
                 onClick={() => {
-                  console.log('Navigating to:', `/about/csr-activities/${activity.id}`);
                   navigate(`/about/csr-activities/${activity.id}`);
                 }}
                 onKeyDown={(e) => {

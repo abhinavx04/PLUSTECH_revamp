@@ -332,4 +332,3 @@ export const useCertificationsFirestore = (options: HookOptions = { includeDraft
   };
 };
 
-

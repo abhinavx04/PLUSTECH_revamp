@@ -43,40 +43,6 @@ if (missingVars.length > 0) {
     db = getFirestore(app);
     storage = getStorage(app);
     
-    // Log configuration for debugging (especially mobile issues)
-    try {
-      console.log('[Firebase] Successfully initialized');
-      console.log('[Firebase] Project ID:', firebaseConfig.projectId || 'MISSING');
-      console.log('[Firebase] Auth Domain:', firebaseConfig.authDomain || 'MISSING');
-      console.log('[Firebase] API Key:', firebaseConfig.apiKey ? `${firebaseConfig.apiKey.substring(0, 10)}...` : 'MISSING');
-      console.log('[Firebase] Environment:', import.meta.env.MODE);
-      console.log('[Firebase] Build time:', new Date().toISOString());
-      
-      // Verify config is not using local .env file on production
-      if (import.meta.env.MODE === 'production') {
-        console.log('[Firebase] Production mode - using Vercel environment variables');
-      }
-      
-      // Log user agent for debugging mobile issues
-      if (typeof navigator !== 'undefined') {
-        const isMobile = /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent);
-        console.log('[Firebase] User Agent:', navigator.userAgent);
-        console.log('[Firebase] Is Mobile:', isMobile);
-        console.log('[Firebase] Platform:', navigator.platform);
-      }
-      
-      // Validate all config values are present
-      const configKeys = Object.keys(firebaseConfig);
-      const missingConfig = configKeys.filter(key => !firebaseConfig[key] || firebaseConfig[key] === 'undefined');
-      if (missingConfig.length > 0) {
-        console.warn('[Firebase] Missing config values:', missingConfig);
-      } else {
-        console.log('[Firebase] All configuration values present');
-      }
-    } catch (logError) {
-      // Ignore logging errors but don't fail initialization
-      console.warn('[Firebase] Logging error (non-critical):', logError);
-    }
   } catch (e) {
     console.error('[Firebase] Initialization failed:', e && e.message ? e.message : e);
     console.error('[Firebase] Error details:', e);

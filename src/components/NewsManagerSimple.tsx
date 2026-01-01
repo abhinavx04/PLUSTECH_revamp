@@ -85,7 +85,6 @@ const NewsManagerSimple: React.FC = () => {
         setUploadingImage(true);
         try {
           finalImageUrl = await uploadImageToStorage(selectedImageFile, 'news/images');
-          console.log('[News] Image uploaded:', finalImageUrl);
         } catch (uploadError: any) {
           setUploadingImage(false);
           throw new Error(`Failed to upload image: ${uploadError.message}`);

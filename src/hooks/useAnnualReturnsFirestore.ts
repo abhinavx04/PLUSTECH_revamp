@@ -93,7 +93,6 @@ export const useAnnualReturnsFirestore = () => {
     const loadAnnualReturns = async () => {
       if (!db) {
         const msg = 'Firestore not configured (check VITE_FIREBASE_* env vars)';
-        console.warn('[AnnualReturns] Firestore not available');
         setError(msg);
         setLoading(false);
         return;
@@ -102,9 +101,6 @@ export const useAnnualReturnsFirestore = () => {
       try {
         setLoading(true);
         setError(null);
-        
-        console.log('[AnnualReturns] Loading annual returns from Firestore...');
-        console.log('[AnnualReturns] Using query with status filter to match security rules');
         
         // Use shared query that filters by status to match security rules
         const publishedQuery = getPublishedAnnualReturnsQuery(db);
@@ -117,30 +113,18 @@ export const useAnnualReturnsFirestore = () => {
         try {
           // Query with status filter - matches security rules: resource.data.status == "published"
           querySnapshot = await getDocs(publishedQuery);
-          console.log('[AnnualReturns] Query executed successfully with status filter');
         } catch (indexError: any) {
           // If index doesn't exist for status + orderBy combination, try with status only
           if (indexError?.code === 'failed-precondition') {
-            console.warn('[AnnualReturns] Composite index missing, trying status-only query');
-            console.warn('[AnnualReturns] Error details:', indexError.message);
-            
             // Fallback: query with status filter only (no orderBy)
             const statusOnlyQuery = query(
               collection(db, 'annualReturns'),
               where('status', '==', 'published')
             );
             querySnapshot = await getDocs(statusOnlyQuery);
-            
-            console.log('[AnnualReturns] Status-only query succeeded, will sort client-side');
           } else {
             throw indexError;
           }
-        }
-        
-        console.log('[AnnualReturns] Loaded', querySnapshot.size, 'published documents');
-        
-        if (querySnapshot.empty) {
-          console.warn('[AnnualReturns] No published documents found. Check that documents have status="published" (lowercase)');
         }
         
         const returnsData: AnnualReturnData[] = [];
@@ -150,7 +134,6 @@ export const useAnnualReturnsFirestore = () => {
           // Validate status field exists and is correct
           const status = data.status || 'draft';
           if (status !== 'published') {
-            console.warn(`[AnnualReturns] Document ${doc.id} has status "${status}", expected "published". Skipping.`);
             return; // Skip non-published documents (shouldn't happen with query filter, but safety check)
           }
           
@@ -189,7 +172,6 @@ export const useAnnualReturnsFirestore = () => {
         returnsData.sort((a, b) => b.financialYear.localeCompare(a.financialYear));
         
         setAnnualReturns(returnsData);
-        console.log('[AnnualReturns] Processed', returnsData.length, 'published annual returns');
       } catch (err: any) {
         console.error('[AnnualReturns] Error loading:', err);
         console.error('[AnnualReturns] Error code:', err?.code);
@@ -232,7 +214,6 @@ export const useAnnualReturnsFirestore = () => {
 
     try {
       setError(null);
-      console.log('[AnnualReturns] Creating annual return:', returnData);
       
       const annualReturnsCollection = collection(db, 'annualReturns');
       const now = Timestamp.now();
@@ -251,7 +232,6 @@ export const useAnnualReturnsFirestore = () => {
       };
       setAnnualReturns(prev => [newReturn, ...prev].sort((a, b) => b.financialYear.localeCompare(a.financialYear)));
       
-      console.log('[AnnualReturns] Created annual return with ID:', docRef.id);
       return docRef.id;
     } catch (err: any) {
       console.error('[AnnualReturns] Error creating:', err);
@@ -277,7 +257,6 @@ export const useAnnualReturnsFirestore = () => {
 
     try {
       setError(null);
-      console.log('[AnnualReturns] Updating annual return:', returnData);
       
       const { id, ...updateData } = returnData;
       const returnDoc = doc(db, 'annualReturns', id);
@@ -291,13 +270,10 @@ export const useAnnualReturnsFirestore = () => {
         
         // If PDF is being changed and old PDF exists, delete the old one
         if (oldDocumentUrl && newDocumentUrl && oldDocumentUrl !== newDocumentUrl) {
-          console.log('[AnnualReturns] PDF changed, deleting old PDF from Storage...');
           try {
-            // Note: We'll need to implement deletePDFFromStorage similar to deleteImageFromStorage
-            // For now, we'll just log it
-            console.warn('[AnnualReturns] Old PDF deletion not yet implemented');
+            await deletePDFFromStorage(oldDocumentUrl, ['annualReturns/pdfs/', 'csr/pdfs/']);
           } catch (pdfError) {
-            console.warn('[AnnualReturns] Failed to delete old PDF, continuing with update:', pdfError);
+            // Continue with update if PDF deletion fails
           }
         }
       }
@@ -311,8 +287,6 @@ export const useAnnualReturnsFirestore = () => {
       setAnnualReturns(prev => prev.map(ret =>
         ret.id === id ? { ...ret, ...updateData, updatedAt: new Date() } : ret
       ).sort((a, b) => b.financialYear.localeCompare(a.financialYear)));
-      
-      console.log('[AnnualReturns] Updated annual return:', id);
     } catch (err: any) {
       console.error('[AnnualReturns] Error updating:', err);
       const code = err?.code || 'unknown';
@@ -337,7 +311,6 @@ export const useAnnualReturnsFirestore = () => {
 
     try {
       setError(null);
-      console.log('[AnnualReturns] Deleting annual return:', id);
       
       // Get the annual return first to extract PDF URL
       const returnDoc = doc(db, 'annualReturns', id);
@@ -352,12 +325,10 @@ export const useAnnualReturnsFirestore = () => {
       
       // Delete the PDF from Storage if it exists
       if (documentUrl) {
-        console.log('[AnnualReturns] Deleting associated PDF from Storage...');
         try {
           await deletePDFFromStorage(documentUrl, ['annualReturns/pdfs/', 'csr/pdfs/']);
         } catch (pdfError) {
-          // Log but don't fail the deletion if PDF deletion fails
-          console.warn('[AnnualReturns] Failed to delete PDF, continuing with document deletion:', pdfError);
+          // Continue with deletion if PDF deletion fails
         }
       }
       
@@ -366,8 +337,6 @@ export const useAnnualReturnsFirestore = () => {
       
       // Remove from local state
       setAnnualReturns(prev => prev.filter(ret => ret.id !== id));
-      
-      console.log('[AnnualReturns] Deleted annual return:', id);
     } catch (err: any) {
       console.error('[AnnualReturns] Error deleting:', err);
       const code = err?.code || 'unknown';
@@ -405,4 +374,3 @@ export const useAnnualReturnsFirestore = () => {
     getAnnualReturnByYear,
   };
 };
-

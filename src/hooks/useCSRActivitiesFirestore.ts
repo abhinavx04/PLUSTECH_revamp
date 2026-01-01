@@ -318,44 +318,26 @@ export const useCSRActivitiesFirestore = (options: HookOptions = { includeDrafts
         const data = snapshot.data();
         const imagesToDelete = data?.imageUrls || (data?.imageUrl ? [data.imageUrl] : []);
         
-        console.log('[CSR] Deleting activity:', id);
-        console.log('[CSR] Images to delete:', imagesToDelete);
-        
         // Delete all images
         for (const imgUrl of imagesToDelete) {
           if (imgUrl) {
-            console.log('[CSR] Deleting image:', imgUrl);
-            const deleted = await deleteImageFromStorage(imgUrl, [
+            await deleteImageFromStorage(imgUrl, [
               'csr/images/',
               'news/images/',
               'projects/images/',
               'certifications/images/',
             ]);
-            if (!deleted) {
-              console.warn('[CSR] Failed to delete image:', imgUrl);
-            } else {
-              console.log('[CSR] Successfully deleted image:', imgUrl);
-            }
           }
         }
         
         // Delete PDF if exists
         if (data?.documentUrl) {
-          console.log('[CSR] Deleting PDF:', data.documentUrl);
-          const pdfDeleted = await deletePDFFromStorage(data.documentUrl, ['csr/pdfs/', 'annualReturns/pdfs/']);
-          if (!pdfDeleted) {
-            console.warn('[CSR] Failed to delete PDF:', data.documentUrl);
-          } else {
-            console.log('[CSR] Successfully deleted PDF:', data.documentUrl);
-          }
+          await deletePDFFromStorage(data.documentUrl, ['csr/pdfs/', 'annualReturns/pdfs/']);
         }
-      } else {
-        console.warn('[CSR] Activity document not found:', id);
       }
 
       // Delete Firestore document
       await deleteDoc(activityDoc);
-      console.log('[CSR] Deleted Firestore document:', id);
       
       setActivities((prev) => prev.filter((item) => item.id !== id));
     } catch (err: any) {
@@ -385,5 +367,4 @@ export const useCSRActivitiesFirestore = (options: HookOptions = { includeDrafts
     getCSRActivityById,
   };
 };
-
 
