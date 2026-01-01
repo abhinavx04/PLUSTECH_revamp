@@ -14,6 +14,8 @@ import CompanyAnimation from '../components/ui/CompanyAnimation';
 import SimpleNewsSection from '../components/SimpleNewsSection';
 import CapabilitiesSection from '../components/CapabilitiesSection';
 import Footer from '../components/Footer';
+import { SEO } from '../components/SEO';
+import { OptimizedImage } from '../components/OptimizedImage';
 
 
 const HomePage: React.FC = () => {
@@ -45,8 +47,14 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-gradient-to-b from-white via-blue-50 to-white">
-      {/* Resizable Navbar */}
+    <>
+      <SEO 
+        title="PLUSTECH - Surface Finishing Solutions & Automation Systems"
+        description="At Plustech, we design and build surface finishing plants for automotive and general industries. With expertise in engineering, automation, and commissioning, we deliver customized solutions that combine innovation, efficiency, and quality."
+        url="/"
+      />
+      <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-gradient-to-b from-white via-blue-50 to-white">
+        {/* Resizable Navbar */}
       <div className="relative w-full">
         <Navbar>
           {/* Desktop Navigation */}
@@ -176,10 +184,14 @@ const HomePage: React.FC = () => {
             </div>
             <div className="flex justify-center items-center">
               <div className="w-full max-w-2xl aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
-                <img 
-                  src="/office/entrance/entrance.jpeg" 
-                  alt="Plustech Entrance" 
-                  className="w-full h-full object-cover"
+                <OptimizedImage
+                  src="/office/entrance/entrance.jpeg"
+                  alt="Plustech Entrance"
+                  className="w-full h-full"
+                  objectFit="cover"
+                  width={800}
+                  height={600}
+                  priority={true}
                 />
               </div>
             </div>
@@ -213,8 +225,9 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 

@@ -181,10 +181,10 @@ export const useCertificationsFirestore = (options: HookOptions = { includeDraft
       setError(null);
       const now = Timestamp.now();
       const docRef = await addDoc(collection(db, COLLECTION_NAME), {
-        ...sanitizeForFirestore(payload),
+        ...sanitizeForFirestore(payload as unknown as Record<string, unknown>),
         createdAt: now,
         updatedAt: now,
-      });
+      } as any);
 
       const newItem: Certification = {
         id: docRef.id,
@@ -248,7 +248,7 @@ export const useCertificationsFirestore = (options: HookOptions = { includeDraft
         updatedAt: Timestamp.now(),
       });
 
-      await updateDoc(certificationDoc, payloadSanitized);
+      await updateDoc(certificationDoc, payloadSanitized as any);
 
       setCertifications((prev) =>
         prev.map((item) =>

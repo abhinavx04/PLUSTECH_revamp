@@ -201,10 +201,10 @@ export const useCSRActivitiesFirestore = (options: HookOptions = { includeDrafts
       setError(null);
       const now = Timestamp.now();
       const docRef = await addDoc(collection(db, COLLECTION_NAME), {
-        ...sanitizeForFirestore(payload),
+        ...sanitizeForFirestore(payload as unknown as Record<string, unknown>),
         createdAt: now,
         updatedAt: now,
-      });
+      } as any);
 
       const newItem: CSRActivity = {
         id: docRef.id,
@@ -254,7 +254,7 @@ export const useCSRActivitiesFirestore = (options: HookOptions = { includeDrafts
         const newImages = updateData.imageUrls || (updateData.imageUrl ? [updateData.imageUrl] : []);
 
         // Delete old images that are no longer in use
-        const imagesToDelete = oldImages.filter(img => !newImages.includes(img));
+        const imagesToDelete = oldImages.filter((img: string) => !newImages.includes(img));
         for (const imgUrl of imagesToDelete) {
           await deleteImageFromStorage(imgUrl, [
             'csr/images/',
@@ -278,7 +278,7 @@ export const useCSRActivitiesFirestore = (options: HookOptions = { includeDrafts
         updatedAt: Timestamp.now(),
       });
 
-      await updateDoc(activityDoc, payloadSanitized);
+      await updateDoc(activityDoc, payloadSanitized as any);
 
       setActivities((prev) =>
         prev.map((item) =>

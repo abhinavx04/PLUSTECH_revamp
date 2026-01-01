@@ -10,7 +10,7 @@
  */
 export async function compressImage(
   file: File,
-  targetSizeMB: number = 1.5,
+  _targetSizeMB: number = 1.5,
   maxWidthOrHeight: number = 1920
 ): Promise<File> {
   return new Promise((resolve, reject) => {

@@ -1,20 +1,13 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCSRActivitiesFirestore } from '../../hooks/useCSRActivitiesFirestore';
-
-const categoryColors = {
-  education: 'bg-blue-100 text-blue-800 border-blue-200',
-  environment: 'bg-green-100 text-green-800 border-green-200',
-  community: 'bg-purple-100 text-purple-800 border-purple-200',
-  healthcare: 'bg-red-100 text-red-800 border-red-200'
-};
 
 const CSRActivitiesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const isInView = useInView(sectionRef, { once: false, margin: '-100px' });
-  const { activities, loading, error, getPublishedCSRActivities } = useCSRActivitiesFirestore();
+  const { loading, error, getPublishedCSRActivities } = useCSRActivitiesFirestore();
 
   const data = useMemo(
     () => getPublishedCSRActivities(),

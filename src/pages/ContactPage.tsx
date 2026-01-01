@@ -12,6 +12,7 @@ import {
 import Footer from '../components/Footer';
 import { db } from '../lib/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { SEO } from '../components/SEO';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -104,7 +105,14 @@ const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
+    <>
+      <SEO
+        title="Contact Us - PLUSTECH"
+        description="Get in touch with PLUSTECH for surface finishing solutions, automation systems, and technical consultancy. Contact our team for inquiries and project discussions."
+        url="/contact"
+        keywords="contact PLUSTECH, surface finishing consultation, automation services, technical support"
+      />
+      <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
       <Navbar>
         <NavBody>
           <NavbarLogo />
@@ -335,7 +343,8 @@ const ContactPage: React.FC = () => {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };
 

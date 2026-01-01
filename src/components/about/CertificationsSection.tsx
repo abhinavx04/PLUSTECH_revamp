@@ -2,10 +2,12 @@ import React, { useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useCertificationsFirestore, type Certification } from '../../hooks/useCertificationsFirestore';
 
-const categoryColors = {
+const categoryColors: Record<string, string> = {
   quality: 'bg-green-100 text-green-800 border-green-200',
   financial: 'bg-blue-100 text-blue-800 border-blue-200',
-  compliance: 'bg-purple-100 text-purple-800 border-purple-200'
+  compliance: 'bg-purple-100 text-purple-800 border-purple-200',
+  safety: 'bg-orange-100 text-orange-800 border-orange-200',
+  other: 'bg-gray-100 text-gray-800 border-gray-200'
 };
 
 const statusColors = {

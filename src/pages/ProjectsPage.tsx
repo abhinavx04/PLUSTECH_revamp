@@ -13,6 +13,7 @@ import Footer from '../components/Footer';
 import ProjectCard from '../components/projects/ProjectCard';
 import { useProjectsFirestore } from '../hooks/useProjectsFirestore';
 import ProjectFilters from '../components/projects/ProjectFilters';
+import { SEO } from '../components/SEO';
 
 const ProjectsPage: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -95,7 +96,14 @@ const ProjectsPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
+    <>
+      <SEO
+        title="Projects - Surface Finishing Solutions & Automation Systems"
+        description="Explore PLUSTECH's portfolio of surface finishing projects, paint shop solutions, and industrial automation systems. View our completed projects across various industries."
+        url="/projects"
+        keywords="surface finishing projects, paint shop projects, automation projects, industrial solutions, completed projects"
+      />
+      <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
       <Navbar>
         <NavBody>
           <NavbarLogo />
@@ -359,7 +367,8 @@ const ProjectsPage: React.FC = () => {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };
 

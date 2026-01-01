@@ -7,7 +7,6 @@ import {
   type CSRMetric,
 } from '../hooks/useCSRActivitiesFirestore';
 import { uploadImageToStorage } from '../lib/storageUtils';
-import { getFileSizeMB } from '../lib/imageUtils';
 import { uploadPDFToStorage } from '../lib/pdfUtils';
 
 interface CSRFormState {

@@ -10,6 +10,8 @@ import {
   MobileNavMenu,
 } from '../components/ui/resizable-navbar';
 import Footer from '../components/Footer';
+import { SEO } from '../components/SEO';
+import { OptimizedImage } from '../components/OptimizedImage';
 
 const services = [
   {
@@ -82,7 +84,14 @@ const ServicesPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
+    <>
+      <SEO
+        title="Services - Technical Consultancy, Maintenance & Productivity Solutions"
+        description="PLUSTECH offers comprehensive services including technical consultancy, maintenance contracts, and productivity improvement solutions for surface finishing plants and automation systems."
+        url="/services"
+        keywords="surface finishing services, technical consultancy, maintenance contracts, productivity improvement, automation solutions"
+      />
+      <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
       <Navbar>
         <NavBody>
           <NavbarLogo />
@@ -344,11 +353,13 @@ const ServicesPage: React.FC = () => {
                 className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_25px_80px_rgba(8,47,73,0.08)] transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="relative h-56 overflow-hidden">
-                  <img
+                  <OptimizedImage
                     src={service.image}
                     alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
+                    className="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                    objectFit="cover"
+                    height={224}
+                    width={400}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
@@ -418,7 +429,8 @@ const ServicesPage: React.FC = () => {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -11,6 +11,7 @@ import {
 } from '../components/ui/resizable-navbar';
 import Footer from '../components/Footer';
 import { useNewsFirestore } from '../hooks/useNewsFirestore';
+import { SEO } from '../components/SEO';
 
 interface NewsArticle {
   id: string;
@@ -58,7 +59,14 @@ const NewsPage: React.FC = () => {
   const publishedNews = news.filter(article => article.published);
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
+    <>
+      <SEO
+        title="News & Updates - PLUSTECH"
+        description="Stay updated with the latest news, updates, and announcements from PLUSTECH. Read about our latest projects, achievements, and industry insights."
+        url="/news"
+        keywords="PLUSTECH news, industry updates, company news, surface finishing industry, automation news"
+      />
+      <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
       <Navbar>
         <NavBody>
           <NavbarLogo />
@@ -345,7 +353,8 @@ const NewsPage: React.FC = () => {
       )}
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };
 

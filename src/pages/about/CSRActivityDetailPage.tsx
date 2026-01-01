@@ -14,23 +14,10 @@ import {
 import Footer from '../../components/Footer';
 import { useCSRActivitiesFirestore } from '../../hooks/useCSRActivitiesFirestore';
 
-const categoryColors = {
-  education: 'bg-blue-100 text-blue-800 border-blue-200',
-  environment: 'bg-green-100 text-green-800 border-green-200',
-  community: 'bg-purple-100 text-purple-800 border-purple-200',
-  healthcare: 'bg-red-100 text-red-800 border-red-200'
-};
-
-const statusColors = {
-  active: 'bg-green-100 text-green-800',
-  completed: 'bg-blue-100 text-blue-800',
-  planned: 'bg-yellow-100 text-yellow-800'
-};
-
 const CSRActivityDetailPage: React.FC = () => {
   const { activityId } = useParams<{ activityId: string }>();
   const navigate = useNavigate();
-  const { activities, loading, getCSRActivityById } = useCSRActivitiesFirestore();
+  const { loading, getCSRActivityById } = useCSRActivitiesFirestore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPDF, setShowPDF] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -263,12 +250,6 @@ const CSRActivityDetailPage: React.FC = () => {
     ? activity.imageUrls 
     : (activity.imageUrl ? [activity.imageUrl] : ['/aboutus/2.png']);
   const hasMultipleImages = images.length > 1;
-
-  const parseDate = (value?: string) => {
-    if (!value) return null;
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? null : date;
-  };
 
   return (
     <div className="min-h-screen w-full flex flex-col text-black font-body overflow-x-hidden bg-gray-50 pt-16">
