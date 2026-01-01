@@ -1,7 +1,6 @@
 // @ts-check
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
 // Firebase configuration for PlusTech project
@@ -39,7 +38,8 @@ if (missingVars.length > 0) {
   try {
     // Initialize Firebase with the real configuration
     app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
+    // Auth is lazy-loaded - only initialize when needed (admin pages)
+    // This reduces initial bundle size and blocking time
     db = getFirestore(app);
     storage = getStorage(app);
     
@@ -97,7 +97,14 @@ if (missingVars.length > 0) {
   }
 }
 
-export { db, auth, storage };
+// Export db and storage (always initialized)
+export { db, storage };
+
+// Auth is initialized lazily - only when getAuth() is called
+// Since useAdminAuth imports from 'firebase/auth' and calls getAuth(),
+// auth will only initialize when admin pages (which are lazy-loaded) actually load
+// This prevents loading auth iframe (91KB) on public pages
+export { auth };
 
 // Provide basic type declarations for TS when importing from JS file
 /**
