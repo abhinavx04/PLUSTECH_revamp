@@ -59,8 +59,8 @@ const AdminDashboard: React.FC = () => {
                 src="/PLUSTECH NEW.png" 
                 alt="PlusTech Logo" 
                 className="h-10 w-auto brightness-110 contrast-110"
-                width="195"
-                height="210"
+                width="184"
+                height="40"
                 loading="eager"
               />
             </div>

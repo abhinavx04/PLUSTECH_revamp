@@ -177,8 +177,8 @@ export const NavbarLogo = ({ className }: NavbarLogoProps) => {
         src="/PLUSTECH NEW.png"
         alt="PlusTech Logo"
         className="h-8 w-auto brightness-110 contrast-110"
-        width="195"
-        height="210"
+        width="147"
+        height="32"
         loading="eager"
         onError={(e) => {
           // Fallback if image doesn't exist

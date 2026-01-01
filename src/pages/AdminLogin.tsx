@@ -31,8 +31,8 @@ const AdminLogin: React.FC = () => {
             src="/PLUSTECH NEW.png" 
             alt="PlusTech Logo" 
             className="h-16 w-auto mx-auto brightness-110 contrast-110"
-            width="195"
-            height="210"
+            width="294"
+            height="64"
             loading="eager"
           />
           <h2 className="mt-6 text-3xl font-bold text-white" style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}>

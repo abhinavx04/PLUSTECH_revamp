@@ -19,8 +19,8 @@ const Footer = () => {
                 src="/PLUSTECH NEW.png"
                 alt="Plustech Logo"
                 className="h-10 w-auto brightness-110 contrast-110"
-                width="195"
-                height="210"
+                width="184"
+                height="40"
                 loading="lazy"
                 onError={(e) => {
                   // Fallback if image doesn't exist
