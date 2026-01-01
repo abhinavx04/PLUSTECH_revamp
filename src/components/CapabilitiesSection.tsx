@@ -38,9 +38,9 @@ const capabilitiesData: CapabilityItem[] = [
       'General industrial parts'
     ],
     images: [
-      '/robotic/indoor-painting_and_door_opening.png',
+      '/robotic/indoor-painting_and_door_opening.webp',
       '/robotic/2-wheeler-fueltanks_plaSTIC.png',
-      '/robotic/scooter-metal_plastic-part.png',
+      '/robotic/scooter-metal_plastic-part.webp',
       '/robotic/sealer_application.png',
       '/robotic/underbody_application.png'
     ],
@@ -54,9 +54,9 @@ const capabilitiesData: CapabilityItem[] = [
     description: 'Plustech deploys fully or partially automated handling solutions across various sections and operations of paint shops to boost productivity, efficiency, and optimize the plant footprint.',
     features: [],
     images: [
-      '/automated-customised-materialhandling/1.png',
-      '/automated-customised-materialhandling/2.png',
-      '/automated-customised-materialhandling/3.png'
+      '/automated-customised-materialhandling/1.webp',
+      '/automated-customised-materialhandling/2.webp',
+      '/automated-customised-materialhandling/3.webp'
     ],
     bgColor: 'bg-white',
     textColor: 'text-black',

@@ -18,7 +18,7 @@ const services = [
     title: 'Technical Consultancy',
     description:
       'Blueprints for new projects and modernization, aligned to throughput, quality, and safety KPIs.',
-    image: '/automated-customised-materialhandling/1.png',
+    image: '/automated-customised-materialhandling/1.webp',
     bullets: [
       'Blueprinting new paint and automation projects',
       'Developing concepts and layouts tailored to each plant',
