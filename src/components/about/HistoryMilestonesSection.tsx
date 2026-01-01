@@ -1,5 +1,6 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useInView, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion';
+import { useMilestonesFirestore } from '../../hooks/useMilestonesFirestore';
 
 interface Milestone {
   id: string;
@@ -15,7 +16,7 @@ interface Milestone {
 }
 
 // Combined timeline data sorted by year
-const allMilestones: Milestone[] = [
+const hardcodedMilestones: Milestone[] = [
   {
     id: 'company-founded',
     year: '2006',
@@ -261,7 +262,7 @@ const categoryConfig = {
 // Group milestones by year for proper layout with improved distribution
 const groupMilestonesByYear = (milestones: Milestone[]) => {
   // Sort by year first (Present goes last)
-  const sorted = milestones.sort((a, b) => {
+  const sorted = [...milestones].sort((a, b) => {
     if (a.year === 'Present') return 1;
     if (b.year === 'Present') return -1;
     return parseInt(a.year) - parseInt(b.year);
@@ -333,31 +334,30 @@ const TimelineMilestone: React.FC<{
     setOffsetTop(milestoneRect.top - containerRect.top + containerEl.scrollTop);
   }, [timelinePx, timelineContainerRef]);
 
-  const maxProgressRef = useRef(0);
+  const maxReachedRef = useRef(0);
+  const maxReached = useMotionValue(0);
   
-  // Track max progress for this milestone
+  // Track max progress for this milestone - never goes backwards
   useEffect(() => {
+    const ratio = timelinePx > 0 ? offsetTop / timelinePx : 1;
     const unsubscribe = scrollYProgress.on("change", (latest) => {
-      if (latest > maxProgressRef.current) {
-        maxProgressRef.current = latest;
+      const currentProgress = latest >= ratio ? 1 : Math.max(0, latest / ratio);
+      // Only update if progress increased - prevents reverse animation
+      if (currentProgress > maxReachedRef.current) {
+        maxReachedRef.current = currentProgress;
+        maxReached.set(currentProgress);
       }
     });
     return () => unsubscribe();
-  }, [scrollYProgress]);
+  }, [scrollYProgress, offsetTop, timelinePx, maxReached]);
   
-  const reached = useTransform(scrollYProgress, (p) => {
-    const ratio = timelinePx > 0 ? offsetTop / timelinePx : 1;
-    // Use max scroll progress to prevent reverse animation - once reached, stay reached
-    const progress = Math.max(p, maxProgressRef.current);
-    return progress >= ratio ? 1 : 0;
-  }) as MotionValue<number>;
-  const reachedSpring = useSpring(reached as MotionValue<number>, { stiffness: 260, damping: 30 });
-  const cardOpacity = reachedSpring;
-  const cardY = useTransform(reachedSpring, (v) => 40 - 40 * v);
-  const cardScale = useTransform(reachedSpring, (v) => 0.96 + 0.04 * v);
-  const nodeOpacity = reachedSpring;
-  const nodeScale = useTransform(reachedSpring, (v) => 0.0 + 1.0 * v);
-  const nodeRotate = useTransform(reachedSpring, (v) => -90 + 90 * v);
+  // Direct transforms without spring - no reverse animation possible
+  const cardOpacity = maxReached;
+  const cardY = useTransform(maxReached, (v) => 40 - 40 * v);
+  const cardScale = useTransform(maxReached, (v) => 0.96 + 0.04 * v);
+  const nodeOpacity = maxReached;
+  const nodeScale = useTransform(maxReached, (v) => 0.0 + 1.0 * v);
+  const nodeRotate = useTransform(maxReached, (v) => -90 + 90 * v);
 
   return (
     <motion.div
@@ -485,10 +485,9 @@ const TimelineYearGroup: React.FC<{
         initial={{ opacity: 0, y: -30, scale: 0.8 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -30, scale: 0.8 }}
         transition={{ 
-          type: "spring",
-          stiffness: 200,
-          damping: 20,
-          delay: 0.2
+          duration: 0.5,
+          delay: 0.2,
+          ease: "easeOut"
         }}
       >
         {yearGroup.year}
@@ -523,6 +522,11 @@ const HistoryMilestonesSection: React.FC = () => {
   const isInView = useInView(sectionRef, { once: true, margin: "-200px" });
   const [timelinePx, setTimelinePx] = useState(0);
   const maxScrollProgressRef = useRef(0);
+  const {
+    milestones: firestoreMilestones,
+    loading: milestonesLoading,
+    error: milestonesError
+  } = useMilestonesFirestore();
   
   // Scroll-based animations for timeline
   const { scrollYProgress } = useScroll({
@@ -531,19 +535,21 @@ const HistoryMilestonesSection: React.FC = () => {
   });
   
   // Track maximum scroll progress to prevent reverse animation
+  const maxLineProgress = useMotionValue(0);
+  
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
+      // Only update if progress increased - prevents reverse animation
       if (latest > maxScrollProgressRef.current) {
         maxScrollProgressRef.current = latest;
+        maxLineProgress.set(latest);
       }
     });
     return () => unsubscribe();
-  }, [scrollYProgress]);
+  }, [scrollYProgress, maxLineProgress]);
   
   // Transform max scroll progress to timeline line height (no reverse animation)
-  // Use ref directly in transform for immediate updates
-  const lineFillPx = useTransform(scrollYProgress, (latest) => {
-    const progress = Math.max(latest, maxScrollProgressRef.current);
+  const lineFillPx = useTransform(maxLineProgress, (progress) => {
     return progress * timelinePx;
   });
 
@@ -567,8 +573,47 @@ const HistoryMilestonesSection: React.FC = () => {
       }
     };
   }, []);
-  
-  const groupedMilestones = groupMilestonesByYear(allMilestones);
+
+  const combinedMilestones = useMemo(() => {
+    const staticPre2020 = hardcodedMilestones.filter((m) => {
+      if (m.year === 'Present') return false;
+      const yearNum = parseInt(m.year, 10);
+      return !Number.isNaN(yearNum) && yearNum <= 2019;
+    });
+
+    const presentMilestone = hardcodedMilestones.find((m) => m.year === 'Present');
+
+    const dynamicMilestones = firestoreMilestones
+      .filter((m) => {
+        const yearNum = parseInt(m.year || '0', 10);
+        return m.published && !Number.isNaN(yearNum) && yearNum >= 2020;
+      })
+      .map((m) => ({
+        id: m.id,
+        year: m.year,
+        title: m.title,
+        description: m.description,
+        category: m.category,
+        icon: m.icon || '',
+        metrics: m.metrics && m.metrics.length > 0 ? m.metrics : [{ label: 'Year', value: m.year }]
+      }));
+
+    const merged = [...staticPre2020, ...dynamicMilestones];
+    if (presentMilestone) {
+      merged.push(presentMilestone);
+    }
+
+    return merged.sort((a, b) => {
+      if (a.year === 'Present') return 1;
+      if (b.year === 'Present') return -1;
+      return parseInt(a.year, 10) - parseInt(b.year, 10);
+    });
+  }, [firestoreMilestones]);
+
+  const groupedMilestones = useMemo(
+    () => groupMilestonesByYear(combinedMilestones),
+    [combinedMilestones]
+  );
 
 
   return (
@@ -583,7 +628,7 @@ const HistoryMilestonesSection: React.FC = () => {
         <motion.h2 
           className="text-4xl md:text-5xl font-bold font-heading text-gray-900 mb-6"
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           History & Milestones
@@ -591,7 +636,7 @@ const HistoryMilestonesSection: React.FC = () => {
         <motion.p 
           className="text-lg md:text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           Our journey spans over two decades of innovation, growth, and excellence in 
@@ -599,22 +644,26 @@ const HistoryMilestonesSection: React.FC = () => {
         </motion.p>
       </motion.div>
 
+      {milestonesError && (
+        <div className="mb-10 text-center bg-red-500/10 border border-red-500/40 text-red-100 rounded-lg px-4 py-3">
+          {milestonesError}
+        </div>
+      )}
+
       {/* Unified Timeline */}
       <motion.div 
         ref={timelineRef}
         className="mb-20"
         initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, delay: 0.6 }}
       >
-        <motion.h3 
-          className="text-3xl font-bold font-heading text-gray-900 mb-12 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-        >
-          Company Journey & Milestones
-        </motion.h3>
+        {milestonesLoading && (
+          <div className="flex items-center justify-center mb-8 text-sm text-gray-200">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#00aeef] mr-2" />
+            <span>Loading recent milestones...</span>
+          </div>
+        )}
         
         <div className="relative">
           {/* Central Timeline Line - Desktop - Red to Purple to Blue gradient */}
@@ -653,9 +702,9 @@ const HistoryMilestonesSection: React.FC = () => {
                     hasMultipleMilestones={hasMultipleMilestones}
                     categoryConfig={categoryConfig}
                     timelineContainerRef={timelineRef}
-              scrollYProgress={scrollYProgress}
-              timelinePx={timelinePx}
-            />
+                    scrollYProgress={scrollYProgress}
+                    timelinePx={timelinePx}
+                  />
                 </div>
               );
             })}
@@ -667,7 +716,7 @@ const HistoryMilestonesSection: React.FC = () => {
       <motion.div 
         className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, delay: 1.5 }}
       >
         {[
@@ -736,7 +785,7 @@ const HistoryMilestonesSection: React.FC = () => {
           backgroundClip: 'padding-box, border-box'
         }}
         initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, delay: 2.0 }}
       >
         {/* Subtle gradient background */}
@@ -746,7 +795,7 @@ const HistoryMilestonesSection: React.FC = () => {
           <motion.h3 
             className="text-3xl md:text-4xl font-bold font-heading bg-gradient-to-r from-[#E63946] via-[#9B59B6] to-[#00aeef] bg-clip-text text-transparent mb-6"
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 2.2 }}
           >
             Looking Forward
@@ -754,7 +803,7 @@ const HistoryMilestonesSection: React.FC = () => {
           <motion.p 
             className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 2.4 }}
           >
             As we continue our journey, we remain committed to pushing the boundaries of innovation, 

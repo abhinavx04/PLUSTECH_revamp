@@ -6,17 +6,19 @@ import AnnualReturnManager from '../components/AnnualReturnManager';
 import ProjectsManager from '../components/ProjectsManager';
 import CertificationManager from '../components/CertificationManager';
 import CSRManager from '../components/CSRManager';
+import MilestonesManager from '../components/MilestonesManager';
 import { useProjectsFirestore } from '../hooks/useProjectsFirestore';
 import { useNewsFirestore } from '../hooks/useNewsFirestore';
 import { useAnnualReturnsFirestore } from '../hooks/useAnnualReturnsFirestore';
 import { useCertificationsFirestore } from '../hooks/useCertificationsFirestore';
 import { useCSRActivitiesFirestore } from '../hooks/useCSRActivitiesFirestore';
+import { useMilestonesFirestore } from '../hooks/useMilestonesFirestore';
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'projects' | 'news' | 'annualReturns' | 'certifications' | 'csr'
+    'dashboard' | 'projects' | 'news' | 'annualReturns' | 'certifications' | 'csr' | 'milestones'
   >('dashboard');
 
   // Load live data for quick stats
@@ -25,13 +27,21 @@ const AdminDashboard: React.FC = () => {
   const { annualReturns, loading: returnsLoading } = useAnnualReturnsFirestore();
   const { certifications, loading: certificationsLoading } = useCertificationsFirestore();
   const { activities: csrActivities, loading: csrLoading } = useCSRActivitiesFirestore();
+  const { milestones, loading: milestonesLoading } = useMilestonesFirestore();
 
   const publishedProjectsCount = projects.filter((p) => p.status === 'published').length;
   const publishedNewsCount = news.filter((n) => n.published).length;
   const publishedReturnsCount = annualReturns.filter((r) => r.status === 'published').length;
   const publishedCertificationsCount = certifications.filter((c) => c.published).length;
   const publishedCSRCount = csrActivities.filter((c) => c.published).length;
-  const isStatsLoading = projectsLoading || newsLoading || returnsLoading || certificationsLoading || csrLoading;
+  const publishedMilestonesCount = milestones.filter((m) => m.published).length;
+  const isStatsLoading =
+    projectsLoading ||
+    newsLoading ||
+    returnsLoading ||
+    certificationsLoading ||
+    csrLoading ||
+    milestonesLoading;
 
   const handleLogout = async () => {
     try {
@@ -58,12 +68,6 @@ const AdminDashboard: React.FC = () => {
                 height="210"
                 loading="eager"
               />
-              <span 
-                className="font-bold text-lg text-[#00aeef]"
-                style={{ fontFamily: 'Orbitron, Arial, sans-serif' }}
-              >
-                PLUSTECH ADMIN
-              </span>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -114,6 +118,16 @@ const AdminDashboard: React.FC = () => {
               }`}
             >
               News Management
+            </button>
+            <button
+              onClick={() => setActiveTab('milestones')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'milestones'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              Milestones
             </button>
             <button
               onClick={() => setActiveTab('annualReturns')}
@@ -186,6 +200,20 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
+          {/* Milestones Card */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+            <h3 className="text-xl font-semibold text-white mb-4">History & Milestones</h3>
+            <p className="text-gray-300 mb-4">Manage timeline entries from 2020 onwards</p>
+            <div className="space-y-2">
+              <button
+                onClick={() => setActiveTab('milestones')}
+                className="w-full px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+              >
+                Manage Milestones
+              </button>
+            </div>
+          </div>
+
           {/* Annual Return Card */}
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
             <h3 className="text-xl font-semibold text-white mb-4">Annual Return</h3>
@@ -230,7 +258,7 @@ const AdminDashboard: React.FC = () => {
             {/* Quick Stats (live data) */}
             <div className="mt-8 bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
               <h2 className="text-2xl font-bold text-white mb-6">Quick Stats</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-[#00aeef]">
                     {isStatsLoading ? '—' : publishedProjectsCount}
@@ -242,6 +270,12 @@ const AdminDashboard: React.FC = () => {
                     {isStatsLoading ? '—' : publishedNewsCount}
                   </div>
                   <div className="text-gray-300">Published News Articles</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#00aeef]">
+                    {isStatsLoading ? '—' : publishedMilestonesCount}
+                  </div>
+                  <div className="text-gray-300">Timeline Milestones (2020+)</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-[#00aeef]">
@@ -268,6 +302,8 @@ const AdminDashboard: React.FC = () => {
           <ProjectsManager />
         ) : activeTab === 'news' ? (
           <NewsManagerSimple />
+        ) : activeTab === 'milestones' ? (
+          <MilestonesManager />
         ) : activeTab === 'annualReturns' ? (
           <AnnualReturnManager />
         ) : activeTab === 'certifications' ? (
