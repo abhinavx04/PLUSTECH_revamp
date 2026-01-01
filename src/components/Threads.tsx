@@ -139,10 +139,6 @@ const Threads: React.FC<ThreadsProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const animationFrameId = useRef<number | null>(null);
-  const isVisibleRef = useRef(true);
-  const rendererRef = useRef<Renderer | null>(null);
-  const programRef = useRef<Program | null>(null);
-  const meshRef = useRef<Mesh | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -164,7 +160,6 @@ const Threads: React.FC<ThreadsProps> = ({
       powerPreference: isMobile ? 'low-power' : 'high-performance',
       antialias: !isMobile && !isLowEndDevice
     });
-    rendererRef.current = renderer;
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
@@ -190,10 +185,8 @@ const Threads: React.FC<ThreadsProps> = ({
         uMouse: { value: new Float32Array([0.5, 0.5]) }
       }
     });
-    programRef.current = program;
 
     const mesh = new Mesh(gl, { geometry, program });
-    meshRef.current = mesh;
 
     function resize() {
       const { clientWidth, clientHeight } = container;
@@ -248,12 +241,6 @@ const Threads: React.FC<ThreadsProps> = ({
     }
 
     function update(t: number) {
-      // Pause animation when not visible
-      if (!isVisibleRef.current) {
-        animationFrameId.current = requestAnimationFrame(update);
-        return;
-      }
-
       // Throttle updates on mobile for better performance
       if (t - lastUpdateTime < frameInterval) {
         animationFrameId.current = requestAnimationFrame(update);
@@ -278,27 +265,7 @@ const Threads: React.FC<ThreadsProps> = ({
     }
     animationFrameId.current = requestAnimationFrame(update);
 
-    // Intersection Observer to pause when not visible
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          isVisibleRef.current = entry.isIntersecting;
-          // If visible and animation was paused, resume
-          if (entry.isIntersecting && !animationFrameId.current) {
-            animationFrameId.current = requestAnimationFrame(update);
-          }
-        });
-      },
-      {
-        threshold: 0.1, // Trigger when 10% visible
-        rootMargin: '50px' // Start loading slightly before visible
-      }
-    );
-
-    observer.observe(container);
-
     return () => {
-      observer.disconnect();
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       window.removeEventListener('resize', resize);
 

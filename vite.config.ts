@@ -21,45 +21,14 @@ export default defineConfig({
     // Optimize chunk splitting for better caching
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // React core
-          if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-            return 'react-vendor';
-          }
-          // Firebase - separate chunk since it's large
-          if (id.includes('firebase')) {
-            return 'firebase-vendor';
-          }
-          // Animation libraries - separate chunks
-          if (id.includes('framer-motion')) {
-            return 'framer-motion';
-          }
-          if (id.includes('gsap')) {
-            return 'gsap';
-          }
-          // 3D libraries - separate chunks
-          if (id.includes('three')) {
-            return 'three';
-          }
-          if (id.includes('ogl')) {
-            return 'ogl';
-          }
-          // UI libraries
-          if (id.includes('@fortawesome') || id.includes('lucide-react')) {
-            return 'ui-vendor';
-          }
-          // PDF library
-          if (id.includes('pdfjs-dist')) {
-            return 'pdfjs';
-          }
-          // Charts
-          if (id.includes('recharts')) {
-            return 'recharts';
-          }
-          // Node modules
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+        manualChunks: {
+          // Vendor chunks for better caching
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // Firebase v12+ has ESM exports that don't work well with manual chunking
+          // Let Vite handle it automatically
+          'animation-vendor': ['framer-motion', 'gsap'],
+          '3d-vendor': ['three', 'ogl'],
+          'ui-vendor': ['@fortawesome/react-fontawesome', '@fortawesome/fontawesome-svg-core', 'lucide-react'],
         },
       },
     },
@@ -69,26 +38,15 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: false, // Keep console for debugging production issues
+        drop_console: true, // Remove console.logs in production
         drop_debugger: true,
-        // Don't remove console.error and console.warn - they're important for debugging
       },
     },
     // Optimize assets - inline small assets
     assetsInlineLimit: 4096, // Inline assets smaller than 4kb
-    // Disable source maps for smaller builds
+    // Enable source maps for production debugging (optional, disable for smaller builds)
     sourcemap: false,
     // CSS code splitting for better performance
     cssCodeSplit: true,
-    // Target modern browsers for smaller output
-    target: 'esnext',
-    // Minify CSS
-    cssMinify: true,
-  },
-  // Optimize dependencies
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
-    // Exclude heavy libs from pre-bundling - they'll be loaded on demand
-    exclude: ['framer-motion', 'gsap', 'three', 'ogl'],
   },
 })

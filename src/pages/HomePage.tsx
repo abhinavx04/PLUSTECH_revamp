@@ -124,7 +124,7 @@ const HomePage: React.FC = () => {
       {/* Capabilities Section */}
       <div id="capabilities" className="bg-white">
         <CapabilitiesSection />
-      </div>
+            </div>
 
       {/* Brand Promise Text moved below capabilities */}
       <div className="w-full px-6 md:px-12 lg:px-16 py-10 bg-white">
