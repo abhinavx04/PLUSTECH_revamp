@@ -165,6 +165,66 @@ const AboutUsPage: React.FC = () => {
               </div>
             </div>
           </section>
+
+          {/* Testimonial Spotlight */}
+          <section className="w-full px-6 md:px-12 lg:px-16 py-20 bg-gradient-to-r from-blue-50 via-white to-blue-50">
+            <div className="max-w-7xl mx-auto w-full space-y-12">
+              <div className="text-center space-y-3">
+                <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-[#00aeef] font-semibold">Client Voices</p>
+                <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">Leaders who trust Plustech</h3>
+                <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+                  Hear how industry leaders describe their experience partnering with Plustech.
+                </p>
+              </div>
+
+              <div className="relative flex flex-col items-center">
+                {/* Halo */}
+                <div className="pointer-events-none absolute inset-0 flex justify-center">
+                  <div className="w-[78%] max-w-6xl h-80 bg-gradient-to-r from-[#00aeef]/20 via-[#7dd3fc]/12 to-[#00aeef]/20 blur-[110px] rounded-full" />
+                </div>
+
+                {/* Centered video */}
+                <div className="w-full lg:w-4/5 xl:w-[72%]">
+                  <div className="relative rounded-3xl overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.16)] border border-white/70 bg-white/80 backdrop-blur">
+                    <div className="relative w-full overflow-hidden bg-black">
+                      <video
+                        className="w-full h-full"
+                        controls
+                        playsInline
+                        preload="metadata"
+                        poster="/home/video-poster.png"
+                      >
+                        <source src="https://firebasestorage.googleapis.com/v0/b/plustech-revamp.firebasestorage.app/o/aboutVideo%2FPlustech%20Interview%2022-Dec-2023%20Combined%20Video%20.mp4?alt=media&token=b28c0c67-0496-4b5d-b2a7-0dd7a177066b" type="video/mp4" />
+                        Your browser does not support HTML5 video.
+                      </video>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Leader tags below video */}
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                  {[
+                    { name: 'Mr Rajiv H Joglekar', title: 'Advisor Projects', company: 'Bajaj Auto Limited' },
+                    { name: 'Mr Sunil Nagarhalli', title: 'Proprietor', company: 'Pratham Project Engineers' },
+                    { name: 'Mr Bimal Kumar Mishra', title: 'Head Operations', company: 'Varroc Engineering Limited' },
+                    { name: 'Mr R A Shrinivas', title: 'President', company: 'Wevin Private Limited' },
+                    { name: 'Mr Sanjay Sangle', title: 'GM CME Paint Technology', company: 'Mahindra and Mahindra' },
+                    { name: 'Mr Santosh Sonalkar', title: 'Managing Director', company: 'JK Systems' },
+                  ].map((person) => (
+                    <div
+                      key={person.name}
+                      className="rounded-xl border border-slate-200 bg-white/90 shadow-md px-4 py-3"
+                    >
+                      <div className="text-sm font-semibold text-slate-900">{person.name}</div>
+                      <div className="text-xs text-slate-600">{person.company}</div>
+                      <div className="text-xs text-[#00aeef] font-medium">{person.title}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </section>
         </>
       )}
 
