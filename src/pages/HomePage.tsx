@@ -59,12 +59,12 @@ const HomePage: React.FC = () => {
       <PageLayout className="bg-gradient-to-b from-white via-blue-50 to-white">
       <main>
 
-      {/* Threads Hero */}
-      <div className="w-full flex items-center justify-center pt-20">
-        <div className="w-full h-[50vh] md:h-[60vh] relative">
+      {/* Threads Hero - Desktop Only */}
+      <div className="hidden md:flex w-full items-center justify-center pt-20">
+        <div className="w-full h-[60vh] relative">
           <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
-            <div className="text-center px-4 md:px-6 lg:px-8 max-w-5xl">
-              <h1 className="text-black/60 text-3xl md:text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)', fontWeight: 950 }}>
+            <div className="text-center px-6 lg:px-8 max-w-5xl">
+              <h1 className="text-black/60 text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)', fontWeight: 950 }}>
                 DEVELOPING SOLUTIONS<br />DELIVERING QUALITY
               </h1>
             </div>
@@ -73,7 +73,44 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* CTAs */}
+      {/* Mobile Hero - Simplified */}
+      <div className="md:hidden w-full pt-20 pb-8">
+        <div className="relative min-h-[35vh] flex items-center justify-center overflow-hidden">
+          {/* Animated gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-cyan-50">
+            <div className="absolute inset-0 opacity-40">
+              <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-[#00aeef]/30 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute bottom-1/3 right-1/4 w-40 h-40 bg-blue-400/25 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+              <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-cyan-300/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+            </div>
+          </div>
+          
+          {/* Content */}
+          <div className="relative z-10 text-center px-6">
+            <h1 className="text-black/70 text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight font-heading" style={{ fontWeight: 950 }}>
+              DEVELOPING SOLUTIONS<br />DELIVERING QUALITY
+            </h1>
+            
+            {/* Mobile CTAs */}
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <button 
+                onClick={() => smoothScrollTo('capabilities')}
+                className="w-full max-w-xs px-6 py-3 rounded-full bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:bg-[#0099d4] transition-all duration-300"
+              >
+                Get Started
+              </button>
+              <a 
+                href="/about" 
+                className="w-full max-w-xs px-6 py-3 rounded-full bg-white text-[#0077a8] font-semibold border-2 border-[#00aeef] transition-all duration-300 text-center"
+              >
+                Discover Our Company
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop CTAs */}
       <div className="w-full hidden md:flex items-center justify-center mt-8 md:mt-12">
         <div className="flex items-center justify-center gap-6">
           <button 
