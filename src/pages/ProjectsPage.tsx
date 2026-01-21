@@ -16,7 +16,14 @@ const ProjectsPage: React.FC = () => {
   // All published projects (sorted)
   const publishedProjects = useMemo(() => {
     const list = getPublishedProjects();
-    return [...list].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return [...list].sort((a, b) => {
+      const aYear = Number.parseInt(String(a.year ?? ''), 10);
+      const bYear = Number.parseInt(String(b.year ?? ''), 10);
+      const aYearValue = Number.isFinite(aYear) ? aYear : -Infinity;
+      const bYearValue = Number.isFinite(bYear) ? bYear : -Infinity;
+      if (bYearValue !== aYearValue) return bYearValue - aYearValue;
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
   }, [getPublishedProjects]);
 
   // Apply filters (client-side)

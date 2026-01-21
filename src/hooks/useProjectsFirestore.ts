@@ -177,8 +177,17 @@ export const useProjectsFirestore = () => {
           });
         });
 
-        // Ensure consistent ordering by createdAt (if not already sorted by query)
-        projectData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        // Ensure consistent ordering:
+        // 1) year desc (newest year first)
+        // 2) createdAt desc (newest first within same year)
+        projectData.sort((a, b) => {
+          const aYear = Number.parseInt(String(a.year ?? ''), 10);
+          const bYear = Number.parseInt(String(b.year ?? ''), 10);
+          const aYearValue = Number.isFinite(aYear) ? aYear : -Infinity;
+          const bYearValue = Number.isFinite(bYear) ? bYear : -Infinity;
+          if (bYearValue !== aYearValue) return bYearValue - aYearValue;
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        });
         setProjects(projectData);
       } catch (err: any) {
         console.error('[Projects] Error loading projects:', err);
@@ -352,7 +361,14 @@ export const useProjectsFirestore = () => {
       projects
         .filter((project) => project.status === 'published')
         .slice()
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+        .sort((a, b) => {
+          const aYear = Number.parseInt(String(a.year ?? ''), 10);
+          const bYear = Number.parseInt(String(b.year ?? ''), 10);
+          const aYearValue = Number.isFinite(aYear) ? aYear : -Infinity;
+          const bYearValue = Number.isFinite(bYear) ? bYear : -Infinity;
+          if (bYearValue !== aYearValue) return bYearValue - aYearValue;
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        }),
     [projects]
   );
 
