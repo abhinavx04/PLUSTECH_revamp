@@ -109,11 +109,7 @@ const CertificationsSection: React.FC = () => {
           <div className="col-span-full flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00aeef]" />
           </div>
-        ) : certificationsData.length === 0 ? (
-          <div className="col-span-full text-center text-gray-600">
-            No certifications found. Check admin dashboard to add items.
-          </div>
-        ) : (
+        ) : certificationsData.length === 0 ? null : (
           certificationsData.map((certification) => {
             const descriptionPreview = certification.description.length > 100 
               ? certification.description.substring(0, 100) + '...'

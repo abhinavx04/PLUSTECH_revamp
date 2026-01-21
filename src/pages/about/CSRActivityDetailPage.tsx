@@ -7,28 +7,18 @@ import { PageLayout } from '../../components/PageLayout';
 
 const categoryConfig = {
   education: {
-    color: 'bg-blue-100 text-blue-800 border-blue-200',
-    icon: '📚',
     label: 'Education',
   },
   environment: {
-    color: 'bg-green-100 text-green-800 border-green-200',
-    icon: '🌱',
     label: 'Environment',
   },
   community: {
-    color: 'bg-purple-100 text-purple-800 border-purple-200',
-    icon: '🤝',
     label: 'Community',
   },
   healthcare: {
-    color: 'bg-red-100 text-red-800 border-red-200',
-    icon: '🏥',
     label: 'Healthcare',
   },
   other: {
-    color: 'bg-gray-100 text-gray-800 border-gray-200',
-    icon: '✨',
     label: 'Other',
   },
 } as const;
@@ -113,14 +103,8 @@ const CSRActivityDetailPage: React.FC = () => {
           <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
             {/* Category badge */}
             <span
-              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold ${
-                categoryConfig[activity.category as keyof typeof categoryConfig]?.color ??
-                'bg-gray-100 text-gray-800 border-gray-200'
-              }`}
+              className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200"
             >
-              <span className="text-base">
-                {categoryConfig[activity.category as keyof typeof categoryConfig]?.icon ?? '✨'}
-              </span>
               {categoryConfig[activity.category as keyof typeof categoryConfig]?.label ?? 'Other'}
             </span>
 

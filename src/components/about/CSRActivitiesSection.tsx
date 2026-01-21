@@ -5,28 +5,18 @@ import { useCSRActivitiesFirestore } from '../../hooks/useCSRActivitiesFirestore
 
 const categoryConfig = {
   education: {
-    color: 'bg-blue-100 text-blue-800 border-blue-200',
-    icon: '📚',
     label: 'Education',
   },
   environment: {
-    color: 'bg-green-100 text-green-800 border-green-200',
-    icon: '🌱',
     label: 'Environment',
   },
   community: {
-    color: 'bg-purple-100 text-purple-800 border-purple-200',
-    icon: '🤝',
     label: 'Community',
   },
   healthcare: {
-    color: 'bg-red-100 text-red-800 border-red-200',
-    icon: '🏥',
     label: 'Healthcare',
   },
   other: {
-    color: 'bg-gray-100 text-gray-800 border-gray-200',
-    icon: '✨',
     label: 'Other',
   },
 } as const;
@@ -163,57 +153,52 @@ const CSRActivitiesSection: React.FC = () => {
       </motion.div>
 
       {/* Filters */}
-      <div className="mb-8 flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-sm font-medium text-gray-600 mr-1">Filter by:</span>
-          <div className="flex flex-wrap gap-2">
-            {['all', 'education', 'environment', 'community', 'healthcare', 'other'].map(
-              (category) => {
-                const config =
-                  category === 'all'
-                    ? { label: 'All', color: 'bg-gray-100 text-gray-800 border-gray-200' }
-                    : categoryConfig[category as keyof typeof categoryConfig];
-                return (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                      selectedCategory === category
-                        ? 'bg-[#00aeef] text-white border-[#00aeef]'
-                        : `${config.color} hover:bg-white`
-                    }`}
-                  >
-                    {category !== 'all' && (
-                      <span className="mr-1">
-                        {categoryConfig[category as keyof typeof categoryConfig].icon}
-                      </span>
-                    )}
-                    {config.label}
-                  </button>
-                );
-              }
-            )}
+      <div className="mb-10 p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
+        <div className="flex flex-wrap gap-6 items-center justify-between">
+          <div className="flex flex-wrap gap-3 items-center">
+            <span className="text-sm font-medium text-slate-500">Category:</span>
+            <div className="flex flex-wrap gap-2">
+              {['all', 'education', 'environment', 'community', 'healthcare', 'other'].map(
+                (category) => {
+                  const label = category === 'all' ? 'All' : categoryConfig[category as keyof typeof categoryConfig].label;
+                  const isSelected = selectedCategory === category;
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                        isSelected
+                          ? 'bg-[#00aeef] text-white rounded-lg shadow-md'
+                          : 'text-slate-600 hover:text-[#00aeef] hover:bg-slate-50 rounded-lg'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                }
+              )}
+            </div>
           </div>
-        </div>
 
-        {years.length > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Year:</span>
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className="text-sm border border-gray-300 rounded-full px-3 py-1.5 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-[#00aeef] focus:border-[#00aeef]"
-            >
-              <option value="all">All years</option>
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+          {years.length > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-slate-500">Year:</span>
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="text-sm border border-slate-200 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#00aeef]/20 focus:border-[#00aeef] transition-all"
+              >
+                <option value="all">All years</option>
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Activity Grid */}
@@ -227,11 +212,7 @@ const CSRActivitiesSection: React.FC = () => {
           <div className="col-span-full flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00aeef]" />
           </div>
-        ) : filteredData.length === 0 ? (
-          <div className="col-span-full text-center text-gray-600 py-8 text-sm">
-            No CSR activities found. Add new items from the admin dashboard.
-          </div>
-        ) : (
+        ) : filteredData.length === 0 ? null : (
           filteredData.map((activity) => {
             const descriptionPreview = activity.description.length > 100 
               ? activity.description.substring(0, 100) + '...'
@@ -261,11 +242,8 @@ const CSRActivitiesSection: React.FC = () => {
                 {/* Header row with category & status */}
                 <div className="flex items-center justify-between p-3 pb-2">
                   <span
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${categoryConfig[activity.category as keyof typeof categoryConfig]?.color ?? 'bg-gray-100 text-gray-800 border-gray-200'}`}
+                    className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200"
                   >
-                    <span className="text-sm">
-                      {categoryConfig[activity.category as keyof typeof categoryConfig]?.icon ?? '✨'}
-                    </span>
                     {categoryConfig[activity.category as keyof typeof categoryConfig]?.label ?? 'Other'}
                   </span>
                   <div className="flex items-center gap-1.5 text-xs text-gray-500">
