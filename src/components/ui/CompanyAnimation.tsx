@@ -24,6 +24,11 @@ const AnimationStyles = () => {
         /* Medium speed for tablets */
         animation: scroll 50s linear infinite;
       }
+      .logo-carousel-container:hover .animate-scroll,
+      .logo-carousel-container:hover .animate-scroll-mobile,
+      .logo-carousel-container:hover .animate-scroll-tablet {
+        animation-play-state: paused;
+      }
       @media (prefers-reduced-motion: reduce) {
         .animate-scroll,
         .animate-scroll-mobile,
@@ -83,7 +88,7 @@ const CompanyAnimation: React.FC = () => {
         <h2 className="text-black/70 text-center text-xl sm:text-2xl md:text-3xl font-semibold font-sans">
           Trusted by leading companies
         </h2>
-        <div className="w-full mx-auto relative overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-r from-white via-blue-50 to-white shadow-[0_8px_24px_rgba(59,130,246,0.15)]"
+        <div className="logo-carousel-container w-full mx-auto relative overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-r from-white via-blue-50 to-white shadow-[0_8px_24px_rgba(59,130,246,0.15)] cursor-pointer"
              style={{ maskImage: 'linear-gradient(to right, transparent, white 8%, white 92%, transparent)' }}>
           <div className="flex w-max animate-scroll sm:animate-scroll-tablet md:animate-scroll py-4">
             {duplicatedLogos.map((logo, index) => (
