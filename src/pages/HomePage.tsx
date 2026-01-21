@@ -141,14 +141,14 @@ const HomePage: React.FC = () => {
             </div>
             <div className="flex justify-center items-center">
               <div 
-                className="w-full max-w-2xl aspect-[4/3] rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
+                className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
                 onClick={() => setSelectedWelcomeImage(0)}
               >
                 <OptimizedImage
                   src="/office/entrance/entrance.jpeg"
                   alt="Plustech Entrance"
-                  className="w-full h-full"
-                  objectFit="cover"
+                  className="w-full h-auto"
+                  objectFit="contain"
                   width={800}
                   height={600}
                   priority={true}

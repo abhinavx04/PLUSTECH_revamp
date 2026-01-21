@@ -30,7 +30,7 @@ const Footer = () => {
               />
             </div>
             <p className="text-xs text-gray-300">
-              Building intelligent solutions for modern manufacturing.
+              Developing Solutions. Delivering Quality.
             </p>
           </div>
 

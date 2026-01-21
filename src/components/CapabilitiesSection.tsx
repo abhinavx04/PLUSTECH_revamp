@@ -2,6 +2,31 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ImageViewer } from './ui/ImageViewer';
 
+const HOME_VIDEO_DOWNLOAD_URL: string | undefined = import.meta.env.VITE_HOME_VIDEO_DOWNLOAD_URL;
+const HOME_VIDEO_POSTER_URL: string =
+  import.meta.env.VITE_HOME_VIDEO_POSTER_URL || '/home/video-poster.png';
+
+function HomeFeatureVideo() {
+  const videoUrl = HOME_VIDEO_DOWNLOAD_URL;
+
+  if (!videoUrl) return null;
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl shadow-2xl border border-white/60 bg-black">
+      <video
+        className="w-full aspect-video"
+        controls
+        playsInline
+        preload="metadata"
+        poster={HOME_VIDEO_POSTER_URL}
+      >
+        <source src={videoUrl} type="video/mp4" />
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+  );
+}
+
 interface CapabilityItem {
   id: string;
   title: string;
@@ -348,23 +373,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                   ))}
                 </div>
 
-                <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-gradient-to-r from-[#e0f7ff] via-white to-[#d7e9ff] shadow-2xl p-6">
-                  <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 10% 10%, rgba(0,174,239,0.2), transparent 35%), radial-gradient(circle at 90% 30%, rgba(99,102,241,0.15), transparent 45%)' }} />
-                  <div className="relative flex flex-col md:flex-row items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-white/80 border border-white/60 shadow-inner flex items-center justify-center text-[#00aeef] font-semibold">
-                      ▶
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-lg font-semibold text-[#0f172a]">Feature Video Placeholder</div>
-                      <p className="text-sm text-slate-600 mt-1">
-                        Upload a walkthrough video of the 3D plant after the visuals—optimized for inline playback.
-                      </p>
-                    </div>
-                    <div className="w-full md:w-64 h-32 rounded-xl border border-dashed border-[#00aeef]/50 bg-white/70 flex items-center justify-center text-[#00aeef] text-sm font-medium">
-                      Upload Video
-                    </div>
-                  </div>
-                </div>
+                <HomeFeatureVideo />
               </div>
             ) : capability.id === 'robotic-applications' ? (
               // Robotic applications with carousel (buttons only, no counter)
