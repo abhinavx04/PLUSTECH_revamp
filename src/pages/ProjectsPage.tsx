@@ -90,11 +90,6 @@ const ProjectsPage: React.FC = () => {
                 Explore the projects we&apos;ve delivered—spanning automation, paintshop solutions,
                 and smart manufacturing upgrades. Only published projects appear here.
               </p>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-                <span>• Optimized for SEO and performance</span>
-                <span>• Inline video playback (no redirects)</span>
-                <span>• Mobile-first layouts</span>
-              </div>
             </div>
 
             <div className="relative">

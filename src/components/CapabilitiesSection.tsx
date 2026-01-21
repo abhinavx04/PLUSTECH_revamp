@@ -375,16 +375,16 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                 {capability.images.map((image, imageIndex) => (
                   <div
                     key={imageIndex}
-                    className="relative overflow-hidden rounded-2xl shadow-2xl group"
+                    className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer"
+                    onClick={() => setSelectedImageIndex(imageIndex)}
                   >
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[260px] md:h-[320px] object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                      className="w-full h-[260px] md:h-[320px] object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
-                      onClick={() => setSelectedImageIndex(imageIndex)}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                   </div>
                 ))}
               </div>
@@ -394,16 +394,16 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                 {capability.images.map((image, imageIndex) => (
                   <div
                     key={imageIndex}
-                    className="relative overflow-hidden rounded-2xl shadow-2xl group"
+                    className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer"
+                    onClick={() => setSelectedImageIndex(imageIndex)}
                   >
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
-                      onClick={() => setSelectedImageIndex(imageIndex)}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                   </div>
                 ))}
               </div>
@@ -487,15 +487,14 @@ const RoboticImageCarousel: React.FC<{ images: string[]; onImageClick: (index: n
         <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
         {images.map((image, i) => (
           <div key={i} className="flex-none w-[450px] md:w-[550px]">
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl group">
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer" onClick={() => onImageClick(i)}>
               <img 
                 src={image} 
                 alt={`Robotic application ${i + 1}`}
-                className="w-full h-[350px] md:h-[400px] object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                className="w-full h-[350px] md:h-[400px] object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
-                onClick={() => onImageClick(i)}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
           </div>
         ))}

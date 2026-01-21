@@ -207,6 +207,17 @@ export const OfficeParallaxTour: React.FC = () => {
         style={{ scaleX: smoothProgress }}
       />
 
+      {/* Exit Button - Top Left */}
+      <a
+        href="/about"
+        className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30 hover:bg-white/30 transition-all duration-200 group"
+      >
+        <svg className="w-5 h-5 text-white group-hover:text-[#00aeef] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span className="text-white text-sm font-medium group-hover:text-[#00aeef] transition-colors">Exit Tour</span>
+      </a>
+
       {/* Sections */}
       {sections.map((section, index) => (
         <ParallaxSection
@@ -216,55 +227,49 @@ export const OfficeParallaxTour: React.FC = () => {
         />
       ))}
 
-      {/* Floating Info Card - Dynamic position based on section */}
-      {(() => {
-        // Cycle through corners: 0=top-left, 1=top-right, 2=bottom-right, 3=bottom-left
-        const cornerIndex = activeSection % 4;
-        const positionClasses = [
-          'top-8 left-8',      // top-left
-          'top-8 right-8',     // top-right
-          'bottom-8 right-8',  // bottom-right
-          'bottom-8 left-8',    // bottom-left
-        ];
-        
-        return (
-          <div className={`fixed ${positionClasses[cornerIndex]} z-40 max-w-md hidden md:block`}>
-            <motion.div
-              key={activeSection}
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -30, scale: 0.95 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/50"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-1.5 h-8 rounded-full bg-[#00aeef]" />
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900">
-                    {sections[activeSection].title}
-                  </h3>
-                </div>
-              </div>
-              <p className="text-slate-600 mb-4 text-sm leading-relaxed pl-5">
-                {sections[activeSection].description}
-              </p>
-              <div className="flex flex-wrap gap-2 pl-5">
-                {sections[activeSection].highlights.map((highlight, idx) => (
-                  <motion.span
-                    key={highlight}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="px-3 py-1.5 bg-slate-100 rounded-full text-xs text-slate-700 font-medium"
-                  >
-                    {highlight}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        );
-      })()}
+      {/* Navigation Arrows */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4">
+        {/* Previous Arrow */}
+        <motion.button
+          onClick={() => {
+            const prevIndex = activeSection > 0 ? activeSection - 1 : sections.length - 1;
+            const targetSection = document.getElementById(sections[prevIndex].id);
+            targetSection?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="p-3 bg-white/20 backdrop-blur-md rounded-full border border-white/30 hover:bg-white/30 transition-all duration-200 group"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Previous section"
+        >
+          <svg className="w-6 h-6 text-white group-hover:text-[#00aeef] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </motion.button>
+
+        {/* Section Counter */}
+        <div className="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
+          <span className="text-white font-medium text-sm">
+            {activeSection + 1} / {sections.length}
+          </span>
+        </div>
+
+        {/* Next Arrow */}
+        <motion.button
+          onClick={() => {
+            const nextIndex = activeSection < sections.length - 1 ? activeSection + 1 : 0;
+            const targetSection = document.getElementById(sections[nextIndex].id);
+            targetSection?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="p-3 bg-white/20 backdrop-blur-md rounded-full border border-white/30 hover:bg-white/30 transition-all duration-200 group"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Next section"
+        >
+          <svg className="w-6 h-6 text-white group-hover:text-[#00aeef] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </motion.button>
+      </div>
     </div>
   );
 };
@@ -376,14 +381,6 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
         </motion.div>
       </motion.div>
 
-      {/* Side accent line */}
-      <motion.div
-        className="absolute top-0 left-0 w-1 z-30 bg-[#00aeef] origin-top"
-        style={{
-          height: useTransform(scrollYProgress, [0, 1], ['0%', '100%']),
-          opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]),
-        }}
-      />
     </div>
   );
 };

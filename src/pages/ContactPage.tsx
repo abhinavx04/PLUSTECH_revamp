@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 import Footer from '../components/Footer';
 import { db } from '../lib/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
@@ -38,6 +39,30 @@ const ContactPage: React.FC = () => {
       if (!form.name || !form.email || !form.message) {
         throw new Error('Please fill in name, email, and message.');
       }
+
+      // EmailJS configuration from env (must be provided in .env)
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error('Email service is not configured. Please try again later.');
+      }
+
+      // Send via EmailJS
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          company: form.company,
+          subject: form.subject || 'Contact Form Submission',
+          message: form.message,
+        },
+        { publicKey }
+      );
 
       // Write to Firestore if available
       if (db) {

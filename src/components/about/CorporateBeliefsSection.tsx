@@ -237,11 +237,6 @@ const CorporateBeliefsSection: React.FC = () => {
           "Our associates take pride and comfort in their engagement with Plustech. 
           We believe in not just meeting customer expectations but exceeding them."
         </blockquote>
-        <cite 
-          className="block mt-6 text-xl text-gray-800 font-semibold"
-        >
-          — Plustech Systems and Solutions
-        </cite>
       </motion.div>
     </div>
   );

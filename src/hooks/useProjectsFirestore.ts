@@ -348,7 +348,11 @@ export const useProjectsFirestore = () => {
   };
 
   const getPublishedProjects = useCallback(
-    () => projects.filter((project) => project.status === 'published'),
+    () =>
+      projects
+        .filter((project) => project.status === 'published')
+        .slice()
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
     [projects]
   );
 

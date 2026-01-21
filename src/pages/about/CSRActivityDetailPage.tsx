@@ -5,6 +5,40 @@ import Footer from '../../components/Footer';
 import { useCSRActivitiesFirestore } from '../../hooks/useCSRActivitiesFirestore';
 import { PageLayout } from '../../components/PageLayout';
 
+const categoryConfig = {
+  education: {
+    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    icon: '📚',
+    label: 'Education',
+  },
+  environment: {
+    color: 'bg-green-100 text-green-800 border-green-200',
+    icon: '🌱',
+    label: 'Environment',
+  },
+  community: {
+    color: 'bg-purple-100 text-purple-800 border-purple-200',
+    icon: '🤝',
+    label: 'Community',
+  },
+  healthcare: {
+    color: 'bg-red-100 text-red-800 border-red-200',
+    icon: '🏥',
+    label: 'Healthcare',
+  },
+  other: {
+    color: 'bg-gray-100 text-gray-800 border-gray-200',
+    icon: '✨',
+    label: 'Other',
+  },
+} as const;
+
+const statusConfig = {
+  active: { color: 'bg-green-500', label: 'Active' },
+  completed: { color: 'bg-blue-500', label: 'Completed' },
+  planned: { color: 'bg-yellow-500', label: 'Planned' },
+} as const;
+
 const CSRActivityDetailPage: React.FC = () => {
   const { activityId } = useParams<{ activityId: string }>();
   const navigate = useNavigate();
@@ -59,11 +93,11 @@ const CSRActivityDetailPage: React.FC = () => {
     <PageLayout className="bg-gray-50 pt-16">
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="bg-white/80 backdrop-blur border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <button
             onClick={() => navigate('/about/csr-activities')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-4 text-sm"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-3 text-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -74,33 +108,53 @@ const CSRActivityDetailPage: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold font-heading text-black mb-2 break-words">
             {activity.title}
           </h1>
+
+          {/* Meta row */}
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+            {/* Category badge */}
+            <span
+              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold ${
+                categoryConfig[activity.category as keyof typeof categoryConfig]?.color ??
+                'bg-gray-100 text-gray-800 border-gray-200'
+              }`}
+            >
+              <span className="text-base">
+                {categoryConfig[activity.category as keyof typeof categoryConfig]?.icon ?? '✨'}
+              </span>
+              {categoryConfig[activity.category as keyof typeof categoryConfig]?.label ?? 'Other'}
+            </span>
+
+            {/* Year & status */}
+            <div className="flex items-center gap-3 text-gray-600">
+              {activity.year && (
+                <span className="inline-flex items-center gap-1 text-xs md:text-sm">
+                  <span className="text-gray-500">Year</span>
+                  <span className="font-semibold">{activity.year}</span>
+                </span>
+              )}
+              <span className="inline-flex items-center gap-2 text-xs md:text-sm">
+                <span className="text-gray-500">Status</span>
+                <span
+                  className={`inline-flex items-center gap-1 font-semibold capitalize`}
+                >
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      statusConfig[activity.status as keyof typeof statusConfig]?.color ??
+                      'bg-green-500'
+                    }`}
+                  />
+                  {statusConfig[activity.status as keyof typeof statusConfig]?.label ??
+                    activity.status}
+                </span>
+              </span>
+            </div>
+          </div>
+
           {activity.impact && (
-            <p className="text-base md:text-lg text-gray-600 break-words mb-4">
+            <p className="mt-3 text-sm md:text-base text-gray-600 break-words max-w-3xl">
               {activity.impact}
             </p>
           )}
-
-          {/* Compact details row */}
-          <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500">Category</span>
-              <span className="font-semibold capitalize">{activity.category}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500">Status</span>
-              <span className="font-semibold capitalize">{activity.status}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-500">Year</span>
-              <span className="font-semibold">{activity.year}</span>
-            </div>
-            {activity.impact && (
-              <div className="flex items-center gap-2">
-                <span className="text-gray-500">Impact</span>
-                <span className="font-semibold break-words">{activity.impact}</span>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 

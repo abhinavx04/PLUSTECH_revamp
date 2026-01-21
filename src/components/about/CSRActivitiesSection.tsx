@@ -1,13 +1,50 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCSRActivitiesFirestore } from '../../hooks/useCSRActivitiesFirestore';
+
+const categoryConfig = {
+  education: {
+    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    icon: '📚',
+    label: 'Education',
+  },
+  environment: {
+    color: 'bg-green-100 text-green-800 border-green-200',
+    icon: '🌱',
+    label: 'Environment',
+  },
+  community: {
+    color: 'bg-purple-100 text-purple-800 border-purple-200',
+    icon: '🤝',
+    label: 'Community',
+  },
+  healthcare: {
+    color: 'bg-red-100 text-red-800 border-red-200',
+    icon: '🏥',
+    label: 'Healthcare',
+  },
+  other: {
+    color: 'bg-gray-100 text-gray-800 border-gray-200',
+    icon: '✨',
+    label: 'Other',
+  },
+} as const;
+
+const statusConfig = {
+  active: { color: 'bg-green-500', label: 'Active' },
+  completed: { color: 'bg-blue-500', label: 'Completed' },
+  planned: { color: 'bg-yellow-500', label: 'Planned' },
+} as const;
 
 const CSRActivitiesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const isInView = useInView(sectionRef, { once: false, margin: '-100px' });
   const { loading, error, getPublishedCSRActivities } = useCSRActivitiesFirestore();
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedYear, setSelectedYear] = useState<string>('all');
 
   const data = useMemo(
     () => getPublishedCSRActivities(),
@@ -18,6 +55,22 @@ const CSRActivitiesSection: React.FC = () => {
     { label: 'Programs', value: data.length },
     { label: 'Categories', value: new Set(data.map((a) => a.category)).size },
   ];
+
+  const years = useMemo(
+    () => Array.from(new Set(data.map((a) => a.year))).sort((a, b) => b.localeCompare(a)),
+    [data]
+  );
+
+  const filteredData = useMemo(
+    () =>
+      data.filter((activity) => {
+        const categoryMatch =
+          selectedCategory === 'all' ? true : activity.category === selectedCategory;
+        const yearMatch = selectedYear === 'all' ? true : activity.year === selectedYear;
+        return categoryMatch && yearMatch;
+      }),
+    [data, selectedCategory, selectedYear]
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -85,7 +138,7 @@ const CSRActivitiesSection: React.FC = () => {
 
       {/* Impact Metrics */}
       <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto"
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 max-w-xl mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8, delay: 0.6 }}
@@ -93,25 +146,79 @@ const CSRActivitiesSection: React.FC = () => {
         {impactMetrics.map((metric, index) => (
           <motion.div
             key={index}
-            className="bg-white rounded-2xl shadow-lg p-6 text-center"
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+            className="bg-white rounded-lg shadow-sm p-4 text-center border border-gray-100"
+            whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.8 + (index * 0.1) }}
           >
-            <div className="text-3xl font-bold text-[#00aeef] mb-2">
+            <div className="text-2xl font-bold text-[#00aeef] mb-0.5">
               {metric.value}
             </div>
-            <div className="text-lg font-semibold text-gray-700">
+            <div className="text-sm font-semibold text-gray-700">
               {metric.label}
             </div>
           </motion.div>
         ))}
       </motion.div>
 
-      {/* Uniform Grid Layout */}
+      {/* Filters */}
+      <div className="mb-8 flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-sm font-medium text-gray-600 mr-1">Filter by:</span>
+          <div className="flex flex-wrap gap-2">
+            {['all', 'education', 'environment', 'community', 'healthcare', 'other'].map(
+              (category) => {
+                const config =
+                  category === 'all'
+                    ? { label: 'All', color: 'bg-gray-100 text-gray-800 border-gray-200' }
+                    : categoryConfig[category as keyof typeof categoryConfig];
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                      selectedCategory === category
+                        ? 'bg-[#00aeef] text-white border-[#00aeef]'
+                        : `${config.color} hover:bg-white`
+                    }`}
+                  >
+                    {category !== 'all' && (
+                      <span className="mr-1">
+                        {categoryConfig[category as keyof typeof categoryConfig].icon}
+                      </span>
+                    )}
+                    {config.label}
+                  </button>
+                );
+              }
+            )}
+          </div>
+        </div>
+
+        {years.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Year:</span>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="text-sm border border-gray-300 rounded-full px-3 py-1.5 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-[#00aeef] focus:border-[#00aeef]"
+            >
+              <option value="all">All years</option>
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Activity Grid */}
       <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         variants={containerVariants}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
@@ -120,21 +227,15 @@ const CSRActivitiesSection: React.FC = () => {
           <div className="col-span-full flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00aeef]" />
           </div>
-        ) : data.length === 0 ? (
-          <div className="col-span-full text-center text-gray-600">
+        ) : filteredData.length === 0 ? (
+          <div className="col-span-full text-center text-gray-600 py-8 text-sm">
             No CSR activities found. Add new items from the admin dashboard.
           </div>
         ) : (
-          data.map((activity) => {
+          filteredData.map((activity) => {
             const descriptionPreview = activity.description.length > 100 
               ? activity.description.substring(0, 100) + '...'
               : activity.description;
-            
-            // Get images - support both new (imageUrls) and legacy (imageUrl) formats
-            const images = activity.imageUrls && activity.imageUrls.length > 0 
-              ? activity.imageUrls 
-              : (activity.imageUrl ? [activity.imageUrl] : ['/aboutus/2.webp']);
-            const primaryImage = images[0];
             
             return (
             <motion.div
@@ -143,7 +244,7 @@ const CSRActivitiesSection: React.FC = () => {
               className="flex flex-col h-full"
             >
               <div 
-                className="relative bg-white rounded-2xl shadow-lg overflow-hidden group border border-gray-100 flex flex-col h-full cursor-pointer"
+                className="relative bg-white rounded-xl shadow-md hover:shadow-xl overflow-hidden group border border-gray-200 flex flex-col h-full cursor-pointer transition-all duration-300 hover:border-[#00aeef]"
                 onClick={() => {
                   navigate(`/about/csr-activities/${activity.id}`);
                 }}
@@ -157,48 +258,50 @@ const CSRActivitiesSection: React.FC = () => {
                 role="button"
                 aria-label={`View details for ${activity.title}`}
               >
-                {/* Image Header */}
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={primaryImage}
-                    alt={activity.title}
-                    className="w-full h-full object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {images.length > 1 && (
-                    <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      {images.length} Photos
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  
-                  {/* Title Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-2xl font-bold font-heading text-white mb-2">
-                      {activity.title}
-                    </h3>
-                    <p className="text-white/90 text-sm">
-                      {descriptionPreview}
-                    </p>
+                {/* Header row with category & status */}
+                <div className="flex items-center justify-between p-3 pb-2">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${categoryConfig[activity.category as keyof typeof categoryConfig]?.color ?? 'bg-gray-100 text-gray-800 border-gray-200'}`}
+                  >
+                    <span className="text-sm">
+                      {categoryConfig[activity.category as keyof typeof categoryConfig]?.icon ?? '✨'}
+                    </span>
+                    {categoryConfig[activity.category as keyof typeof categoryConfig]?.label ?? 'Other'}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                    {activity.year && <span>{activity.year}</span>}
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        statusConfig[activity.status as keyof typeof statusConfig]?.color ??
+                        'bg-green-500'
+                      }`}
+                      title={statusConfig[activity.status as keyof typeof statusConfig]?.label ?? 'Active'}
+                    />
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex flex-col flex-grow">
+                <div className="px-3 pb-3 flex flex-col flex-grow">
+                  {/* Title & description */}
+                  <h3 className="text-base font-bold font-heading text-gray-900 mb-1.5 line-clamp-2 group-hover:text-[#00aeef] transition-colors leading-tight">
+                    {activity.title}
+                  </h3>
+                  <p className="text-xs text-gray-600 mb-2.5 line-clamp-2 flex-grow leading-relaxed">
+                    {descriptionPreview}
+                  </p>
+
                   {/* Metrics */}
                   {activity.metrics.length > 0 && (
-                    <div className="grid grid-cols-3 gap-3 mb-4">
-                      {activity.metrics.slice(0, 3).map((metric, index) => (
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {activity.metrics.slice(0, 2).map((metric, index) => (
                         <div
                           key={index}
-                          className="text-center p-3 bg-gray-50 rounded-lg"
+                          className="flex-1 min-w-[45%] text-center px-2 py-1.5 bg-gray-50 rounded-md border border-gray-100"
                         >
-                          <div className="text-lg font-bold text-[#00aeef] mb-1">
+                          <div className="text-xs font-bold text-[#00aeef] leading-tight">
                             {metric.value}
                           </div>
-                          <div className="text-xs text-gray-600">
+                          <div className="text-[10px] text-gray-600 line-clamp-1 mt-0.5">
                             {metric.label}
                           </div>
                         </div>
@@ -207,9 +310,9 @@ const CSRActivitiesSection: React.FC = () => {
                   )}
 
                   {/* View Details Button */}
-                  <div className="mt-auto pt-4">
-                    <div className="w-full px-4 py-2 bg-[#00aeef] text-white rounded-lg hover:bg-[#0099d4] transition-colors text-sm font-medium text-center pointer-events-none">
-                      View Details
+                  <div className="mt-auto pt-1">
+                    <div className="w-full px-3 py-1.5 bg-gradient-to-r from-[#00aeef] to-[#0099d4] text-white rounded-md hover:from-[#0099d4] hover:to-[#0088c0] transition-all text-xs font-semibold text-center">
+                      View Details →
                     </div>
                   </div>
                 </div>

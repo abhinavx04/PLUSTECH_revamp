@@ -7,6 +7,69 @@ import { PageLayout } from '../components/PageLayout';
 import './ProjectDetailPage.css';
 
 const ProjectDetailPage: React.FC = () => {
+  const renderDescription = (text?: string) => {
+    if (!text) {
+      return <p className="text-slate-500 text-lg italic">Details coming soon.</p>;
+    }
+
+    const lines = text.split(/\r?\n/);
+    const blocks: React.ReactNode[] = [];
+    let bullets: string[] = [];
+    let paragraph: string[] = [];
+    let blockIndex = 0;
+
+    const flushParagraph = () => {
+      if (paragraph.length === 0) return;
+      blocks.push(
+        <p key={`p-${blockIndex++}`} className="text-lg md:text-xl leading-relaxed text-slate-700">
+          {paragraph.join(' ')}
+        </p>
+      );
+      paragraph = [];
+    };
+
+    const flushBullets = () => {
+      if (bullets.length === 0) return;
+      blocks.push(
+        <ul key={`ul-${blockIndex++}`} className="space-y-3 my-6">
+          {bullets.map((item, index) => (
+            <li 
+              key={`li-${index}`} 
+              className="flex items-start gap-3 text-lg text-slate-700"
+            >
+              <span className="mt-2.5 w-2 h-2 rounded-full bg-[#00aeef] flex-shrink-0" />
+              <span className="leading-relaxed">{item}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      bullets = [];
+    };
+
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        flushParagraph();
+        flushBullets();
+        return;
+      }
+
+      const bulletMatch = trimmed.match(/^[-•]\s+(.*)$/);
+      if (bulletMatch) {
+        flushParagraph();
+        bullets.push(bulletMatch[1]);
+        return;
+      }
+
+      flushBullets();
+      paragraph.push(trimmed);
+    });
+
+    flushParagraph();
+    flushBullets();
+
+    return blocks.length > 0 ? blocks : <p className="text-slate-500 text-lg italic">Details coming soon.</p>;
+  };
   const { projectId } = useParams();
   const { getProjectById, fetchProjectById } = useProjectsFirestore();
   const [project, setProject] = useState<Project | null>(null);
@@ -285,37 +348,56 @@ const ProjectDetailPage: React.FC = () => {
               );
             })()}
 
-            <div className="mt-10 grid lg:grid-cols-[1.4fr_0.6fr] gap-10">
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-[#0f172a]">Project Overview</h2>
-                <div className="prose max-w-none text-slate-700 leading-relaxed">
-                  <p className="whitespace-pre-line">{project.description || 'Details coming soon.'}</p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="p-5 rounded-xl border border-slate-200 bg-white shadow-sm">
-                  <h3 className="text-lg font-semibold text-[#0f172a] mb-3">Highlights</h3>
-                  <ul className="space-y-2 text-sm text-slate-700">
-                    <li>• Published project — visible to website visitors</li>
-                    <li>• Inline video playback with YouTube privacy mode</li>
-                    <li>• Optimized images with lazy loading</li>
-                    <li>• No admin-only fields are exposed</li>
-                  </ul>
-                </div>
-
-                {(project.technologies || []).length > 0 && (
-                  <div className="p-5 rounded-xl border border-slate-200 bg-white shadow-sm">
-                    <h3 className="text-lg font-semibold text-[#0f172a] mb-3">Technologies</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {(project.technologies || []).map((tech) => (
-                        <span key={tech} className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm">
-                          {tech}
-                        </span>
-                      ))}
+            {/* Project Overview Card */}
+            <div className="mt-12">
+              <div className="relative">
+                {/* Decorative background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/40 to-white rounded-3xl" />
+                
+                <div className="relative p-8 md:p-10 lg:p-12 rounded-3xl border border-slate-200/60 shadow-xl shadow-slate-200/50">
+                  {/* Header with accent */}
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-1.5 h-12 bg-gradient-to-b from-[#00aeef] to-blue-600 rounded-full" />
+                    <div>
+                      <span className="text-sm font-semibold text-[#00aeef] uppercase tracking-wider">Overview</span>
+                      <h2 className="text-3xl md:text-4xl font-bold text-[#0f172a]">Project Details</h2>
                     </div>
                   </div>
-                )}
+
+                  {/* Content area with improved typography */}
+                  <div className="grid lg:grid-cols-[1fr_auto] gap-10">
+                    <div className="space-y-6">
+                      {/* Main description with enhanced styling */}
+                      <div className="max-w-none space-y-5">
+                        {renderDescription(project.description)}
+                      </div>
+                    </div>
+
+                    {/* Technologies sidebar - only if technologies exist */}
+                    {(project.technologies || []).length > 0 && (
+                      <div className="lg:w-72 flex-shrink-0">
+                        <div className="sticky top-24 p-6 rounded-2xl bg-white border border-slate-200 shadow-lg">
+                          <div className="flex items-center gap-2 mb-4">
+                            <svg className="w-5 h-5 text-[#00aeef]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                            <h3 className="text-lg font-bold text-[#0f172a]">Technologies</h3>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {(project.technologies || []).map((tech) => (
+                              <span 
+                                key={tech} 
+                                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-slate-100 to-slate-50 text-slate-700 text-sm font-medium border border-slate-200 hover:border-[#00aeef]/30 hover:bg-blue-50 transition-colors"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
