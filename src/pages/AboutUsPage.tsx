@@ -5,6 +5,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import CountUp from '../components/ui/CountUp';
 import { PageLayout } from '../components/PageLayout';
 
+const TESTIMONIAL_VIDEO_URL: string | undefined = import.meta.env.VITE_TESTIMONIAL_VIDEO_URL;
+
 const AboutUsPage: React.FC = () => {
   const location = useLocation();
   
@@ -194,7 +196,7 @@ const AboutUsPage: React.FC = () => {
                         preload="metadata"
                         poster="/home/video-poster.png"
                       >
-                        <source src="https://firebasestorage.googleapis.com/v0/b/plustech-revamp.firebasestorage.app/o/aboutVideo%2FPlustech%20Interview%2022-Dec-2023%20Combined%20Video%20.mp4?alt=media&token=b28c0c67-0496-4b5d-b2a7-0dd7a177066b" type="video/mp4" />
+                        {TESTIMONIAL_VIDEO_URL && <source src={TESTIMONIAL_VIDEO_URL} type="video/mp4" />}
                         Your browser does not support HTML5 video.
                       </video>
                     </div>
