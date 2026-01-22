@@ -49,7 +49,7 @@ const capabilitiesData: CapabilityItem[] = [
       '/home/NAHAR_2.webp',
       '/home/UNITED.webp'
     ],
-    bgColor: 'bg-white',
+    bgColor: 'bg-gradient-to-b from-white via-white to-blue-50',
     textColor: 'text-black',
     animationDirection: 'left'
   },
@@ -70,7 +70,7 @@ const capabilitiesData: CapabilityItem[] = [
       '/robotic/sealer_application.webp',
       '/robotic/underbody_application.webp'
     ],
-    bgColor: 'bg-gradient-to-r from-blue-50 to-blue-100',
+    bgColor: 'bg-gradient-to-b from-blue-50 via-blue-100 to-white',
     textColor: 'text-black',
     animationDirection: 'right'
   },
@@ -84,7 +84,7 @@ const capabilitiesData: CapabilityItem[] = [
       '/automated-customised-materialhandling/2.webp',
       '/automated-customised-materialhandling/3.webp'
     ],
-    bgColor: 'bg-white',
+    bgColor: 'bg-gradient-to-b from-white via-white to-blue-50',
     textColor: 'text-black',
     animationDirection: 'left'
   },
@@ -103,7 +103,7 @@ const capabilitiesData: CapabilityItem[] = [
       '/digitization-smartfactory/1.webp',
       '/digitization-smartfactory/2.webp'
     ],
-    bgColor: 'bg-white',
+    bgColor: 'bg-gradient-to-b from-blue-50 via-blue-100 to-white',
     textColor: 'text-black',
     animationDirection: 'up'
   }
@@ -355,13 +355,12 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                   {capability.images.map((image, idx) => (
                     <div
                       key={image}
-                      className="relative overflow-hidden rounded-2xl shadow-2xl border border-white/60 bg-gradient-to-br from-white via-[#e8f4ff] to-[#cfe1ff] group"
+                      className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group"
                     >
-                      <div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(0,174,239,0.25), transparent 35%), radial-gradient(circle at 80% 0%, rgba(79,70,229,0.18), transparent 40%)' }} />
                       <img
                         src={image}
                         alt={`Turnkey paintshop visual ${idx + 1}`}
-                        className="relative w-full h-[260px] md:h-[320px] object-contain bg-white/50 cursor-pointer transition-transform duration-500 group-hover:scale-105"
+                        className="relative w-full h-[260px] md:h-[320px] object-contain bg-slate-50 cursor-pointer transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                         onClick={() => setSelectedImageIndex(idx)}
                       />

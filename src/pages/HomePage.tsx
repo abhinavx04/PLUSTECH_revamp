@@ -174,12 +174,12 @@ const HomePage: React.FC = () => {
             </div>
 
       {/* News Section – Latest News & Updates */}
-      <div className="bg-slate-50 border-t border-slate-200">
+      <div className="bg-white">
         <SimpleNewsSection />
         </div>
 
       {/* Company Logos Animation – Trusted by leading companies */}
-      <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-r from-blue-50 via-blue-100 to-blue-200">
+      <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-b from-white via-blue-50 to-blue-100">
         <div className="max-w-7xl mx-auto w-full">
           <CompanyAnimation />
         </div>
