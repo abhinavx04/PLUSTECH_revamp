@@ -278,7 +278,7 @@ const ProjectsManager: React.FC = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold text-white">Projects Management</h2>
         <button
           onClick={() => setShowForm(true)}
@@ -289,7 +289,7 @@ const ProjectsManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {editingId ? 'Edit Project' : 'Create Project'}
@@ -645,7 +645,7 @@ const ProjectsManager: React.FC = () => {
                     {project.youtubeVideoId && <span>Video linked</span>}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
                   <a
                     href={`/projects/${project.id}`}
                     target="_blank"

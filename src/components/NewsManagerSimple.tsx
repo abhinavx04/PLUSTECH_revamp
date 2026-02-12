@@ -239,7 +239,7 @@ const NewsManagerSimple: React.FC = () => {
       )}
       
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold text-white">News Management (Demo Mode)</h2>
         <button
           onClick={() => setShowForm(true)}
@@ -441,7 +441,7 @@ const NewsManagerSimple: React.FC = () => {
               </label>
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex flex-wrap gap-3">
               <button
                 type="submit"
                 className="px-6 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
@@ -469,7 +469,7 @@ const NewsManagerSimple: React.FC = () => {
           ) : (
             news.map((article) => (
               <div key={article.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <h4 className="text-lg font-semibold text-white">{article.title}</h4>
@@ -493,7 +493,7 @@ const NewsManagerSimple: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  <div className="flex space-x-2 ml-4">
+                  <div className="flex flex-wrap gap-2 md:ml-4">
                     <button
                       onClick={() => handleEdit(article)}
                       className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"

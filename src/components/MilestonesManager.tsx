@@ -167,7 +167,7 @@ const MilestonesManager: React.FC = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold text-white">Milestones (2020+)</h2>
         <button
           onClick={() => setShowForm(true)}
@@ -178,7 +178,7 @@ const MilestonesManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {editingId ? 'Edit Milestone' : 'Create Milestone'}
@@ -327,7 +327,7 @@ const MilestonesManager: React.FC = () => {
               </label>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="submit"
                 className="px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
@@ -400,7 +400,7 @@ const MilestonesManager: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <button
                     onClick={() => handleEdit(item)}
                     className="px-3 py-2 text-sm bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors duration-200"

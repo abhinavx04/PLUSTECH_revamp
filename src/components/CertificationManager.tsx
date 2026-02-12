@@ -192,7 +192,7 @@ const CertificationManager: React.FC = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold text-white">Certifications Management</h2>
         <button
           onClick={() => setShowForm(true)}
@@ -203,7 +203,7 @@ const CertificationManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {editingId ? 'Edit Certification' : 'Create Certification'}
@@ -402,7 +402,7 @@ const CertificationManager: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <button
                 type="submit"
                 className="px-6 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
@@ -467,7 +467,7 @@ const CertificationManager: React.FC = () => {
                     {item.sortOrder !== undefined && <span>Order: {item.sortOrder}</span>}
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
                   <button
                     onClick={() => handlePublishToggle(item)}
                     className={`px-3 py-1 text-white text-sm rounded transition-colors ${

@@ -347,7 +347,7 @@ const AnnualReturnManager: React.FC = () => {
       )}
       
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold text-white">Annual Return Management</h2>
         <button
           onClick={() => setShowForm(true)}
@@ -616,7 +616,7 @@ const AnnualReturnManager: React.FC = () => {
               ) : (
                 <div className="space-y-3">
                   {formData.businessActivities.map((activity, index) => (
-                    <div key={index} className="flex gap-3 items-start">
+                    <div key={index} className="flex flex-wrap gap-3 items-start">
                       <input
                         type="text"
                         value={activity.name}
@@ -629,7 +629,7 @@ const AnnualReturnManager: React.FC = () => {
                         step="0.01"
                         value={activity.percentage}
                         onChange={(e) => handleUpdateBusinessActivity(index, 'percentage', parseFloat(e.target.value) || 0)}
-                        className="w-32 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                        className="w-24 sm:w-32 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
                         placeholder="%"
                       />
                       <button
@@ -736,7 +736,7 @@ const AnnualReturnManager: React.FC = () => {
             </div>
 
             {/* Form Actions */}
-            <div className="flex space-x-4 pt-4 border-t border-white/20">
+            <div className="flex flex-wrap gap-3 pt-4 border-t border-white/20">
               <button
                 type="submit"
                 disabled={uploadingPDF || extractingData}
@@ -765,7 +765,7 @@ const AnnualReturnManager: React.FC = () => {
           ) : (
             annualReturns.map((returnData) => (
               <div key={returnData.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <h4 className="text-lg font-semibold text-white">
@@ -797,7 +797,7 @@ const AnnualReturnManager: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex space-x-2 ml-4">
+                  <div className="flex flex-wrap gap-2 md:ml-4">
                     <button
                       onClick={() => returnData.documentUrl && window.open(returnData.documentUrl, '_blank')}
                       className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
