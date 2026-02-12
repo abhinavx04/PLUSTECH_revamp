@@ -54,25 +54,25 @@ const AdminDashboard: React.FC = () => {
       {/* Header */}
       <header className="bg-black/30 backdrop-blur-lg border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between py-3 sm:py-0 sm:h-16">
+            <div className="flex items-center justify-between sm:justify-start gap-3">
               <img 
                 src="/PLUSTECH NEW.png" 
                 alt="PlusTech Logo" 
-                className="h-10 w-auto brightness-110 contrast-110"
+                className="h-8 sm:h-10 w-auto brightness-110 contrast-110"
                 width="184"
                 height="40"
                 loading="eager"
               />
             </div>
             
-            <div className="flex items-center space-x-4">
-              <span className="text-white text-sm">
+            <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-4">
+              <span className="text-white text-xs sm:text-sm">
                 Welcome, {user?.email || 'Admin'}
               </span>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
               >
                 Logout
               </button>
@@ -83,11 +83,11 @@ const AdminDashboard: React.FC = () => {
 
       {/* Navigation Tabs */}
       <div className="bg-black/20 backdrop-blur-lg border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+          <nav className="flex overflow-x-auto scrollbar-hide -mx-2 px-2 sm:mx-0 sm:px-0 gap-4 sm:gap-6">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'dashboard'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
@@ -97,7 +97,7 @@ const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('projects')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'projects'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
@@ -107,7 +107,7 @@ const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('news')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'news'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
@@ -117,7 +117,7 @@ const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('milestones')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'milestones'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
@@ -127,7 +127,7 @@ const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('annualReturns')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'annualReturns'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
@@ -137,7 +137,7 @@ const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('certifications')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'certifications'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
@@ -147,7 +147,7 @@ const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('careers')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'careers'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
@@ -157,7 +157,7 @@ const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('csr')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm ${
                 activeTab === 'csr'
                   ? 'border-[#00aeef] text-[#00aeef]'
                   : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
