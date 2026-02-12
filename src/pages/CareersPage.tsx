@@ -11,6 +11,7 @@ const CareersPage: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const jobs = useMemo(() => publicJobs.slice(0, 20), [publicJobs]);
+  const hasOpenJobs = jobs.length > 0;
 
   const toggleJob = (jobId: string) => {
     setExpandedId((prev) => (prev === jobId ? null : jobId));
@@ -26,57 +27,136 @@ const CareersPage: React.FC = () => {
       />
       <PageLayout className="bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
         <main className="flex-1 w-full overflow-hidden">
+          {/* Hero */}
           <section className="relative isolate overflow-hidden px-6 md:px-12 lg:px-16 py-16 md:py-20">
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute -top-20 -left-20 w-72 h-72 bg-[#00aeef]/15 blur-3xl rounded-full" />
-              <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-900/10 blur-3xl rounded-full" />
+              <div className="absolute -top-24 -left-20 w-72 h-72 bg-[#00aeef]/18 blur-3xl rounded-full" />
+              <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-900/20 blur-3xl rounded-full" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(15,23,42,0.5),transparent_55%)]" />
             </div>
+
+            {hasOpenJobs && (
+              <div className="absolute inset-x-0 top-4 md:top-6 flex justify-center z-20 px-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('open-positions');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className="inline-flex items-center gap-4 rounded-full bg-gradient-to-r from-[#0f172a] via-slate-900 to-sky-900 text-sky-50 border border-sky-400/70 px-6 py-3 text-sm md:text-base font-semibold shadow-[0_24px_60px_rgba(15,23,42,0.9)] backdrop-blur-md hover:from-slate-900 hover:via-slate-900 hover:to-sky-800 transition-colors"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#00aeef] text-slate-900 text-sm font-extrabold shadow-lg shadow-[#00aeef]/50">
+                    +
+                  </span>
+                  <div className="flex flex-col items-start leading-tight">
+                    <span className="uppercase tracking-[0.24em] text-sm md:text-base text-sky-50">
+                      WE ARE HIRING
+                    </span>
+                    <span className="text-[0.8rem] md:text-sm text-sky-100/95 mt-0.5">
+                      New roles open across projects, automation &amp; service →
+                    </span>
+                  </div>
+                </button>
+              </div>
+            )}
+
             <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
-              <div className="space-y-6">
-                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/70 border border-black/5 shadow-sm backdrop-blur">
+              {/* Left: structured copy */}
+              <div className="space-y-7">
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/80 border border-black/5 shadow-sm backdrop-blur">
                   <span className="w-2 h-2 rounded-full bg-[#00aeef]" />
                   <span className="text-sm font-semibold text-[#0f172a]">Careers at PLUSTECH</span>
                 </div>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-                  Build systems that move real factories, not just dashboards.
-                </h1>
-                <ul className="space-y-3 text-slate-700 text-base md:text-lg">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00aeef]" />
-                    <span>Work with experienced mentors across mechanical, electrical, and automation teams.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00aeef]" />
-                    <span>Own outcomes that directly impact client productivity, quality, and plant uptime.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-[#00aeef]" />
-                    <span>Learn continuously through hands-on projects, reviews, and cross-functional collaboration.</span>
-                  </li>
-                </ul>
+
+                <div className="space-y-3">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-slate-900">
+                    Build real paintshops, real automation, and real careers.
+                  </h1>
+                  <p className="text-lg md:text-xl text-slate-700 max-w-2xl">
+                    At PLUSTECH, you work on live customer plants—not mock projects. You see complete
+                    paintshops, material handling, and automation systems move from concept on paper to
+                    stable production on the shop floor.
+                  </p>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-3">
+                  <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-[0.14em]">
+                      Your work
+                    </div>
+                    <p className="mt-1 text-sm text-slate-700">
+                      Own clearly defined pieces of projects—from layouts and calculations to trials and
+                      commissioning at customer sites.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-[0.14em]">
+                      Your team
+                    </div>
+                    <p className="mt-1 text-sm text-slate-700">
+                      Work with experienced mechanical, electrical, and automation engineers who review
+                      designs with you and stay hands‑on with the work.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
+                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-[0.14em]">
+                      Your growth
+                    </div>
+                    <p className="mt-1 text-sm text-slate-700">
+                      Grow through real project cycles, customer exposure, and the chance to see how good
+                      engineering decisions hold up in production.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="flex flex-wrap items-center gap-4">
                   <a
                     href="#open-positions"
                     className="inline-flex items-center px-6 py-3 rounded-xl bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:-translate-y-0.5 transition-transform"
                   >
-                    View Open Positions
+                    View open positions
                   </a>
                   <a
-                    href="#life-at-plustech"
+                    href="/facility"
                     className="inline-flex items-center px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 font-semibold hover:border-[#00aeef]/70 hover:text-[#00aeef] transition-colors"
                   >
-                    Life at PLUSTECH
+                    View our facilities
                   </a>
                 </div>
               </div>
+
+              {/* Right: visual context card */}
               <div className="relative">
                 <div className="absolute -inset-5 bg-white/50 rounded-3xl blur-xl" />
-                <div className="relative rounded-3xl border border-white/80 bg-gradient-to-br from-white to-blue-100/60 p-8 shadow-[0_25px_80px_rgba(8,47,73,0.08)]">
-                  <h2 className="text-2xl font-bold text-[#0f172a] mb-3">Why teams stay here</h2>
-                  <p className="text-slate-700">
-                    Projects are complex, timelines are real, and decisions are collaborative. We keep
-                    hierarchies light and accountability clear, so good ideas move quickly.
-                  </p>
+                <div className="relative rounded-3xl border border-white/80 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-7 shadow-[0_30px_80px_rgba(15,23,42,0.65)] text-slate-50 overflow-hidden">
+                  <div className="absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_0%_0%,rgba(56,189,248,0.5),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(14,165,233,0.55),transparent_55%)]" />
+                  <div className="relative space-y-4">
+                    <div className="text-xs uppercase tracking-[0.18em] text-sky-200/80">
+                      What you work on here
+                    </div>
+                    <p className="text-sm text-slate-100/90">
+                      Lines for automotive and industrial customers, conveyor systems, pretreatment and
+                      paint processes, and upgrades that improve energy, safety, and uptime.
+                    </p>
+                    <p className="text-sm text-slate-100/90">
+                      Roles span project engineering, controls and automation, on‑site execution, and
+                      long‑term service. You are always close to real equipment and real decisions.
+                    </p>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                        Project engineering
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                        Controls & automation
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                        Site execution
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                        Service & audits
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -225,19 +305,27 @@ const CareersPage: React.FC = () => {
             </div>
           </section>
 
-          <section id="life-at-plustech" className="px-6 md:px-12 lg:px-16 pb-16">
+          {/* Facilities CTA */}
+          <section className="px-6 md:px-12 lg:px-16 pb-16">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#0f172a]">Life at PLUSTECH</h2>
-              <div className="mt-6 grid md:grid-cols-3 gap-4">
-                {[
-                  'Hands-on ownership from design to commissioning.',
-                  'Collaborative reviews with mentors who care about craft.',
-                  'Practical growth across automation, controls, and process engineering.',
-                ].map((item) => (
-                  <div key={item} className="rounded-2xl border border-white/80 bg-white/75 p-5 shadow-sm">
-                    <p className="text-slate-700">{item}</p>
-                  </div>
-                ))}
+              <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-[#00aeef]/10 via-white to-blue-100/40 p-8 md:p-10 shadow-[0_18px_55px_rgba(15,23,42,0.12)] flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
+                <div className="space-y-2">
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-[#0f172a]">
+                    See where you’ll be building.
+                  </h2>
+                  <p className="text-slate-700 max-w-xl">
+                    Take a quick tour of our Pune facilities—engineering floors, project bays, and meeting spaces
+                    where teams collaborate on live programs.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href="/facility"
+                    className="inline-flex items-center px-6 py-3 rounded-xl bg-[#00aeef] text-black font-semibold shadow-md hover:-translate-y-0.5 transition-transform"
+                  >
+                    View our facilities
+                  </a>
+                </div>
               </div>
             </div>
           </section>
