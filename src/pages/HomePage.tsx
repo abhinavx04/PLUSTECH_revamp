@@ -60,8 +60,8 @@ const HomePage: React.FC = () => {
       <main>
 
       {/* Threads Hero - Desktop Only */}
-      <div className="hidden md:flex w-full items-center justify-center pt-20">
-        <div className="w-full h-[60vh] relative">
+      <div className="hidden md:flex w-full items-center justify-center pt-20 overflow-visible">
+        <div className="w-full h-[80vh] relative overflow-visible">
           <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
             <div className="text-center px-6 lg:px-8 max-w-5xl">
               <h1 className="text-black/60 text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)', fontWeight: 950 }}>
@@ -69,7 +69,7 @@ const HomePage: React.FC = () => {
               </h1>
             </div>
           </div>
-          <Threads color={[0, 0.8, 1]} amplitude={1.6} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
+          <Threads color={[0, 0.8, 1]} amplitude={1.2} distance={0.7} animationSpeed={0.5} enableMouseInteraction={true} />
         </div>
       </div>
 
@@ -111,7 +111,7 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Desktop CTAs */}
-      <div className="w-full hidden md:flex items-center justify-center mt-8 md:mt-12">
+      <div className="w-full hidden md:flex items-center justify-center mt-12 md:mt-16">
         <div className="flex items-center justify-center gap-6">
           <button 
             onClick={() => smoothScrollTo('capabilities')}

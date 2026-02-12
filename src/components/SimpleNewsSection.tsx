@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNewsFirestore } from '../hooks/useNewsFirestore';
 
 interface NewsArticle {
@@ -17,6 +17,18 @@ interface NewsArticle {
 const SimpleNewsSection: React.FC = () => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const { news, loading, error } = useNewsFirestore();
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedArticle) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedArticle]);
 
   const publishedNews = news.filter(article => article.published);
   const latestPublished = publishedNews.slice(0, 3); // show only latest few on homepage
@@ -93,7 +105,7 @@ const SimpleNewsSection: React.FC = () => {
             {latestPublished.map(article => (
               <div
                 key={article.id}
-                className="group relative bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 ease-out flex flex-col overflow-hidden"
+                className="group relative bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-out flex flex-col overflow-hidden"
               >
                 {article.featured && (
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-500 z-10" />
@@ -171,8 +183,14 @@ const SimpleNewsSection: React.FC = () => {
 
       {/* News Detail Modal */}
       {selectedArticle && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedArticle(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Header */}
             <div className="relative">
               {selectedArticle.imageUrl && (

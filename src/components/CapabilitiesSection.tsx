@@ -360,7 +360,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                       <img
                         src={image}
                         alt={`Turnkey paintshop visual ${idx + 1}`}
-                        className="relative w-full h-[260px] md:h-[320px] object-contain bg-slate-50 cursor-pointer transition-transform duration-500 group-hover:scale-105"
+                        className="relative w-full h-[300px] md:h-[350px] object-contain bg-slate-50 cursor-pointer transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                         onClick={() => setSelectedImageIndex(idx)}
                       />
@@ -383,13 +383,13 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                 {capability.images.map((image, imageIndex) => (
                   <div
                     key={imageIndex}
-                    className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer"
+                    className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer"
                     onClick={() => setSelectedImageIndex(imageIndex)}
                   >
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[260px] md:h-[320px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-[300px] md:h-[350px] object-contain bg-slate-50 group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -398,17 +398,17 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
               </div>
             ) : (
               // Large 2-column grid for digitization (2 images)
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {capability.images.map((image, imageIndex) => (
                   <div
                     key={imageIndex}
-                    className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer"
+                    className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer"
                     onClick={() => setSelectedImageIndex(imageIndex)}
                   >
                     <img 
                       src={image} 
                       alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[400px] md:h-[450px] object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-[300px] md:h-[350px] object-contain bg-slate-50 group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -495,11 +495,11 @@ const RoboticImageCarousel: React.FC<{ images: string[]; onImageClick: (index: n
         <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
         {images.map((image, i) => (
           <div key={i} className="flex-none w-[450px] md:w-[550px]">
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl group cursor-pointer" onClick={() => onImageClick(i)}>
+            <div className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer" onClick={() => onImageClick(i)}>
               <img 
                 src={image} 
                 alt={`Robotic application ${i + 1}`}
-                className="w-full h-[350px] md:h-[400px] object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-[300px] md:h-[350px] object-contain bg-slate-50 group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
