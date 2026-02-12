@@ -8,6 +8,10 @@ interface NewsArticle {
   excerpt: string;
   author: string;
   createdAt: Date;
+  /**
+   * Logical news date (can be backdated, used for ordering)
+   */
+  publishedAt?: Date;
   published: boolean;
   featured: boolean;
   imageUrl?: string;
@@ -142,7 +146,11 @@ const SimpleNewsSection: React.FC = () => {
                     <span className="uppercase tracking-wide">{article.author}</span>
                     <span className="w-1 h-1 rounded-full bg-slate-300" />
                     <time>
-                      {article.createdAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {(article.publishedAt || article.createdAt).toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </time>
                   </div>
                   {(article.tags || []).length > 0 && (
@@ -226,7 +234,9 @@ const SimpleNewsSection: React.FC = () => {
                 <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
                   <span>By {selectedArticle.author}</span>
                   <span>•</span>
-                  <span>{selectedArticle.createdAt.toLocaleDateString()}</span>
+                  <span>
+                    {(selectedArticle.publishedAt || selectedArticle.createdAt).toLocaleDateString()}
+                  </span>
                   {selectedArticle.tags && selectedArticle.tags.length > 0 && (
                     <>
                       <span>•</span>

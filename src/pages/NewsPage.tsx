@@ -11,6 +11,10 @@ interface NewsArticle {
   excerpt: string;
   author: string;
   createdAt: Date;
+  /**
+   * Logical news date (can be backdated, used for ordering)
+   */
+  publishedAt?: Date;
   published: boolean;
   featured: boolean;
   imageUrl?: string;
@@ -135,7 +139,11 @@ const NewsPage: React.FC = () => {
                       <span className="uppercase tracking-wide">{article.author}</span>
                       <span className="w-1 h-1 rounded-full bg-slate-300" />
                       <time>
-                        {article.createdAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {(article.publishedAt || article.createdAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
                       </time>
                     </div>
                     {(article.tags || []).length > 0 && (
@@ -203,7 +211,13 @@ const NewsPage: React.FC = () => {
                 <div className="flex items-center flex-wrap gap-3 text-sm text-slate-500 mb-4">
                   <span>By {selectedArticle.author}</span>
                   <span className="w-1 h-1 rounded-full bg-slate-300" />
-                  <time>{selectedArticle.createdAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</time>
+                  <time>
+                    {(selectedArticle.publishedAt || selectedArticle.createdAt).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </time>
                   {selectedArticle.tags && selectedArticle.tags.length > 0 && (
                     <>
                       <span className="w-1 h-1 rounded-full bg-slate-300" />

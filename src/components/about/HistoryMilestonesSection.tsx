@@ -363,8 +363,8 @@ const TimelineMilestone: React.FC<{
     <motion.div
       ref={milestoneRef}
       className={`relative w-full flex items-start ${
-        isLeftSide ? 'lg:flex-row' : 'lg:flex-row-reverse'
-      } flex-col lg:items-center lg:space-x-12 space-y-6 lg:space-y-0 pl-16 lg:pl-0`}
+        isLeftSide ? 'xl:flex-row' : 'xl:flex-row-reverse'
+      } flex-col xl:items-center xl:space-x-12 space-y-6 xl:space-y-0 pl-16 xl:pl-0`}
       initial={false}
       style={{
         opacity: cardOpacity,
@@ -374,8 +374,8 @@ const TimelineMilestone: React.FC<{
       {/* Timeline Node */}
       <motion.div
         className={`z-10 flex-shrink-0 ${
-          isLeftSide ? 'lg:order-1 lg:-translate-x-10' : 'lg:order-2 lg:translate-x-10'
-        } absolute left-8 top-1 lg:static`}
+          isLeftSide ? 'xl:order-1 xl:-translate-x-10' : 'xl:order-2 xl:translate-x-10'
+        } absolute left-8 top-1 xl:static`}
         initial={false}
         style={{
           opacity: nodeOpacity,
@@ -401,10 +401,10 @@ const TimelineMilestone: React.FC<{
 
       {/* Milestone Card */}
       <motion.div
-        className={`bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30 p-5 md:p-6 w-full lg:max-w-md ml-4 lg:ml-0 mx-auto lg:mx-0 ${
+        className={`bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-white/30 p-5 md:p-6 w-full xl:max-w-md ml-4 xl:ml-0 mx-auto xl:mx-0 ${
           isLeftSide 
-            ? 'lg:order-2 lg:mr-56'  // even wider gutter from center line on left side
-            : 'lg:order-1 lg:ml-56'  // even wider gutter from center line on right side
+            ? 'xl:order-2 xl:mr-56'  // even wider gutter from center line on left side
+            : 'xl:order-1 xl:ml-56'  // even wider gutter from center line on right side
         }`}
         initial={false}
         style={{
@@ -479,8 +479,8 @@ const TimelineYearGroup: React.FC<{
       <motion.div 
         className={`text-white px-6 py-3 rounded-full font-bold text-xl shadow-lg mb-8 w-fit ${
           isEvenYear 
-            ? 'bg-gradient-to-r from-[#E63946] to-[#9B59B6] mx-auto lg:mx-0 lg:ml-0' 
-            : 'bg-gradient-to-r from-[#9B59B6] to-[#00aeef] mx-auto lg:mx-0 lg:mr-0 lg:ml-auto'
+            ? 'bg-gradient-to-r from-[#E63946] to-[#9B59B6] mx-auto xl:mx-0 xl:ml-0' 
+            : 'bg-gradient-to-r from-[#9B59B6] to-[#00aeef] mx-auto xl:mx-0 xl:mr-0 xl:ml-auto'
         }`}
         initial={{ opacity: 0, y: -30, scale: 0.8 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -30, scale: 0.8 }}
@@ -527,6 +527,9 @@ const HistoryMilestonesSection: React.FC = () => {
     loading: milestonesLoading,
     error: milestonesError
   } = useMilestonesFirestore();
+
+  // Automatically increment years of excellence based on founding year (2006)
+  const yearsOfExcellence = Math.max(0, new Date().getFullYear() - 2006);
   
   // Scroll-based animations for timeline
   const { scrollYProgress } = useScroll({
@@ -666,18 +669,18 @@ const HistoryMilestonesSection: React.FC = () => {
         )}
         
         <div className="relative">
-          {/* Central Timeline Line - Desktop - Red to Purple to Blue gradient */}
+          {/* Central Timeline Line - Desktop (xl and up) - Red to Purple to Blue gradient */}
           <motion.div 
-            className="hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full rounded-full"
+            className="hidden xl:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full rounded-full"
             style={{ 
               height: lineFillPx,
               background: 'linear-gradient(to bottom, #E63946, #FF6B6B, #9B59B6, #00aeef, #0099d4)'
             }}
           />
           
-          {/* Central Timeline Line - Mobile - Red to Purple to Blue gradient */}
+          {/* Central Timeline Line - Mobile / Tablet - Red to Purple to Blue gradient */}
           <motion.div
-            className="lg:hidden absolute left-6 w-1 h-full rounded-full"
+            className="xl:hidden absolute left-6 w-1 h-full rounded-full"
             style={{ 
               height: lineFillPx,
               background: 'linear-gradient(to bottom, #E63946, #FF6B6B, #9B59B6, #00aeef, #0099d4)'
@@ -722,7 +725,7 @@ const HistoryMilestonesSection: React.FC = () => {
         {[
           { 
             label: 'Years of Excellence', 
-            value: '18+', 
+            value: `${yearsOfExcellence}+`, 
             gradient: 'from-[#E63946] to-[#FF6B6B]',
             textGradient: 'from-[#E63946] to-[#9B59B6]'
           },

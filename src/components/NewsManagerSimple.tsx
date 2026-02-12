@@ -11,6 +11,10 @@ interface NewsArticle {
   author: string;
   createdAt: Date;
   updatedAt: Date;
+  /**
+   * Logical news date (can be backdated, used for ordering)
+   */
+  publishedAt?: Date;
   published: boolean;
   featured: boolean;
   imageUrl?: string;
@@ -22,6 +26,10 @@ interface CreateNewsData {
   content: string;
   excerpt: string;
   author: string;
+  /**
+   * Logical news date (can be backdated, used for ordering)
+   */
+  publishedAt?: Date;
   published: boolean;
   featured: boolean;
   imageUrl?: string;
@@ -43,11 +51,13 @@ const NewsManagerSimple: React.FC = () => {
     content: '',
     excerpt: '',
     author: '',
+    publishedAt: undefined,
     published: false,
     featured: false,
     imageUrl: '',
     tags: [],
   });
+  const [publishDate, setPublishDate] = useState<string>('');
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,8 +102,15 @@ const NewsManagerSimple: React.FC = () => {
         setUploadingImage(false);
       }
 
-      // Create or update news with final image URL
-      const newsData = { ...formData, imageUrl: finalImageUrl || undefined };
+      // Convert selected publish date (YYYY-MM-DD) to Date (midnight local)
+      const publishedAtDate = publishDate ? new Date(`${publishDate}T00:00:00`) : undefined;
+
+      // Create or update news with final image URL and logical publish date
+      const newsData: CreateNewsData = { 
+        ...formData, 
+        imageUrl: finalImageUrl || undefined,
+        publishedAt: publishedAtDate,
+      };
       
       if (editingNews) {
         await updateNews({ ...newsData, id: editingNews.id });
@@ -111,11 +128,13 @@ const NewsManagerSimple: React.FC = () => {
         content: '',
         excerpt: '',
         author: '',
+        publishedAt: undefined,
         published: false,
         featured: false,
         imageUrl: '',
         tags: [],
       });
+      setPublishDate('');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -134,11 +153,17 @@ const NewsManagerSimple: React.FC = () => {
       content: article.content,
       excerpt: article.excerpt,
       author: article.author,
+      publishedAt: article.publishedAt || article.createdAt,
       published: article.published,
       featured: article.featured,
       imageUrl: article.imageUrl || '',
       tags: article.tags,
     });
+    const effectiveDate = article.publishedAt || article.createdAt;
+    const yyyy = effectiveDate.getFullYear();
+    const mm = String(effectiveDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(effectiveDate.getDate()).padStart(2, '0');
+    setPublishDate(`${yyyy}-${mm}-${dd}`);
     setImagePreview(article.imageUrl || null);
     setSelectedImageFile(null);
     setShowForm(true);
@@ -165,11 +190,13 @@ const NewsManagerSimple: React.FC = () => {
       content: '',
       excerpt: '',
       author: '',
+      publishedAt: undefined,
       published: false,
       featured: false,
       imageUrl: '',
       tags: [],
     });
+    setPublishDate('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -265,6 +292,22 @@ const NewsManagerSimple: React.FC = () => {
                   className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
                   placeholder="Author name"
                 />
+              </div>
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">
+                  News Date *
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={publishDate}
+                  onChange={(e) => setPublishDate(e.target.value)}
+                  min="2006-01-01"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                />
+                <p className="mt-1 text-xs text-gray-300">
+                  Select the actual date of this news (you can backdate to 2006 for older updates).
+                </p>
               </div>
             </div>
 

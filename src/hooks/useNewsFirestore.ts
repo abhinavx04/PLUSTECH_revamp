@@ -11,6 +11,11 @@ interface NewsArticle {
   author: string;
   createdAt: Date;
   updatedAt: Date;
+  /**
+   * The logical date of the news item (can be backdated, e.g. 2006).
+   * Used for chronological ordering and display.
+   */
+  publishedAt?: Date;
   published: boolean;
   featured: boolean;
   imageUrl?: string;
@@ -22,6 +27,11 @@ interface CreateNewsData {
   content: string;
   excerpt: string;
   author: string;
+  /**
+   * Logical news date (e.g. actual date of the news/event).
+   * Optional; if omitted we fall back to "now".
+   */
+  publishedAt?: Date;
   published: boolean;
   featured: boolean;
   imageUrl?: string;
@@ -93,21 +103,35 @@ export const useNewsFirestore = () => {
         
         const newsData: NewsArticle[] = [];
         querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const article = {
+          const data = doc.data() as any;
+          const createdAt: Date =
+            data.createdAt?.toDate?.() || data.createdAt instanceof Date
+              ? data.createdAt.toDate?.() ?? data.createdAt
+              : new Date();
+          const updatedAt: Date =
+            data.updatedAt?.toDate?.() || data.updatedAt instanceof Date
+              ? data.updatedAt.toDate?.() ?? data.updatedAt
+              : createdAt;
+          const publishedAt: Date =
+            data.publishedAt?.toDate?.() ||
+            (data.publishedAt instanceof Date ? data.publishedAt : createdAt);
+
+          const article: NewsArticle = {
             id: doc.id,
             ...data,
-            createdAt: data.createdAt?.toDate() || new Date(),
-            updatedAt: data.updatedAt?.toDate() || new Date(),
-          } as NewsArticle;
+            createdAt,
+            updatedAt,
+            publishedAt,
+          };
+
           newsData.push(article);
         });
         
         // Sort manually if we loaded without orderBy
         newsData.sort((a, b) => {
-          const aTime = a.createdAt.getTime();
-          const bTime = b.createdAt.getTime();
-          return bTime - aTime; // Descending order
+          const aTime = (a.publishedAt || a.createdAt).getTime();
+          const bTime = (b.publishedAt || b.createdAt).getTime();
+          return bTime - aTime; // Descending order (latest news first)
         });
         
         setNews(newsData);
@@ -149,19 +173,25 @@ export const useNewsFirestore = () => {
       
       const newsCollection = collection(db, 'news');
       const now = Timestamp.now();
+      const publishedAtTimestamp =
+        newsData.publishedAt ? Timestamp.fromDate(newsData.publishedAt) : now;
+
       const payload = sanitizeForFirestore({
         ...newsData,
+        publishedAt: publishedAtTimestamp,
         createdAt: now,
         updatedAt: now,
       });
       const docRef = await addDoc(newsCollection, payload);
       
       // Add to local state
+      const nowDate = new Date();
       const newArticle: NewsArticle = {
         id: docRef.id,
         ...newsData,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: nowDate,
+        updatedAt: nowDate,
+        publishedAt: newsData.publishedAt || nowDate,
       };
       setNews(prev => [newArticle, ...prev]);
       
@@ -213,16 +243,32 @@ export const useNewsFirestore = () => {
         }
       }
       
+      // Ensure publishedAt (if present) is stored as a Firestore Timestamp
+      const updateBase: Record<string, any> = { ...updateData };
+      if (updateData.publishedAt) {
+        updateBase.publishedAt = Timestamp.fromDate(updateData.publishedAt);
+      }
+
       const payload = sanitizeForFirestore({
-        ...updateData,
+        ...updateBase,
         updatedAt: Timestamp.now(),
       });
       await updateDoc(newsDoc, payload);
       
       // Update local state
-      setNews(prev => prev.map(article =>
-        article.id === id ? { ...article, ...updateData, updatedAt: new Date() } : article
-      ));
+      const updatedAtDate = new Date();
+      setNews(prev =>
+        prev.map(article =>
+          article.id === id
+            ? {
+                ...article,
+                ...updateData,
+                updatedAt: updatedAtDate,
+                publishedAt: updateData.publishedAt ?? article.publishedAt ?? article.createdAt,
+              }
+            : article
+        )
+      );
     } catch (err: any) {
       console.error('[News] Error updating news:', err);
       console.error('[News] Full error object:', JSON.stringify(err, null, 2));
