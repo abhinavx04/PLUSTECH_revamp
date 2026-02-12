@@ -104,20 +104,7 @@ const CareersPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
-                  <a
-                    href="#open-positions"
-                    className="inline-flex items-center px-6 py-3 rounded-xl bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:-translate-y-0.5 transition-transform"
-                  >
-                    View open positions
-                  </a>
-                  <a
-                    href="/facility"
-                    className="inline-flex items-center px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 font-semibold hover:border-[#00aeef]/70 hover:text-[#00aeef] transition-colors"
-                  >
-                    View our facilities
-                  </a>
-                </div>
+                {/* Primary CTAs removed as requested */}
               </div>
 
               {/* Right: visual context card (match Projects/Contact gradient style) */}
