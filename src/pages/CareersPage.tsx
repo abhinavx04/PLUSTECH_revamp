@@ -28,12 +28,7 @@ const CareersPage: React.FC = () => {
       <PageLayout className="bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
         <main className="flex-1 w-full overflow-hidden">
           {/* Hero */}
-          <section className="relative isolate overflow-hidden px-6 md:px-12 lg:px-16 py-16 md:py-20">
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute -top-24 -left-20 w-72 h-72 bg-[#00aeef]/18 blur-3xl rounded-full" />
-              <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-900/20 blur-3xl rounded-full" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(15,23,42,0.5),transparent_55%)]" />
-            </div>
+          <section className="relative isolate px-6 md:px-12 lg:px-16 py-16 md:py-20">
 
             {hasOpenJobs && (
               <div className="absolute inset-x-0 top-4 md:top-6 flex justify-center z-20 px-4">
@@ -43,16 +38,16 @@ const CareersPage: React.FC = () => {
                     const el = document.getElementById('open-positions');
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }}
-                  className="inline-flex items-center gap-4 rounded-full bg-gradient-to-r from-[#0f172a] via-slate-900 to-sky-900 text-sky-50 border border-sky-400/70 px-6 py-3 text-sm md:text-base font-semibold shadow-[0_24px_60px_rgba(15,23,42,0.9)] backdrop-blur-md hover:from-slate-900 hover:via-slate-900 hover:to-sky-800 transition-colors"
+                  className="inline-flex items-center gap-4 rounded-full bg-gradient-to-r from-white via-[#e0f4ff] to-[#cfe7ff] text-[#0f172a] border border-white/80 px-6 py-3 text-sm md:text-base font-semibold shadow-[0_24px_60px_rgba(15,23,42,0.4)] backdrop-blur-md hover:from-[#e6f4ff] hover:via-[#d8ecff] hover:to-[#c3ddff] transition-colors"
                 >
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#00aeef] text-slate-900 text-sm font-extrabold shadow-lg shadow-[#00aeef]/50">
                     +
                   </span>
                   <div className="flex flex-col items-start leading-tight">
-                    <span className="uppercase tracking-[0.24em] text-sm md:text-base text-sky-50">
+                    <span className="uppercase tracking-[0.24em] text-sm md:text-base text-slate-800">
                       WE ARE HIRING
                     </span>
-                    <span className="text-[0.8rem] md:text-sm text-sky-100/95 mt-0.5">
+                    <span className="text-[0.8rem] md:text-sm text-slate-700 mt-0.5">
                       New roles open across projects, automation &amp; service →
                     </span>
                   </div>
@@ -125,34 +120,33 @@ const CareersPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right: visual context card */}
+              {/* Right: visual context card (match Projects/Contact gradient style) */}
               <div className="relative">
-                <div className="absolute -inset-5 bg-white/50 rounded-3xl blur-xl" />
-                <div className="relative rounded-3xl border border-white/80 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-7 shadow-[0_30px_80px_rgba(15,23,42,0.65)] text-slate-50 overflow-hidden">
-                  <div className="absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_0%_0%,rgba(56,189,248,0.5),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(14,165,233,0.55),transparent_55%)]" />
+                <div className="absolute -inset-5 bg-white/60 rounded-3xl blur-xl" />
+                <div className="relative rounded-[28px] border border-white/80 shadow-2xl shadow-blue-900/10 overflow-hidden bg-gradient-to-br from-white via-[#e0f4ff] to-[#cfe7ff] p-7 text-[#0f172a]">
                   <div className="relative space-y-4">
-                    <div className="text-xs uppercase tracking-[0.18em] text-sky-200/80">
+                    <div className="text-xs uppercase tracking-[0.18em] text-slate-500">
                       What you work on here
                     </div>
-                    <p className="text-sm text-slate-100/90">
+                    <p className="text-sm text-slate-700">
                       Lines for automotive and industrial customers, conveyor systems, pretreatment and
                       paint processes, and upgrades that improve energy, safety, and uptime.
                     </p>
-                    <p className="text-sm text-slate-100/90">
+                    <p className="text-sm text-slate-700">
                       Roles span project engineering, controls and automation, on‑site execution, and
                       long‑term service. You are always close to real equipment and real decisions.
                     </p>
                     <div className="flex flex-wrap gap-2 text-xs">
-                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
                         Project engineering
                       </span>
-                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
                         Controls & automation
                       </span>
-                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
                         Site execution
                       </span>
-                      <span className="px-3 py-1 rounded-full bg-slate-800/80 border border-sky-400/60">
+                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
                         Service & audits
                       </span>
                     </div>
