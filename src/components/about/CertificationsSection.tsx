@@ -78,7 +78,7 @@ const CertificationsSection: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Certifications Dashboard
+          Certifications
         </motion.h2>
         <motion.p 
           className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"

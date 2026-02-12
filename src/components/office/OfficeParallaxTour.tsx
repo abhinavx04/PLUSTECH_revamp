@@ -17,12 +17,12 @@ interface OfficeSection {
 const sections: OfficeSection[] = [
   {
     id: 'welcome',
-    title: 'Welcome',
+    title: '',
     subtitle: 'Where Innovation Begins',
     images: {
-      background: '/office/entrance/entrance.jpeg',
-      midground: '/office/entrance/entrance.jpeg',
-      foreground: '/office/entrance/entrance.jpeg',
+      background: '/office/entrance/Reception.webp',
+      midground: '/office/entrance/Reception.webp',
+      foreground: '/office/entrance/Reception.webp',
     },
     description: 'Step into our modern facility and experience excellence',
     highlights: ['Modern Design', 'Welcoming Space', 'Professional Environment'],
@@ -285,6 +285,7 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
 }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const isWelcomeSection = section.id === 'welcome';
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -350,7 +351,7 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
             {section.title}
           </motion.h2>
           <motion.p
-            className="text-xl md:text-2xl lg:text-3xl text-white/90 font-light mb-6"
+            className={`text-xl md:text-2xl lg:text-3xl text-white/90 font-light mb-6 ${isWelcomeSection ? 'mt-24' : ''}`}
             initial={{ opacity: 0 }}
             animate={isVisible ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}

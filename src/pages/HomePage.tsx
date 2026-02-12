@@ -11,7 +11,7 @@ import { ImageViewer } from '../components/ui/ImageViewer';
 
 const HomePage: React.FC = () => {
   const [selectedWelcomeImage, setSelectedWelcomeImage] = useState<number | null>(null);
-  const welcomeImages = ['/office/entrance/entrance.jpeg'];
+  const welcomeImages = ['/office/entrance/Reception.webp'];
 
   // Smooth scroll function with dynamic speed based on distance
   const smoothScrollTo = (targetId: string) => {
@@ -145,7 +145,7 @@ const HomePage: React.FC = () => {
                 onClick={() => setSelectedWelcomeImage(0)}
               >
                 <OptimizedImage
-                  src="/office/entrance/entrance.jpeg"
+                  src="/office/entrance/Reception.webp"
                   alt="Plustech Entrance"
                   className="w-full h-auto"
                   objectFit="contain"

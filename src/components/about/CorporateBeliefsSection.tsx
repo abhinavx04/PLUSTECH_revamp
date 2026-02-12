@@ -66,7 +66,7 @@ const beliefsData: BeliefCard[] = [
     description: 'Our USP outlined under the acronym PEACE (Productivity, Efficiency, Affordability, Cost and Environment) focuses on delivering best value proposition to customers for long lasting relationships.',
     icon: 'chart-line',
     color: 'from-[#00aeef] to-[#0099d4]',
-    stats: ['Productivity', 'Efficiency', 'Affordability']
+    stats: ['Productivity', 'Cost', 'Efficiency', 'Environment', 'Affordability']
   },
   {
     id: 'future-plans',
@@ -97,7 +97,7 @@ const CorporateBeliefsSection: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Corporate Beliefs Dashboard
+          Corporate Beliefs
         </motion.h2>
         <motion.p 
           className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed text-justify"
