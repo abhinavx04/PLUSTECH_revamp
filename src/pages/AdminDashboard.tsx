@@ -8,6 +8,7 @@ import CertificationManager from '../components/CertificationManager';
 import CSRManager from '../components/CSRManager';
 import MilestonesManager from '../components/MilestonesManager';
 import { AnalyticsDashboard } from '../components/AnalyticsDashboard';
+import CareersManager from '../components/CareersManager';
 import { useProjectsFirestore } from '../hooks/useProjectsFirestore';
 import { useNewsFirestore } from '../hooks/useNewsFirestore';
 import { useAnnualReturnsFirestore } from '../hooks/useAnnualReturnsFirestore';
@@ -19,7 +20,7 @@ const AdminDashboard: React.FC = () => {
   const { user, logout } = useAdminAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'projects' | 'news' | 'annualReturns' | 'certifications' | 'csr' | 'milestones'
+    'dashboard' | 'projects' | 'news' | 'annualReturns' | 'certifications' | 'csr' | 'milestones' | 'careers'
   >('dashboard');
 
   // Load live data for quick stats
@@ -145,6 +146,16 @@ const AdminDashboard: React.FC = () => {
               Certifications
             </button>
             <button
+              onClick={() => setActiveTab('careers')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'careers'
+                  ? 'border-[#00aeef] text-[#00aeef]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300'
+              }`}
+            >
+              Careers
+            </button>
+            <button
               onClick={() => setActiveTab('csr')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'csr'
@@ -188,6 +199,8 @@ const AdminDashboard: React.FC = () => {
           <AnnualReturnManager />
         ) : activeTab === 'certifications' ? (
           <CertificationManager />
+        ) : activeTab === 'careers' ? (
+          <CareersManager />
         ) : (
           <CSRManager />
         )}

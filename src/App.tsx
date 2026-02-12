@@ -19,6 +19,8 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
+const CareersPage = lazy(() => import('./pages/CareersPage'));
+const CareerApplyPage = lazy(() => import('./pages/CareerApplyPage'));
 const OfficeTourPage = lazy(() => import('./pages/OfficeTourPage').then(module => ({ default: module.OfficeTourPage })));
 
 // Loading component
@@ -40,6 +42,8 @@ function App() {
       <Route path="/projects" element={<ProjectsPage />} />
       <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
       <Route path="/news" element={<NewsPage />} />
+      <Route path="/careers" element={<CareersPage />} />
+      <Route path="/careers/apply/:jobId" element={<CareerApplyPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/facility" element={<OfficeTourPage />} />
       <Route path="/about/csr-activities/:activityId" element={<CSRActivityDetailPage />} />

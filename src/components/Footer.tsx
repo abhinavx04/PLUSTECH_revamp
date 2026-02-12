@@ -42,6 +42,7 @@ const Footer = () => {
                 { label: 'Home', href: '/' },
                 { label: 'About', href: '/about' },
                 { label: 'Services', href: '/services' },
+                { label: 'Careers', href: '/careers' },
                 { label: 'Contact', href: '/contact' },
               ].map((item) => (
                 <li key={item.label}>

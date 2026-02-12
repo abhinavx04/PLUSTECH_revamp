@@ -91,7 +91,7 @@ After updating the rules:
 6. Try uploading a PDF and creating an annual return - it should save to Firestore
 7. Check the `/about/annual-returns` page - published annual returns should appear
 
-## Firebase Storage Rules (for Image Uploads)
+## Firebase Storage Rules (for Uploads)
 
 Since the app now supports image uploads, you also need to configure Firebase Storage rules:
 
@@ -101,111 +101,127 @@ Since the app now supports image uploads, you also need to configure Firebase St
 4. Replace the existing rules with the rules below
 5. Click **Publish**
 
-### Recommended Storage Rules (for authenticated users)
-
 ```javascript
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // News images - allow authenticated users to upload/read/delete
-    match /news/images/{imageId} {
-      // Allow read for authenticated users
-      allow read: if request.auth != null;
-      
-      // Allow write (upload) for authenticated users with size and type validation
-      allow write: if request.auth != null
-        && request.resource.size < 5 * 1024 * 1024  // Max 5MB before compression
-        && request.resource.contentType.matches('image/.*');
-      
-      // Allow delete for authenticated users
-      allow delete: if request.auth != null;
-    }
-    
-    // Annual Return PDFs - allow authenticated users to upload/read/delete
-    match /annualReturns/pdfs/{pdfId} {
-      // Allow read for authenticated users
-      allow read: if request.auth != null;
-      
-      // Allow write (upload) for authenticated users with size and type validation
-      allow write: if request.auth != null
-        && request.resource.size < 50 * 1024 * 1024  // Max 50MB
-        && request.resource.contentType == 'application/pdf';
-      
-      // Allow delete for authenticated users
-      allow delete: if request.auth != null;
-    }
 
-    // Project images - allow authenticated users to upload/read/delete
-    match /projects/images/{imageId} {
-      allow read: if request.auth != null;
+    // ======================
+    // NEWS IMAGES
+    // ======================
+    match /news/images/{imageId} {
+      allow read: if true;
+
       allow write: if request.auth != null
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
+
       allow delete: if request.auth != null;
     }
-    
-    // Default: deny all other access
+
+    // ======================
+    // ANNUAL RETURN PDFS
+    // ======================
+    match /annualReturns/pdfs/{pdfId} {
+      allow read: if true;
+
+      allow write: if request.auth != null
+        && request.resource.size < 50 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+
+      allow delete: if request.auth != null;
+    }
+
+    // ======================
+    // PROJECT IMAGES
+    // ======================
+    match /projects/images/{imageId} {
+      allow read: if true;
+
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+
+      allow delete: if request.auth != null;
+    }
+
+    // ======================
+    // CERTIFICATION IMAGES
+    // ======================
+    match /certifications/images/{imageId} {
+      allow read: if true;
+
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+
+      allow delete: if request.auth != null;
+    }
+
+    // ======================
+    // CSR ACTIVITY IMAGES
+    // ======================
+    match /csr/images/{imageId} {
+      allow read: if true;
+
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+
+      allow delete: if request.auth != null;
+    }
+
+    // ======================
+    // CSR ACTIVITY PDFS
+    // ======================
+    match /csr/pdfs/{pdfId} {
+      allow read: if true;
+
+      allow write: if request.auth != null
+        && request.resource.size < 50 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+
+      allow delete: if request.auth != null;
+    }
+
+    // ======================
+    // CAREERS — JD DOCUMENTS (MERGED)
+    // Publicly viewable from careers page
+    // ======================
+    match /careers/jd/{jobId}/{fileName} {
+      allow read: if true;
+
+      allow create, update: if request.auth != null
+        && request.resource.size < 10 * 1024 * 1024
+        && (
+          request.resource.contentType == 'application/pdf' ||
+          request.resource.contentType == 'application/msword' ||
+          request.resource.contentType == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        );
+
+      allow delete: if request.auth != null;
+    }
+
+    // ======================
+    // CAREERS — RESUMES (MERGED)
+    // Candidate uploads; private to HR/Admin
+    // ======================
+    match /careers/resumes/{jobId}/{fileName} {
+      allow create: if request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // ======================
+    // DEFAULT — DENY EVERYTHING ELSE
+    // ======================
     match /{allPaths=**} {
       allow read, write, delete: if false;
     }
   }
 }
 ```
-
-**Note:** The `write` rule only applies to uploads (create/update). For deletion, you need the explicit `allow delete` rule.
-
-### Alternative: Public Read, Authenticated Write/Delete
-
-```javascript
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    // News images - public read, authenticated write/delete
-    match /news/images/{imageId} {
-      // Anyone can read
-      allow read: if true;
-      
-      // Only authenticated users can upload
-      allow write: if request.auth != null
-        && request.resource.size < 5 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
-      
-      // Only authenticated users can delete
-      allow delete: if request.auth != null;
-    }
-    
-    // Annual Return PDFs - public read, authenticated write/delete
-    match /annualReturns/pdfs/{pdfId} {
-      // Anyone can read (for published annual returns)
-      allow read: if true;
-      
-      // Only authenticated users can upload
-      allow write: if request.auth != null
-        && request.resource.size < 50 * 1024 * 1024  // Max 50MB
-        && request.resource.contentType == 'application/pdf';
-      
-      // Only authenticated users can delete
-      allow delete: if request.auth != null;
-    }
-
-    // Project images - public read, authenticated write/delete
-    match /projects/images/{imageId} {
-      allow read: if true;
-      allow write: if request.auth != null
-        && request.resource.size < 5 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
-      allow delete: if request.auth != null;
-    }
-    
-    // Default: deny all other access
-    match /{allPaths=**} {
-      allow read, write, delete: if false;
-    }
-  }
-}
-```
-
-**Note:** The `write` rule only applies to uploads (create/update). For deletion, you need the explicit `allow delete` rule.
 
 ## Troubleshooting
 
