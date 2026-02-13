@@ -440,6 +440,69 @@ export const useCareersFirestore = (options: UseCareersFirestoreOptions = {}) =>
     );
   };
 
+  const deleteApplication = async (applicationId: string) => {
+    if (!db) throw new Error('Firestore not available');
+
+    try {
+      setError(null);
+
+      const appRef = doc(db, APPLICATIONS_COLLECTION, applicationId);
+      const appSnap = await getDoc(appRef);
+
+      if (!appSnap.exists()) {
+        return;
+      }
+
+      const appData = appSnap.data();
+      const resumeUrl: string | undefined = appData?.resumeUrl;
+      const jobId: string | undefined = appData?.jobId;
+
+      // Best-effort delete of resume file from Storage
+      if (storage && resumeUrl) {
+        try {
+          await deleteObject(ref(storage, resumeUrl));
+        } catch (storageErr) {
+          console.warn('[Careers] Failed to delete resume from storage, continuing', storageErr);
+        }
+      }
+
+      // Decrement applicationsCount on the related job if we know the jobId
+      if (jobId) {
+        try {
+          await updateDoc(doc(db, JOBS_COLLECTION, jobId), {
+            applicationsCount: increment(-1),
+            updatedAt: Timestamp.now(),
+          });
+        } catch (jobErr) {
+          console.warn('[Careers] Failed to update job applicationsCount after deleting application', jobErr);
+        }
+      }
+
+      // Delete the application document itself
+      await deleteDoc(appRef);
+
+      // Update local state
+      setApplications((prev) => prev.filter((application) => application.id !== applicationId));
+      if (jobId) {
+        setJobs((prev) =>
+          prev.map((job) =>
+            job.id === jobId
+              ? {
+                  ...job,
+                  applicationsCount: Math.max(0, (job.applicationsCount || 0) - 1),
+                  updatedAt: new Date(),
+                }
+              : job
+          )
+        );
+      }
+    } catch (err: any) {
+      console.error('[Careers] Error deleting application', err);
+      setError(err?.message || 'Failed to delete application.');
+      throw err;
+    }
+  };
+
   const saveBaseQuestionnaire = async (questions: CareerQuestion[]) => {
     if (!db) throw new Error('Firestore not available');
     const payload = {
@@ -483,6 +546,7 @@ export const useCareersFirestore = (options: UseCareersFirestoreOptions = {}) =>
     createApplication,
     updateApplicationStatus,
     updateApplicationNotes,
+    deleteApplication,
     saveBaseQuestionnaire,
     canApplyToJob,
   };

@@ -46,6 +46,7 @@ const CareersManager: React.FC = () => {
     updateApplicationNotes,
     saveBaseQuestionnaire,
     deleteJob,
+    deleteApplication,
   } = useCareersFirestore({ admin: true });
 
   const [activeTab, setActiveTab] = useState<AdminTab>('jobs');
@@ -896,6 +897,28 @@ const CareersManager: React.FC = () => {
                       className="px-3 py-2 bg-[#00aeef] text-black rounded-lg text-sm font-semibold"
                     >
                       Save notes
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (!selectedApplication) return;
+                        const confirmed = window.confirm(
+                          'Delete this application and its resume from storage? This cannot be undone.'
+                        );
+                        if (!confirmed) return;
+                        setActionError(null);
+                        setSaving(true);
+                        try {
+                          await deleteApplication(selectedApplication.id);
+                          setSelectedApplication(null);
+                        } catch (err: any) {
+                          setActionError(err?.message || 'Failed to delete application.');
+                        } finally {
+                          setSaving(false);
+                        }
+                      }}
+                      className="mt-2 px-3 py-2 bg-red-700 text-white rounded-lg text-sm font-semibold"
+                    >
+                      Delete application
                     </button>
                   </div>
                 </div>

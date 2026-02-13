@@ -83,7 +83,8 @@ export const sendApplicationEmails = async (application: CareerApplication): Pro
   const candidateTemplateId = import.meta.env.VITE_EMAILJS_CAREERS_CANDIDATE_TEMPLATE_ID;
   const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-  if (!serviceId || !hrTemplateId || !candidateTemplateId || !publicKey) {
+  // Only HR forwarding is strictly required. Candidate auto-response is optional.
+  if (!serviceId || !hrTemplateId || !publicKey) {
     throw new Error('Careers email service is not configured.');
   }
 
@@ -112,16 +113,19 @@ export const sendApplicationEmails = async (application: CareerApplication): Pro
     { publicKey }
   );
 
-  await emailjs.send(
-    serviceId,
-    candidateTemplateId,
-    {
-      ...commonParams,
-      to_email: application.email,
-      subject: "We've received your application - PLUSTECH",
-      timeline: 'We typically respond within 5-7 business days.',
-    },
-    { publicKey }
-  );
+  // Optional: send confirmation email to candidate if a template is configured
+  if (candidateTemplateId) {
+    await emailjs.send(
+      serviceId,
+      candidateTemplateId,
+      {
+        ...commonParams,
+        to_email: application.email,
+        subject: "We've received your application - PLUSTECH",
+        timeline: 'We typically respond within 5-7 business days.',
+      },
+      { publicKey }
+    );
+  }
 };
 
