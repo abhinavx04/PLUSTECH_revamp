@@ -106,7 +106,7 @@ const CorporateBeliefsSection: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           Since inception, Plustech Systems and Solutions has made "customer satisfaction" and "relationships" 
-          as the foundation of our business principle.
+          as the foundation of business principle.
         </motion.p>
       </motion.div>
 
