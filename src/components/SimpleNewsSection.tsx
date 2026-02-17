@@ -114,20 +114,20 @@ const SimpleNewsSection: React.FC = () => {
                 {article.featured && (
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-500 z-10" />
                 )}
-                <div className="relative w-full aspect-[16/9] min-h-[220px] overflow-hidden bg-slate-100">
+                <div className="relative w-full aspect-[16/9] min-h-[220px] overflow-hidden bg-white flex items-center justify-center">
                   {article.imageUrl ? (
                     <>
                       <img 
                         src={article.imageUrl} 
                         alt={article.title || 'News image'} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 bg-white"
+                        style={{ backgroundColor: 'white' }}
                         loading="lazy"
                         decoding="async"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
@@ -200,13 +200,14 @@ const SimpleNewsSection: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               {selectedArticle.imageUrl && (
-                <div className="h-64 md:h-80 overflow-hidden bg-gray-200">
+                <div className="w-full max-h-[40vh] sm:max-h-[50vh] overflow-hidden bg-white flex items-center justify-center">
                   <img 
                     src={selectedArticle.imageUrl} 
                     alt={selectedArticle.title} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain max-h-[40vh] sm:max-h-[50vh] bg-white"
+                    style={{ backgroundColor: 'white' }}
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {

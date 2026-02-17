@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useCertificationsFirestore, type Certification } from '../../hooks/useCertificationsFirestore';
 
@@ -22,6 +22,18 @@ const CertificationsSection: React.FC = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const isInView = useInView(sectionRef, { once: false, margin: '-100px' });
   const { loading, error, getPublishedCertifications } = useCertificationsFirestore();
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (showDetailModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showDetailModal]);
 
   const certificationsData = useMemo(
     () => getPublishedCertifications(),
@@ -196,41 +208,41 @@ const CertificationsSection: React.FC = () => {
       {/* Detail Modal */}
       {showDetailModal && selectedCertification && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 sm:p-4 md:p-6"
           onClick={() => setShowDetailModal(false)}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+            className="relative w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] bg-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${categoryColors[selectedCertification.category]}`}>
+            <div className="p-4 sm:p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 flex-shrink-0">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-2 sm:mb-3">
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold border ${categoryColors[selectedCertification.category]}`}>
                       {selectedCertification.category}
                     </span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[selectedCertification.status]}`}>
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${statusColors[selectedCertification.status]}`}>
                       {selectedCertification.status}
                     </span>
                   </div>
-                  <h2 className="text-3xl font-bold font-heading text-black mb-2">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-heading text-black mb-1 sm:mb-2 break-words">
                     {selectedCertification.name}
                   </h2>
-                  <p className="text-gray-600 text-lg">
+                  <p className="text-sm sm:text-base md:text-lg text-gray-600 break-words">
                     {selectedCertification.issuingBody}
                   </p>
                 </div>
                 <button
                   onClick={() => setShowDetailModal(false)}
-                  className="bg-white hover:bg-gray-100 text-gray-800 rounded-full p-2 transition-colors"
+                  className="bg-white hover:bg-gray-100 text-gray-800 rounded-full p-1.5 sm:p-2 transition-colors flex-shrink-0"
                   aria-label="Close modal"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -238,18 +250,18 @@ const CertificationsSection: React.FC = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Description</h3>
-                <p className="text-gray-700 leading-relaxed">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">Description</h3>
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                   {selectedCertification.description}
                 </p>
               </div>
 
               {/* Valid Until */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-500 mb-2">Valid Until:</div>
-                <div className="text-2xl font-semibold text-[#00aeef]">
+              <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                <div className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">Valid Until:</div>
+                <div className="text-xl sm:text-2xl font-semibold text-[#00aeef]">
                   {parseDate(selectedCertification.validUntil)?.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -260,7 +272,7 @@ const CertificationsSection: React.FC = () => {
 
               {/* Image if available */}
               {selectedCertification.imageUrl && (
-                <div className="mb-6">
+                <div className="mb-4 sm:mb-6">
                   <img
                     src={selectedCertification.imageUrl}
                     alt={selectedCertification.name}

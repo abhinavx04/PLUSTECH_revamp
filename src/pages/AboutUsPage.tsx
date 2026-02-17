@@ -108,7 +108,7 @@ const AboutUsPage: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.8 }}
             >
               <div className="text-3xl md:text-4xl font-extrabold">
-                <CountUp to={18} durationMs={1400} />
+                <CountUp to={Math.max(0, new Date().getFullYear() - 2006)} durationMs={1400} />
                 <span className="ml-1 align-top">+</span>
               </div>
               <div className="mt-1 text-sm md:text-base text-white/80">Years of Excellence</div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
 import { useNewsFirestore } from '../hooks/useNewsFirestore';
 import { SEO } from '../components/SEO';
@@ -26,6 +26,18 @@ const NewsPage: React.FC = () => {
   const { news, loading, error } = useNewsFirestore();
 
   const publishedNews = news.filter(article => article.published);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedArticle) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedArticle]);
 
   return (
     <>
@@ -103,20 +115,20 @@ const NewsPage: React.FC = () => {
                   {article.featured && (
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-500 z-10" />
                   )}
-                  <div className="relative w-full aspect-[16/9] min-h-[220px] overflow-hidden bg-slate-100">
+                  <div className="relative w-full aspect-[16/9] min-h-[220px] overflow-hidden bg-white flex items-center justify-center">
                     {article.imageUrl ? (
                       <>
                         <img 
                           src={article.imageUrl} 
                           alt={article.title || 'News image'} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 bg-white"
+                          style={{ backgroundColor: 'white' }}
                           loading="lazy"
                           decoding="async"
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display = 'none';
                           }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
@@ -170,16 +182,23 @@ const NewsPage: React.FC = () => {
 
       {/* News Detail Modal */}
       {selectedArticle && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 sm:p-4 md:p-6"
+          onClick={() => setSelectedArticle(null)}
+        >
+          <div 
+            className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Header */}
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               {selectedArticle.imageUrl && (
-                <div className="h-64 md:h-80 overflow-hidden bg-slate-100">
+                <div className="w-full max-h-[40vh] sm:max-h-[50vh] overflow-hidden bg-white flex items-center justify-center">
                   <img 
                     src={selectedArticle.imageUrl} 
                     alt={selectedArticle.title} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain max-h-[40vh] sm:max-h-[50vh] bg-white"
+                    style={{ backgroundColor: 'white' }}
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {
@@ -190,21 +209,22 @@ const NewsPage: React.FC = () => {
               )}
               <button
                 onClick={() => setSelectedArticle(null)}
-                className="absolute top-4 right-4 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all duration-200"
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-black bg-opacity-50 text-white rounded-full p-1.5 sm:p-2 hover:bg-opacity-70 transition-all duration-200"
+                aria-label="Close modal"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 md:p-8 overflow-y-auto max-h-[60vh]">
-              <div className="mb-6">
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+              <div className="mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                   {selectedArticle.title}
                 </h2>
-                <div className="flex items-center flex-wrap gap-3 text-sm text-slate-500 mb-4">
+                <div className="flex items-center flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4">
                   <span>By {selectedArticle.author}</span>
                   <span className="w-1 h-1 rounded-full bg-slate-300" />
                   <time>
@@ -217,9 +237,9 @@ const NewsPage: React.FC = () => {
                   {selectedArticle.tags && selectedArticle.tags.length > 0 && (
                     <>
                       <span className="w-1 h-1 rounded-full bg-slate-300" />
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
                         {selectedArticle.tags.map((tag: string, index: number) => (
-                          <span key={index} className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-medium border border-slate-200">
+                          <span key={index} className="px-2 sm:px-2.5 py-0.5 sm:py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-medium border border-slate-200">
                             {tag}
                           </span>
                         ))}
@@ -229,19 +249,19 @@ const NewsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="prose prose-lg max-w-none">
-                <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+              <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+                <div className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {selectedArticle.content}
                 </div>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 md:px-8 py-4 bg-slate-50 border-t border-slate-200">
+            <div className="flex-shrink-0 px-4 sm:px-6 md:px-8 py-3 sm:py-4 bg-slate-50 border-t border-slate-200">
               <div className="flex justify-end">
                 <button
                   onClick={() => setSelectedArticle(null)}
-                  className="px-6 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200 font-semibold"
+                  className="px-4 sm:px-6 py-2 text-sm sm:text-base bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200 font-semibold"
                 >
                   Close
                 </button>
