@@ -120,7 +120,17 @@ const ContactPage: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Visit us – main office */}
+                  {/* Email – clearly global */}
+                  <div className="space-y-1 text-sm md:text-base">
+                    <div className="font-semibold">Email us</div>
+                    <p className="text-slate-700">
+                      <span className="font-semibold text-[#00aeef]">
+                        info@plustech.co.in
+                      </span>
+                    </p>
+                  </div>
+
+                  {/* Visit us – head office */}
                   <div className="space-y-1 text-sm md:text-base">
                     <div className="font-semibold">Visit us</div>
                     <p className="text-slate-700">
@@ -132,21 +142,9 @@ const ContactPage: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Email – clearly global */}
+                  {/* Call us – head office numbers */}
                   <div className="space-y-1 text-sm md:text-base">
-                    <div className="font-semibold">Email us</div>
-                    <p className="text-slate-700">
-                      General enquiries (all locations)
-                      <br />
-                      <span className="font-semibold text-[#00aeef]">
-                        info@plustech.co.in
-                      </span>
-                    </p>
-                  </div>
-
-                  {/* Call us – main office numbers */}
-                  <div className="space-y-1 text-sm md:text-base">
-                    <div className="font-semibold">Call us (main office – Pune)</div>
+                    <div className="font-semibold">Call us (head office – Pune)</div>
                     <p className="text-slate-700">
                       Mon–Fri, business hours
                       <br />
