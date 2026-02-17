@@ -200,7 +200,7 @@ const CertificationsSection: React.FC = () => {
           </h3>
           <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
             Our comprehensive certification portfolio ensures we maintain the highest standards 
-            in quality management, financial transparency, and regulatory compliance across all operations.
+            in quality management, financial transparency, and regulatory compliance across company operations.
           </p>
         </div>
       </motion.div>
