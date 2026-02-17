@@ -28,6 +28,18 @@ const sections: OfficeSection[] = [
     highlights: ['Modern Design', 'Welcoming Space', 'Professional Environment'],
   },
   {
+    id: 'proposals',
+    title: 'Proposals',
+    subtitle: 'Crafting Solutions',
+    images: {
+      background: '/office/proposals/IMG_8086.jpg',
+      midground: '/office/proposals/IMG_8086.jpg',
+      foreground: '/office/proposals/IMG_8086.jpg',
+    },
+    description: 'Where innovative proposals and solutions come to life',
+    highlights: ['Creative Solutions', 'Documentation Excellence', 'Client Focus'],
+  },
+  {
     id: 'engineering',
     title: 'Engineering',
     subtitle: 'Where Ideas Take Shape',
@@ -52,28 +64,16 @@ const sections: OfficeSection[] = [
     highlights: ['Project Excellence', 'Team Collaboration', 'Strategic Planning'],
   },
   {
-    id: 'proposals',
-    title: 'Proposals',
-    subtitle: 'Crafting Solutions',
+    id: 'purchase',
+    title: 'Purchase',
+    subtitle: 'Strategic Procurement',
     images: {
-      background: '/office/proposals/IMG_8086.jpg',
-      midground: '/office/proposals/IMG_8086.jpg',
-      foreground: '/office/proposals/IMG_8086.jpg',
+      background: '/office/purchase/IMG_8115.jpg',
+      midground: '/office/purchase/IMG_8115.jpg',
+      foreground: '/office/purchase/IMG_8115.jpg',
     },
-    description: 'Where innovative proposals and solutions come to life',
-    highlights: ['Creative Solutions', 'Documentation Excellence', 'Client Focus'],
-  },
-  {
-    id: 'accounts',
-    title: 'Accounts',
-    subtitle: 'Financial Excellence',
-    images: {
-      background: '/office/accounts/IMG_8122.jpg',
-      midground: '/office/accounts/IMG_8122.jpg',
-      foreground: '/office/accounts/IMG_8122.jpg',
-    },
-    description: 'Accounts and finance department managing financial operations',
-    highlights: ['Financial Management', 'Precision', 'Accountability'],
+    description: 'Procurement and purchasing department',
+    highlights: ['Strategic Sourcing', 'Efficient Procurement', 'Supply Chain'],
   },
   {
     id: 'admin-hr',
@@ -88,16 +88,16 @@ const sections: OfficeSection[] = [
     highlights: ['People Management', 'Administrative Excellence', 'Team Support'],
   },
   {
-    id: 'purchase',
-    title: 'Purchase',
-    subtitle: 'Strategic Procurement',
+    id: 'accounts',
+    title: 'Accounts',
+    subtitle: 'Financial Excellence',
     images: {
-      background: '/office/purchase/IMG_8115.jpg',
-      midground: '/office/purchase/IMG_8115.jpg',
-      foreground: '/office/purchase/IMG_8115.jpg',
+      background: '/office/accounts/IMG_8122.jpg',
+      midground: '/office/accounts/IMG_8122.jpg',
+      foreground: '/office/accounts/IMG_8122.jpg',
     },
-    description: 'Procurement and purchasing department',
-    highlights: ['Strategic Sourcing', 'Efficient Procurement', 'Supply Chain'],
+    description: 'Accounts and finance department managing financial operations',
+    highlights: ['Financial Management', 'Precision', 'Accountability'],
   },
   {
     id: 'chevron',
@@ -112,18 +112,6 @@ const sections: OfficeSection[] = [
     highlights: ['Professional Meetings', 'Modern Facilities', 'Collaboration'],
   },
   {
-    id: 'md',
-    title: 'Managing Director',
-    subtitle: 'Strategic Leadership',
-    images: {
-      background: '/office/MD/IMG_8130.jpg',
-      midground: '/office/MD/IMG_8130.jpg',
-      foreground: '/office/MD/IMG_8130.jpg',
-    },
-    description: 'Managing Director office driving strategic vision and growth',
-    highlights: ['Strategic Vision', 'Executive Excellence', 'Leadership'],
-  },
-  {
     id: 'director',
     title: 'Director',
     subtitle: 'Guiding Excellence',
@@ -134,6 +122,18 @@ const sections: OfficeSection[] = [
     },
     description: 'Director office and executive leadership',
     highlights: ['Executive Leadership', 'Strategic Planning', 'Excellence'],
+  },
+  {
+    id: 'md',
+    title: 'Managing Director',
+    subtitle: 'Strategic Leadership',
+    images: {
+      background: '/office/MD/IMG_8130.jpg',
+      midground: '/office/MD/IMG_8130.jpg',
+      foreground: '/office/MD/IMG_8130.jpg',
+    },
+    description: 'Managing Director office driving strategic vision and growth',
+    highlights: ['Strategic Vision', 'Executive Excellence', 'Leadership'],
   },
 ];
 
