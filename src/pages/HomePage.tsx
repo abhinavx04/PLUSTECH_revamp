@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
-import SimpleNewsSection from '../components/SimpleNewsSection';
 import CapabilitiesSection from '../components/CapabilitiesSection';
 import Footer from '../components/Footer';
 import { SEO } from '../components/SEO';
@@ -172,11 +171,6 @@ const HomePage: React.FC = () => {
                 </p>
               </div>
             </div>
-
-      {/* News Section – Latest News & Updates */}
-      <div className="bg-white">
-        <SimpleNewsSection />
-        </div>
 
       {/* Company Logos Animation – Trusted by leading companies */}
       <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-b from-white via-blue-50 to-blue-100">

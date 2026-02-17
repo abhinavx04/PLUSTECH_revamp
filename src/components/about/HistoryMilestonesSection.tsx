@@ -31,19 +31,6 @@ const hardcodedMilestones: Milestone[] = [
     ]
   },
   {
-    id: 'tata-motors-2007',
-    year: '2007',
-    title: 'Tata Motors Project',
-    description: '1st PT CED for Passenger Car project at Tata Motors - 15 JPH / 56 K litres (CED Tank).',
-    category: 'achievement',
-    icon: '',
-    metrics: [
-      { label: 'Client', value: 'Tata Motors' },
-      { label: 'Capacity', value: '15 JPH' },
-      { label: 'Tank Size', value: '56K Litres' }
-    ]
-  },
-  {
     id: 'pluscon-established',
     year: '2008',
     title: 'Pluscon Established',
@@ -54,19 +41,6 @@ const hardcodedMilestones: Milestone[] = [
       { label: 'Division', value: 'Pluscon' },
       { label: 'Focus', value: 'Electrical' },
       { label: 'Automation', value: 'Process' }
-    ]
-  },
-  {
-    id: 'ashok-leyland-2008',
-    year: '2008',
-    title: 'Ashok Leyland FSM',
-    description: 'Ashok Leyland for Pretreatment and Powder Coating Line for FSM - 600 Frames per day.',
-    category: 'achievement',
-    icon: '',
-    metrics: [
-      { label: 'Client', value: 'Ashok Leyland' },
-      { label: 'Capacity', value: '600/Day' },
-      { label: 'Process', value: 'PT & Powder' }
     ]
   },
   {
@@ -109,28 +83,15 @@ const hardcodedMilestones: Milestone[] = [
     ]
   },
   {
-    id: 'mahindra-2011',
-    year: '2011',
-    title: 'Mahindra Commercial',
-    description: '1st PT CED for Commercial Vehicles at Mahindra and Mahindra - 15 JPH / 175 K litres (CED Tank).',
-    category: 'achievement',
-    icon: '',
-    metrics: [
-      { label: 'Client', value: 'Mahindra' },
-      { label: 'Capacity', value: '15 JPH' },
-      { label: 'Tank Size', value: '175K Litres' }
-    ]
-  },
-  {
     id: 'bajaj-auto-2012',
     year: '2012',
-    title: 'Bajaj Auto Complete',
-    description: 'Complete Paintshop for 4 Wheelers at Bajaj Auto for PT CED and Painting line.',
+    title: 'Bajaj Auto (Waluj)',
+    description: 'Complete Paintshop for 4 Wheelers at Bajaj Auto (Waluj) for PT CED and Painting line - a significant value milestone.',
     category: 'achievement',
     icon: '',
     metrics: [
       { label: 'Client', value: 'Bajaj Auto' },
-      { label: 'Vehicle', value: '4 Wheelers' },
+      { label: 'Location', value: 'Waluj' },
       { label: 'Scope', value: 'Complete' }
     ]
   },
@@ -161,29 +122,16 @@ const hardcodedMilestones: Milestone[] = [
     ]
   },
   {
-    id: 'first-overseas-project',
+    id: 'overseas-uttarakhand-2016',
     year: '2016',
-    title: 'First Overseas Project',
-    description: 'Plustech bagged its first overseas Paintshop project, marking international expansion.',
-    category: 'achievement',
+    title: 'First Overseas Project & Uttarakhand Expansion',
+    description: 'Plustech achieved its first overseas Paintshop project, marking international expansion, while simultaneously expanding operations in Uttarakhand.',
+    category: 'expansion',
     icon: '',
     metrics: [
       { label: 'Market', value: 'International' },
-      { label: 'Project Type', value: 'Paintshop' },
-      { label: 'Milestone', value: 'Overseas' }
-    ]
-  },
-  {
-    id: 'uttara-bangladesh-2016',
-    year: '2016',
-    title: 'Uttara Bangladesh',
-    description: 'PT CED and Painting facility for Uttara, Bangladesh for 2 Wheelers.',
-    category: 'achievement',
-    icon: '',
-    metrics: [
-      { label: 'Client', value: 'Uttara' },
-      { label: 'Country', value: 'Bangladesh' },
-      { label: 'Vehicle', value: '2 Wheelers' }
+      { label: 'Expansion', value: 'Uttarakhand' },
+      { label: 'Milestone', value: 'Global Growth' }
     ]
   },
   {

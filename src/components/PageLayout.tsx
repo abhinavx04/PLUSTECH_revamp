@@ -34,6 +34,7 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   { name: 'Projects', link: '/projects' },
+  { name: 'News & Events', link: '/news' },
   { name: 'Services', link: '/services' },
   { name: 'Careers', link: '/careers' },
   { name: 'Contact', link: '/contact' },
