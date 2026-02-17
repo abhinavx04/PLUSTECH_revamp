@@ -59,7 +59,7 @@ const NewsPage: React.FC = () => {
           <div className="max-w-6xl mx-auto relative z-10">
             <div className="space-y-5 text-center mb-12">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-slate-900">
-                News & Updates
+                News & Events
               </h1>
               <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
                 Stay informed with our latest announcements, insights, and company updates.
