@@ -99,7 +99,7 @@ const CertificationsSection: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           Our certifications demonstrate our commitment to quality management, financial strength, and business reliability, 
-          ensuring we meet the highest international and industry standards.
+          ensuring we meet the highest industry standards.
         </motion.p>
       </motion.div>
 
