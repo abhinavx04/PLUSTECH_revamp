@@ -115,21 +115,18 @@ const NewsPage: React.FC = () => {
                   {article.featured && (
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-500 z-10" />
                   )}
-                  <div className="relative w-full aspect-[16/9] min-h-[220px] overflow-hidden bg-white flex items-center justify-center">
+                  <div className="relative w-full h-40 sm:h-44 bg-white flex items-center justify-center overflow-hidden">
                     {article.imageUrl ? (
-                      <>
-                        <img 
-                          src={article.imageUrl} 
-                          alt={article.title || 'News image'} 
-                          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 bg-white"
-                          style={{ backgroundColor: 'white' }}
-                          loading="lazy"
-                          decoding="async"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      </>
+                      <img 
+                        src={article.imageUrl} 
+                        alt={article.title || 'News image'} 
+                        className="max-h-full max-w-[85%] object-contain"
+                        loading="lazy"
+                        decoding="async"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
                         <div className="text-slate-300 text-6xl font-light">N</div>
