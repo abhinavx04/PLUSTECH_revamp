@@ -146,17 +146,36 @@ const CorporateBeliefsSection: React.FC = () => {
                    {index + 1}
                  </div>
                 
-                 {/* Header with title and accent */}
+                 {/* Header with icon and gradient */}
                  <div className="relative p-6">
-                   <div className="flex-1 min-w-0">
-                     <h3 
-                       className="text-xl md:text-2xl font-bold font-heading text-black text-left whitespace-nowrap"
-                     >
-                       {belief.title}
-                     </h3>
-                     <div 
-                       className={`h-1 mt-2 w-16 bg-gradient-to-r ${belief.color} rounded-full`}
-                     />
+                   <div className="flex items-start gap-4">
+                     {/* Icon badge */}
+                     <div className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center">
+                       {belief.icon === 'long-term' ? (
+                         <img 
+                           src="/long-term.png" 
+                           alt="Long-term" 
+                           className="w-10 h-10 object-contain"
+                         />
+                       ) : (
+                         <FontAwesomeIcon 
+                           icon={iconMap[belief.icon]} 
+                           className="text-3xl text-gray-700"
+                         />
+                       )}
+                     </div>
+                     
+                     {/* Title section */}
+                     <div className="flex-1 min-w-0">
+                       <h3 
+                         className="text-2xl font-bold font-heading text-black text-left"
+                       >
+                         {belief.title}
+                       </h3>
+                       <div 
+                         className={`h-1 mt-2 w-16 bg-gradient-to-r ${belief.color} rounded-full`}
+                       />
+                     </div>
                    </div>
                  </div>
                 
@@ -215,7 +234,7 @@ const CorporateBeliefsSection: React.FC = () => {
         <blockquote 
           className="text-2xl text-gray-900 max-w-4xl mx-auto leading-relaxed italic text-justify"
         >
-          "Our customers/associates take pride and comfort in their engagement with Plustech. 
+          "Our associates take pride and comfort in their engagement with Plustech. 
           We believe in not just meeting customer expectations but exceeding them."
         </blockquote>
       </motion.div>
