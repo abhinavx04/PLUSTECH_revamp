@@ -46,10 +46,6 @@ const NewsPage: React.FC = () => {
 
           <div className="max-w-6xl mx-auto relative z-10">
             <div className="space-y-5 text-center mb-12">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/70 border border-black/5 shadow-sm backdrop-blur">
-                <span className="w-2 h-2 rounded-full bg-[#00aeef]" />
-                <span className="text-sm font-semibold text-[#0f172a]">News & Updates</span>
-              </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-slate-900">
                 All News & Updates
               </h1>

@@ -28,7 +28,7 @@ const CareersPage: React.FC = () => {
       <PageLayout className="bg-gradient-to-b from-white via-blue-50/30 to-white text-[#0f172a] pt-16">
         <main className="flex-1 w-full overflow-hidden">
           {/* Hero */}
-          <section className="relative isolate px-6 md:px-12 lg:px-16 py-16 md:py-20">
+          <section className="relative isolate px-6 md:px-12 lg:px-16 py-20 md:py-28">
 
             {hasOpenJobs && (
               <div className="absolute inset-x-0 top-4 md:top-6 flex justify-center z-20 px-4">
@@ -55,89 +55,57 @@ const CareersPage: React.FC = () => {
               </div>
             )}
 
-            <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
-              {/* Left: structured copy */}
-              <div className="space-y-7">
-                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/80 border border-black/5 shadow-sm backdrop-blur">
-                  <span className="w-2 h-2 rounded-full bg-[#00aeef]" />
-                  <span className="text-sm font-semibold text-[#0f172a]">Careers at PLUSTECH</span>
-                </div>
+            <div className="max-w-7xl mx-auto relative z-10 pt-20 md:pt-28">
+              <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[3.75rem] font-extrabold leading-[1.08] tracking-tight text-slate-900 lg:whitespace-nowrap">
+                We build real paintshops and real careers.
+              </h1>
 
-                <div className="space-y-3">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-slate-900">
-                    Build real paintshops, real automation, and real careers.
-                  </h1>
-                  <p className="text-lg md:text-xl text-slate-700 max-w-2xl">
-                    At PLUSTECH, you work on live customer plants—not mock projects. You see complete
-                    paintshops, material handling, and automation systems move from concept on paper to
-                    stable production on the shop floor.
-                  </p>
-                </div>
+              {/* Subtitle */}
+              <p className="text-lg md:text-[1.35rem] text-slate-600 leading-relaxed max-w-3xl mt-8 md:mt-10 text-justify">
+                At PLUSTECH, you work on live customer plants—not mock projects. You see complete
+                paintshops, material handling, and automation systems move from concept on paper to
+                stable production on the shop floor.
+              </p>
 
-                <div className="grid sm:grid-cols-3 gap-3">
-                  <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
-                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-[0.14em]">
-                      Your work
-                    </div>
-                    <p className="mt-1 text-sm text-slate-700">
-                      Own clearly defined pieces of projects—from layouts and calculations to trials and
-                      commissioning at customer sites.
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
-                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-[0.14em]">
-                      Your team
-                    </div>
-                    <p className="mt-1 text-sm text-slate-700">
-                      Work with experienced mechanical, electrical, and automation engineers who review
-                      designs with you and stay hands‑on with the work.
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
-                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-[0.14em]">
-                      Your growth
-                    </div>
-                    <p className="mt-1 text-sm text-slate-700">
-                      Grow through real project cycles, customer exposure, and the chance to see how good
-                      engineering decisions hold up in production.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Primary CTAs removed as requested */}
+              {/* Domain tags — inline, matching body text size */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-8 text-base md:text-[1.35rem] text-slate-500">
+                <span>Project engineering</span>
+                <span className="text-slate-300" aria-hidden="true">/</span>
+                <span>Controls & automation</span>
+                <span className="text-slate-300" aria-hidden="true">/</span>
+                <span>Site execution</span>
+                <span className="text-slate-300" aria-hidden="true">/</span>
+                <span>Direct & indirect sourcing</span>
               </div>
 
-              {/* Right: visual context card (match Projects/Contact gradient style) */}
-              <div className="relative">
-                <div className="absolute -inset-5 bg-white/60 rounded-3xl blur-xl" />
-                <div className="relative rounded-[28px] border border-white/80 shadow-2xl shadow-blue-900/10 overflow-hidden bg-gradient-to-br from-white via-[#e0f4ff] to-[#cfe7ff] p-7 text-[#0f172a]">
-                  <div className="relative space-y-4">
-                    <div className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      What you work on here
-                    </div>
-                    <p className="text-sm text-slate-700">
-                      Lines for automotive and industrial customers, conveyor systems, pretreatment and
-                      paint processes, and upgrades that improve energy, safety, and uptime.
-                    </p>
-                    <p className="text-sm text-slate-700">
-                      Roles span project engineering, controls and automation, on‑site execution, and
-                      long‑term service. You are always close to real equipment and real decisions.
-                    </p>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
-                        Project engineering
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
-                        Controls & automation
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
-                        Site execution
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-white/70 border border-slate-200 text-slate-800">
-                        Service & audits
-                      </span>
-                    </div>
+              {/* Value tiles — full-width row */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-16 md:mt-20">
+                <div className="rounded-2xl border-2 border-slate-300 bg-white px-6 py-6 shadow-md flex flex-col items-center text-center">
+                  <div className="text-base font-bold text-[#00aeef] uppercase tracking-[0.08em]">
+                    Your work
                   </div>
+                  <p className="mt-3 text-base md:text-[1.35rem] md:leading-relaxed text-slate-700">
+                    Own clearly defined pieces of projects—from layouts and calculations to trials and
+                    commissioning at customer sites.
+                  </p>
+                </div>
+                <div className="rounded-2xl border-2 border-slate-300 bg-white px-6 py-6 shadow-md flex flex-col items-center text-center">
+                  <div className="text-base font-bold text-[#00aeef] uppercase tracking-[0.08em]">
+                    Your team
+                  </div>
+                  <p className="mt-3 text-base md:text-[1.35rem] md:leading-relaxed text-slate-700">
+                    Work with experienced mechanical, electrical, and automation engineers who review
+                    designs with you and stay hands‑on with the work.
+                  </p>
+                </div>
+                <div className="rounded-2xl border-2 border-slate-300 bg-white px-6 py-6 shadow-md flex flex-col items-center text-center">
+                  <div className="text-base font-bold text-[#00aeef] uppercase tracking-[0.08em]">
+                    Your growth
+                  </div>
+                  <p className="mt-3 text-base md:text-[1.35rem] md:leading-relaxed text-slate-700">
+                    Grow through real project cycles, customer exposure, and the chance to see how good
+                    engineering decisions hold up in production.
+                  </p>
                 </div>
               </div>
             </div>
