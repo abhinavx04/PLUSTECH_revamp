@@ -46,6 +46,7 @@ const NewsManagerSimple: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState<CreateNewsData>({
     title: '',
     content: '',
@@ -167,6 +168,10 @@ const NewsManagerSimple: React.FC = () => {
     setImagePreview(article.imageUrl || null);
     setSelectedImageFile(null);
     setShowForm(true);
+    // Scroll to form after state updates
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -251,7 +256,7 @@ const NewsManagerSimple: React.FC = () => {
 
       {/* News Form */}
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
+        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
           <h3 className="text-xl font-semibold text-white mb-4">
             {editingNews ? 'Edit Article' : 'Create New Article'}
           </h3>
@@ -346,11 +351,11 @@ const NewsManagerSimple: React.FC = () => {
               
               {/* Image Preview */}
               {(imagePreview || formData.imageUrl) && (
-                <div className="mb-3 relative">
+                <div className="mb-3 relative bg-white/5 rounded-lg border border-white/20 p-3 flex items-center justify-center min-h-[200px] max-h-[400px] overflow-hidden">
                   <img
                     src={imagePreview || formData.imageUrl}
                     alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg border border-white/20"
+                    className="max-w-full max-h-full object-contain rounded-lg"
                   />
                   <button
                     type="button"

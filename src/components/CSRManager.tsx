@@ -62,6 +62,7 @@ const CSRManager: React.FC = () => {
   const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   const [uploadingPDF, setUploadingPDF] = useState(false);
   const [selectedPDFFile, setSelectedPDFFile] = useState<File | null>(null);
   const [pdfPreview, setPdfPreview] = useState<string | null>(null);
@@ -258,6 +259,10 @@ const CSRManager: React.FC = () => {
     setSelectedImageFiles([]);
     setSelectedPDFFile(null);
     setShowForm(true);
+    // Scroll to form after state updates
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -316,7 +321,7 @@ const CSRManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {editingId ? 'Edit CSR Activity' : 'Create CSR Activity'}
@@ -578,11 +583,11 @@ const CSRManager: React.FC = () => {
               {(imagePreviews.length > 0 || formData.imageUrls.length > 0) && (
                 <div className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
                   {(imagePreviews.length > 0 ? imagePreviews : formData.imageUrls).map((img, index) => (
-                    <div key={index} className="relative group">
+                    <div key={index} className="relative group bg-white/5 rounded-lg border border-white/20 p-2 flex items-center justify-center min-h-[120px] max-h-[200px] overflow-hidden">
                       <img
                         src={img}
                         alt={`Preview ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg border border-white/20"
+                        className="max-w-full max-h-full object-contain rounded-lg"
                       />
                       <button
                         type="button"

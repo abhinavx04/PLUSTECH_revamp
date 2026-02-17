@@ -12,6 +12,7 @@ const AnnualReturnManager: React.FC = () => {
   const [pdfPreview, setPdfPreview] = useState<string | null>(null);
   const [selectedPDFFile, setSelectedPDFFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   
   const [formData, setFormData] = useState({
     financialYear: '',
@@ -262,6 +263,10 @@ const AnnualReturnManager: React.FC = () => {
     setPdfPreview(returnData.documentUrl);
     setSelectedPDFFile(null);
     setShowForm(true);
+    // Scroll to form after state updates
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -359,7 +364,7 @@ const AnnualReturnManager: React.FC = () => {
 
       {/* Annual Return Form */}
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <h3 className="text-xl font-semibold text-white mb-4">
             {editingReturn ? 'Edit Annual Return' : 'Create New Annual Return'}
           </h3>

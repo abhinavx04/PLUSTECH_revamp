@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Download, Plus } from 'lucide-react';
 import { useCareersFirestore } from '../hooks/useCareersFirestore';
 import { validateJDFile } from '../lib/careersUtils';
@@ -63,6 +63,7 @@ const CareersManager: React.FC = () => {
   const [newJobSpecificQuestion, setNewJobSpecificQuestion] = useState<CareerQuestion>(newQuestion('job'));
   const [localBaseQuestions, setLocalBaseQuestions] = useState<CareerQuestion[]>(baseQuestions);
   const [jdUploadFile, setJdUploadFile] = useState<File | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const [jobForm, setJobForm] = useState<CreateCareerJobData>({
     title: '',
@@ -152,6 +153,10 @@ const CareersManager: React.FC = () => {
     setShowForm(true);
     setJobFormStep(1);
     setActionError(null);
+    // Scroll to form after state updates
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const updateListItem = (field: 'responsibilities' | 'mustHave' | 'niceToHave' | 'successMetrics', index: number, value: string) => {
@@ -372,7 +377,7 @@ const CareersManager: React.FC = () => {
           </div>
 
           {showForm && (
-            <div className="bg-white/10 rounded-xl border border-white/20 p-5 space-y-5">
+            <div ref={formRef} className="bg-white/10 rounded-xl border border-white/20 p-5 space-y-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-semibold text-white">{editingJobId ? 'Edit Job' : 'Create Job'}</h3>
                 <div className="text-sm text-gray-300">Step {jobFormStep} of 4</div>

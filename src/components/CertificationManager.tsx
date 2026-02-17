@@ -55,6 +55,7 @@ const CertificationManager: React.FC = () => {
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -164,6 +165,10 @@ const CertificationManager: React.FC = () => {
     setImagePreview(item.imageUrl || null);
     setSelectedImageFile(null);
     setShowForm(true);
+    // Scroll to form after state updates
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -203,7 +208,7 @@ const CertificationManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {editingId ? 'Edit Certification' : 'Create Certification'}
@@ -345,11 +350,11 @@ const CertificationManager: React.FC = () => {
               <label className="block text-white text-sm font-medium mb-2">Certification Image / Badge</label>
 
               {(imagePreview || formData.imageUrl) && (
-                <div className="mb-3 relative">
+                <div className="mb-3 relative bg-white/5 rounded-lg border border-white/20 p-3 flex items-center justify-center min-h-[200px] max-h-[400px] overflow-hidden">
                   <img
                     src={imagePreview || formData.imageUrl}
                     alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg border border-white/20"
+                    className="max-w-full max-h-full object-contain rounded-lg"
                   />
                   <button
                     type="button"

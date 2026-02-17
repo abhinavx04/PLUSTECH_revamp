@@ -48,6 +48,7 @@ const ProjectsManager: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<ProjectFormState>(defaultFormState);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -237,6 +238,10 @@ const ProjectsManager: React.FC = () => {
     setImagePreviews(imageUrls);
     setSelectedImageFiles([]);
     setShowForm(true);
+    // Scroll to form after state updates
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -289,7 +294,7 @@ const ProjectsManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {editingId ? 'Edit Project' : 'Create Project'}
@@ -466,11 +471,11 @@ const ProjectsManager: React.FC = () => {
                     <p className="text-xs text-gray-300 mb-2">Existing Images:</p>
                     <div className="flex gap-2 overflow-x-auto pb-2">
                       {formData.imageUrls.split(',').filter(Boolean).map((url, index) => (
-                        <div key={index} className="relative flex-shrink-0">
+                        <div key={index} className="relative flex-shrink-0 bg-white/5 rounded-lg border border-white/20 p-2 flex items-center justify-center w-24 h-24 overflow-hidden">
                           <img
                             src={url.trim()}
                             alt={`Preview ${index + 1}`}
-                            className="w-24 h-24 object-cover rounded-lg border border-white/20"
+                            className="max-w-full max-h-full object-contain rounded-lg"
                           />
                           <button
                             type="button"
@@ -491,11 +496,11 @@ const ProjectsManager: React.FC = () => {
                     <p className="text-xs text-gray-300 mb-2">New Images to Upload:</p>
                     <div className="flex gap-2 overflow-x-auto pb-2">
                       {selectedImageFiles.map((file, index) => (
-                        <div key={index} className="relative flex-shrink-0">
+                        <div key={index} className="relative flex-shrink-0 bg-white/5 rounded-lg border border-white/20 p-2 flex items-center justify-center w-24 h-24 overflow-hidden">
                           <img
                             src={imagePreviews[index] || URL.createObjectURL(file)}
                             alt={`Preview ${index + 1}`}
-                            className="w-24 h-24 object-cover rounded-lg border border-white/20"
+                            className="max-w-full max-h-full object-contain rounded-lg"
                           />
                           <button
                             type="button"

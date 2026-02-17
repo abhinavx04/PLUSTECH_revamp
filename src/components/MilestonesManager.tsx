@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   type Milestone,
   type MilestoneCategory,
@@ -48,6 +48,7 @@ const MilestonesManager: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormState>(defaultFormState);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const yearOptions = useMemo(buildYearOptions, []);
 
@@ -128,6 +129,10 @@ const MilestonesManager: React.FC = () => {
     });
     setShowForm(true);
     setFormError(null);
+    // Scroll to form after state updates
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -178,7 +183,7 @@ const MilestonesManager: React.FC = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold text-white">
               {editingId ? 'Edit Milestone' : 'Create Milestone'}
