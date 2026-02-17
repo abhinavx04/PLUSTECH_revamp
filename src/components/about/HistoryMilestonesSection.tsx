@@ -20,7 +20,7 @@ const hardcodedMilestones: Milestone[] = [
   {
     id: 'company-founded',
     year: '2006',
-    title: 'Company Founded',
+    title: 'Company Incorporated',
     description: 'Plustech was established by a team of engineer-entrepreneurs with wide experience of more than 2 decades in the Surface Finishing industry.',
     category: 'founding',
     icon: '',
