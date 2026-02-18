@@ -201,15 +201,10 @@ const IndustrySectionMobile: React.FC<{
           className="px-5 py-5"
           style={{ y: textY, opacity: textOpacity }}
         >
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-4xl font-black text-[#00aeef]/20 leading-none">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <motion.div
-              className="h-[3px] rounded-full bg-[#00aeef]"
-              style={{ width: lineWidth }}
-            />
-          </div>
+          <motion.div
+            className="h-[3px] rounded-full bg-[#00aeef] mb-3"
+            style={{ width: lineWidth }}
+          />
           <h2 className="text-xl font-bold text-gray-900 leading-snug">
             {label}
           </h2>
