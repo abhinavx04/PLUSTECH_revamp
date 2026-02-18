@@ -100,8 +100,12 @@ const capabilitiesData: CapabilityItem[] = [
       'Machine learning optimization'
     ],
     images: [
-      '/digitization-smartfactory/1.webp',
-      '/digitization-smartfactory/2.webp'
+      '/digitization-smartfactory/Digitisation (IOT)-1.jpg',
+      '/digitization-smartfactory/Digitisation (IOT) -2.jpg',
+      '/digitization-smartfactory/Digitisation (IOT)-3.jpg',
+      '/digitization-smartfactory/Digitisation (IOT) -4.jpg',
+      '/digitization-smartfactory/Digitisation (IOT) - 5.jpg',
+      '/digitization-smartfactory/Digitisation (IOT) - 6.jpg'
     ],
     bgColor: 'bg-gradient-to-b from-blue-50 via-blue-100 to-white',
     textColor: 'text-black',
@@ -397,8 +401,8 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                 ))}
               </div>
             ) : (
-              // Large 2-column grid for digitization (2 images)
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              // 3-column grid for digitization (6 images, 2 rows of 3)
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {capability.images.map((image, imageIndex) => (
                   <div
                     key={imageIndex}

@@ -35,7 +35,7 @@ const services = [
     title: 'Productivity Improvement',
     description:
       'Delivering smarter throughput with automation, modernization, and process tuning without compromising quality.',
-    image: '/digitization-smartfactory/2.webp',
+    image: '/digitization-smartfactory/Digitisation (IOT) -2.jpg',
     bullets: [
       'Process and capacity enhancement programs',
       'Modernisation with low-downtime execution',
