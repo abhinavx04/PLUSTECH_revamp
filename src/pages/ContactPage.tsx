@@ -142,9 +142,9 @@ const ContactPage: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Call us – head office numbers */}
+                  {/* Call us – Head Office numbers */}
                   <div className="space-y-1 text-sm md:text-base">
-                    <div className="font-semibold">Call us (head office – Pune)</div>
+                    <div className="font-semibold">Call us (Head Office – Pune)</div>
                     <p className="text-slate-700">
                       Mon–Fri, business hours
                       <br />
