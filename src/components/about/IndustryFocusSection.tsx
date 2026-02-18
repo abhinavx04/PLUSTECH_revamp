@@ -165,7 +165,7 @@ const IndustrySectionMobile: React.FC<{
   label: string;
   image: string;
   index: number;
-}> = ({ label, image, index }) => {
+}> = ({ label, image }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
