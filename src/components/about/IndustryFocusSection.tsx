@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const industries = [
@@ -24,30 +24,30 @@ const IndustrySection: React.FC<{
     offset: ['start end', 'end start'],
   });
 
-  // Phase 1: Elements slide in (0.1 → 0.35) — reduced distances for mobile
+  // Phase 1: Elements slide in (0.1 → 0.35)
   const headingX = useTransform(
     scrollYProgress,
     [0.1, 0.35],
-    [isEven ? -80 : 80, 0]
+    [isEven ? -250 : 250, 0]
   );
   const headingOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1]);
 
   const imageX = useTransform(
     scrollYProgress,
     [0.12, 0.37],
-    [isEven ? 100 : -100, 0]
+    [isEven ? 300 : -300, 0]
   );
   const imageOpacity = useTransform(scrollYProgress, [0.12, 0.32], [0, 1]);
 
   // Phase 2: Image expands to fill (0.35 → 0.55)
   const imageScale = useTransform(scrollYProgress, [0.35, 0.55], [1, 1.15]);
-  const imageWidth = useTransform(scrollYProgress, [0.35, 0.55], ['80%', '100%']);
+  const imageWidth = useTransform(scrollYProgress, [0.35, 0.55], ['55%', '100%']);
   const imageHeight = useTransform(scrollYProgress, [0.35, 0.55], ['70%', '100%']);
   const imageBorderRadius = useTransform(scrollYProgress, [0.35, 0.55], [20, 0]);
   const imageLeft = useTransform(
     scrollYProgress,
     [0.35, 0.55],
-    isEven ? ['10%', '0%'] : ['0%', '0%']
+    isEven ? ['45%', '0%'] : ['0%', '0%']
   );
   const imageRight = useTransform(
     scrollYProgress,
@@ -81,11 +81,11 @@ const IndustrySection: React.FC<{
 
   const writeUpOpacity = useTransform(scrollYProgress, [0.4, 0.55], [0, 0.7]);
 
-  const sectionHeightClass = isLast ? 'h-[calc(100vh-64px)] md:h-[calc(100vh-80px)]' : 'h-[100vh] md:h-[120vh]';
+  const sectionHeightClass = isLast ? 'h-[calc(100vh-80px)]' : 'h-[120vh]';
 
   return (
     <div ref={sectionRef} className={`${sectionHeightClass} relative`}>
-      <div className="sticky top-[64px] md:top-[80px] h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] w-full overflow-hidden">
+      <div className="sticky top-[80px] h-[calc(100vh-80px)] w-full overflow-hidden">
         {/* Image container — starts on one side, expands to fill */}
         <motion.div
           className="absolute overflow-hidden"
@@ -104,7 +104,7 @@ const IndustrySection: React.FC<{
           <motion.img
             src={image}
             alt={label}
-            className="w-full h-full object-contain sm:object-cover"
+            className="w-full h-full object-cover"
             style={{ scale: imageScale }}
           />
           <motion.div
@@ -116,10 +116,10 @@ const IndustrySection: React.FC<{
         {/* Heading — centered vertically, alternates horizontal side */}
         <div className="absolute inset-0 flex items-center">
           <motion.div
-            className={`relative z-10 max-w-[85%] sm:max-w-md md:max-w-xl px-4 sm:px-8 md:px-16 ${
+            className={`relative z-10 max-w-xl px-8 md:px-16 ${
               isEven
-                ? 'mr-auto ml-[3%] sm:ml-[5%] md:ml-[8%] text-left'
-                : 'ml-auto mr-[3%] sm:mr-[5%] md:mr-[8%] text-right'
+                ? 'mr-auto ml-[5%] md:ml-[8%] text-left'
+                : 'ml-auto mr-[5%] md:mr-[8%] text-right'
             }`}
             style={{
               x: headingX,
@@ -127,7 +127,7 @@ const IndustrySection: React.FC<{
             }}
           >
             <motion.h2
-              className="text-xl sm:text-2xl md:text-5xl lg:text-6xl font-bold leading-tight"
+              className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight"
               style={{
                 color: headingColor,
                 textShadow: headingTextShadow,
@@ -137,7 +137,7 @@ const IndustrySection: React.FC<{
             </motion.h2>
 
             <motion.div
-              className={`h-1 mt-3 md:mt-4 rounded-full ${isEven ? 'mr-auto' : 'ml-auto'}`}
+              className={`h-1 mt-4 rounded-full ${isEven ? 'mr-auto' : 'ml-auto'}`}
               style={{
                 width: lineWidth,
                 opacity: lineOpacity,
@@ -146,7 +146,7 @@ const IndustrySection: React.FC<{
             />
 
             <motion.p
-              className="mt-3 md:mt-4 text-base md:text-xl leading-relaxed"
+              className="mt-4 text-lg md:text-xl leading-relaxed"
               style={{
                 color: headingColor,
                 opacity: writeUpOpacity,
@@ -157,6 +157,64 @@ const IndustrySection: React.FC<{
           </motion.div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const IndustrySectionMobile: React.FC<{
+  label: string;
+  image: string;
+  index: number;
+}> = ({ label, image, index }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const imageY = useTransform(scrollYProgress, [0.05, 0.3], [60, 0]);
+  const imageOpacity = useTransform(scrollYProgress, [0.05, 0.25], [0, 1]);
+  const imageScale = useTransform(scrollYProgress, [0.05, 0.3], [0.95, 1]);
+
+  const textY = useTransform(scrollYProgress, [0.15, 0.35], [30, 0]);
+  const textOpacity = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
+
+  const lineWidth = useTransform(scrollYProgress, [0.25, 0.45], ['0px', '60px']);
+
+  return (
+    <div ref={cardRef} className="px-4 py-6">
+      <motion.div
+        className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-white"
+        style={{ y: imageY, opacity: imageOpacity, scale: imageScale }}
+      >
+        <div className="relative w-full bg-slate-50">
+          <img
+            src={image}
+            alt={label}
+            className="w-full h-auto object-contain"
+            loading="lazy"
+          />
+        </div>
+
+        <motion.div
+          className="px-5 py-5"
+          style={{ y: textY, opacity: textOpacity }}
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-4xl font-black text-[#00aeef]/20 leading-none">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <motion.div
+              className="h-[3px] rounded-full bg-[#00aeef]"
+              style={{ width: lineWidth }}
+            />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 leading-snug">
+            {label}
+          </h2>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
@@ -174,14 +232,24 @@ const IndustryFocusSection: React.FC = () => {
         </p>
       </div>
 
-      {/* Industry sections */}
+      {/* Industry sections — desktop: parallax, mobile: reveal cards */}
       {industries.map((industry, index) => (
-        <IndustrySection
-          key={industry.label}
-          label={industry.label}
-          image={industry.image}
-          index={index}
-        />
+        <React.Fragment key={industry.label}>
+          <div className="hidden md:block">
+            <IndustrySection
+              label={industry.label}
+              image={industry.image}
+              index={index}
+            />
+          </div>
+          <div className="md:hidden">
+            <IndustrySectionMobile
+              label={industry.label}
+              image={industry.image}
+              index={index}
+            />
+          </div>
+        </React.Fragment>
       ))}
     </div>
   );
