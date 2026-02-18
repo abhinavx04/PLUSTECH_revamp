@@ -234,7 +234,7 @@ const CorporateBeliefsSection: React.FC = () => {
         <blockquote 
           className="text-2xl text-gray-900 max-w-4xl mx-auto leading-relaxed italic text-justify"
         >
-          "Our associates take pride and comfort in their engagement with Plustech. 
+          "Our customers/associates take pride and comfort in their engagement with Plustech. 
           We believe in not just meeting customer expectations but exceeding them."
         </blockquote>
       </motion.div>
