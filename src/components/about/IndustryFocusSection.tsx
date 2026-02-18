@@ -47,7 +47,7 @@ const IndustrySection: React.FC<{
   const imageLeft = useTransform(
     scrollYProgress,
     [0.35, 0.55],
-    isEven ? ['45%', '0%'] : ['0%', '0%']
+    isEven ? ['10%', '0%'] : ['0%', '0%']
   );
   const imageRight = useTransform(
     scrollYProgress,
@@ -104,7 +104,7 @@ const IndustrySection: React.FC<{
           <motion.img
             src={image}
             alt={label}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain sm:object-cover"
             style={{ scale: imageScale }}
           />
           <motion.div
