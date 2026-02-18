@@ -52,13 +52,26 @@ const CSRActivitiesSection: React.FC = () => {
   );
 
   const filteredData = useMemo(
-    () =>
-      data.filter((activity) => {
+    () => {
+      const filtered = data.filter((activity) => {
         const categoryMatch =
           selectedCategory === 'all' ? true : activity.category === selectedCategory;
         const yearMatch = selectedYear === 'all' ? true : activity.year === selectedYear;
         return categoryMatch && yearMatch;
-      }),
+      });
+
+      // Sort so latest activities appear first.
+      // Primary sort: year (descending), fallback: createdAt (descending).
+      return [...filtered].sort((a, b) => {
+        if (a.year && b.year && a.year !== b.year) {
+          return b.year.localeCompare(a.year);
+        }
+
+        const aTime = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+        const bTime = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+        return bTime - aTime;
+      });
+    },
     [data, selectedCategory, selectedYear]
   );
 
