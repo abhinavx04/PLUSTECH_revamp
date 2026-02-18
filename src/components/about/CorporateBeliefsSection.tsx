@@ -71,7 +71,7 @@ const beliefsData: BeliefCard[] = [
   {
     id: 'future-plans',
     title: 'Future Plans',
-    description: 'Plustech is steering geographical expansion drive to serve global industry with greener technologies and best engineering practices. We are coming up with a Technical Center and elegant office in a new business district.',
+    description: 'Plustech is steering geographical expansion drive to serve the industry with greener technologies and best engineering practices. We are coming up with a Technical Center and elegant office in a new business district.',
     icon: 'long-term',
     color: 'from-[#005a7a] to-[#00aeef]',
     stats: ['Global Expansion', 'Technical Center', 'Green Technologies']
