@@ -38,8 +38,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       className={`relative overflow-hidden ${className}`}
       style={{ 
         aspectRatio: width && height ? `${width}/${height}` : undefined,
-        width: width ? `${width}px` : undefined,
-        height: height ? `${height}px` : undefined,
+        maxWidth: width ? `${width}px` : undefined,
       }}
     >
       {!isLoaded && !hasError && (
