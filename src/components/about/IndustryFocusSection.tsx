@@ -17,6 +17,7 @@ const IndustrySection: React.FC<{
 }> = ({ label, image, index }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isEven = index % 2 === 0;
+  const isLast = index === industries.length - 1;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -55,7 +56,7 @@ const IndustrySection: React.FC<{
   );
 
   // Overlay fades in during merge
-  const overlayOpacity = useTransform(scrollYProgress, [0.35, 0.55], [0.1, 0.6]);
+  const overlayOpacity = useTransform(scrollYProgress, [0.35, 0.55], [0.05, 0.5]);
 
   // Heading transitions: side-aligned → centered as image fills
   const headingColor = useTransform(
@@ -80,8 +81,10 @@ const IndustrySection: React.FC<{
 
   const writeUpOpacity = useTransform(scrollYProgress, [0.4, 0.55], [0, 0.7]);
 
+  const sectionHeightClass = isLast ? 'h-[calc(100vh-80px)]' : 'h-[120vh]';
+
   return (
-    <div ref={sectionRef} className="h-[120vh] relative">
+    <div ref={sectionRef} className={`${sectionHeightClass} relative`}>
       <div className="sticky top-[80px] h-[calc(100vh-80px)] w-full overflow-hidden">
         {/* Image container — starts on one side, expands to fill */}
         <motion.div
@@ -105,7 +108,7 @@ const IndustrySection: React.FC<{
             style={{ scale: imageScale }}
           />
           <motion.div
-            className="absolute inset-0 bg-[#00aeef]"
+            className="absolute inset-0 bg-gradient-to-b from-[#1a2a3a]/80 via-[#36454F]/60 to-[#1a2a3a]/80"
             style={{ opacity: overlayOpacity }}
           />
         </motion.div>
@@ -162,7 +165,7 @@ const IndustryFocusSection: React.FC = () => {
   return (
     <div className="bg-white">
       {/* Compact intro header */}
-      <div className="pt-10 pb-16 flex flex-col items-center text-center px-6">
+      <div className="pt-10 pb-10 flex flex-col items-center text-center px-6">
         <h1 className="text-4xl md:text-6xl font-bold text-black mb-4">
           Industry Focus
         </h1>
