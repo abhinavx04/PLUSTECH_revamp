@@ -3,13 +3,8 @@ import IndustryFocusSection from '../../components/about/IndustryFocusSection';
 
 const IndustryFocusPage: React.FC = () => {
   return (
-    <div className="relative">
-      <div className="absolute inset-0" style={{ backgroundImage: 'url(/aboutus/bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }} />
-      <div className="relative z-10">
-        <div className="max-w-7xl mx-auto px-6 md:px-8 py-10">
-          <IndustryFocusSection />
-        </div>
-      </div>
+    <div className="-mx-6 md:-mx-12 lg:-mx-16 -mt-8 -mb-16 w-[calc(100%+3rem)] md:w-[calc(100%+6rem)] lg:w-[calc(100%+8rem)]">
+      <IndustryFocusSection />
     </div>
   );
 };
