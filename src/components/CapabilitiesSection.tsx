@@ -445,63 +445,57 @@ const RoboticImageCarousel: React.FC<{ images: string[]; onImageClick: (index: n
   const scrollToImage = (index: number) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    
-    const imageWidth = 450; // w-[450px] on mobile
-    const gap = 24; // gap-6 = 24px
-    const scrollPosition = index * (imageWidth + gap);
-    
+    const child = scroller.children[index] as HTMLElement;
+    if (!child) return;
     scroller.scrollTo({
-      left: scrollPosition,
+      left: child.offsetLeft - scroller.offsetLeft,
       behavior: 'smooth'
     });
     setCurrentIndex(index);
   };
 
-  const nextImage = () => {
-    const nextIndex = (currentIndex + 1) % images.length;
-    scrollToImage(nextIndex);
+  const nextImage = () => scrollToImage((currentIndex + 1) % images.length);
+  const prevImage = () => scrollToImage(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
+
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
   };
 
-  const prevImage = () => {
-    const prevIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
-    scrollToImage(prevIndex);
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (Math.abs(diff) > minSwipeDistance) {
+      if (diff > 0) {
+        nextImage();
+      } else {
+        prevImage();
+      }
+    }
   };
 
   return (
     <div className="relative">
-      {/* Navigation Buttons */}
-      <button
-        onClick={prevImage}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/70 hover:bg-black/90 text-white rounded-full p-3 transition-all duration-200"
-        aria-label="Previous image"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      
-      <button
-        onClick={nextImage}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/70 hover:bg-black/90 text-white rounded-full p-3 transition-all duration-200"
-        aria-label="Next image"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-
       {/* Carousel Container */}
       <div
         ref={scrollerRef}
         className="flex overflow-hidden gap-6"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
-        <style>{`.hide-scrollbar::-webkit-scrollbar{display:none}`}</style>
         {images.map((image, i) => (
           <div key={i} className="flex-none w-[450px] md:w-[550px]">
-            <div className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer" onClick={() => onImageClick(i)}>
-              <img 
-                src={image} 
+            <div
+              className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer"
+              onClick={() => onImageClick(i)}
+            >
+              <img
+                src={image}
                 alt={`Robotic application ${i + 1}`}
                 className="w-full h-[300px] md:h-[350px] object-contain bg-slate-50 group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
@@ -510,6 +504,44 @@ const RoboticImageCarousel: React.FC<{ images: string[]; onImageClick: (index: n
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Navigation: arrows + dot indicators */}
+      <div className="flex items-center justify-center gap-4 mt-6">
+        <button
+          onClick={prevImage}
+          className="p-2 rounded-full border border-slate-300 bg-white hover:bg-slate-100 text-slate-600 hover:text-black transition-all duration-200 shadow-sm"
+          aria-label="Previous image"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <div className="flex items-center gap-2">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToImage(i)}
+              className={`rounded-full transition-all duration-300 ${
+                i === currentIndex
+                  ? 'w-8 h-2.5 bg-[#00aeef]'
+                  : 'w-2.5 h-2.5 bg-slate-300 hover:bg-slate-400'
+              }`}
+              aria-label={`Go to image ${i + 1}`}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={nextImage}
+          className="p-2 rounded-full border border-slate-300 bg-white hover:bg-slate-100 text-slate-600 hover:text-black transition-all duration-200 shadow-sm"
+          aria-label="Next image"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </div>
   );
