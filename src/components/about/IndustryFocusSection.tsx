@@ -1,12 +1,12 @@
 import React from 'react';
 
-const items = [
-  'Automotive / Commercial Vehicles',
-  '2-Wheelers & 3-Wheeler Plant Chassis and Parts',
-  'Automotive Plastics',
-  'Farm and Construction Machinery',
-  'Consumer Durables',
-  'General Industry',
+const industries = [
+  { label: 'Automotive / Commercial Vehicles', image: '/industry focus/Automotive_Commercial.png' },
+  { label: '2-Wheelers & 3-Wheeler Plant Chassis and Parts', image: '/industry focus/2-3_wheeler.png' },
+  { label: 'Automotive Plastics', image: '/industry focus/Automotive_parts.png' },
+  { label: 'Farm and Construction Machinery', image: '/industry focus/Farm_construction.png' },
+  { label: 'Consumer Durables', image: '/industry focus/consumer_durables.png' },
+  { label: 'General Industry', image: '/industry focus/General_industry.png' },
 ];
 
 const IndustryFocusSection: React.FC = () => {
@@ -19,18 +19,27 @@ const IndustryFocusSection: React.FC = () => {
         </p>
       </div>
 
-      <div className="rounded-2xl bg-white shadow-lg border border-gray-100 p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {items.map((item) => (
-            <div
-              key={item}
-              className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50/70 px-4 py-3 transition-shadow hover:shadow-md"
-            >
-              <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[#00aeef]" />
-              <span className="text-lg text-gray-900 leading-snug">{item}</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {industries.map((industry) => (
+          <div
+            key={industry.label}
+            className="group relative h-[220px] md:h-[250px] rounded-2xl overflow-hidden shadow-lg cursor-pointer"
+          >
+            <img
+              src={industry.image}
+              alt={industry.label}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+            />
+
+            <div className="absolute inset-0 bg-[#00aeef]/65 transition-all duration-300 group-hover:bg-[#00aeef]/40" />
+
+            <div className="relative z-10 flex items-center justify-center h-full px-6">
+              <h3 className="text-white text-xl md:text-2xl font-bold text-center leading-snug drop-shadow-md">
+                {industry.label}
+              </h3>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
