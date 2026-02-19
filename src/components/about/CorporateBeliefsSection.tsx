@@ -110,6 +110,45 @@ const CorporateBeliefsSection: React.FC = () => {
         </motion.p>
       </motion.div>
 
+      {/* Our Values — full-width dark environment zone */}
+      <div className="-mx-6 md:-mx-8 mb-20">
+        <div className="relative overflow-hidden">
+          {/* Dark environment background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#0a1628]" />
+
+          {/* Subtle decorative glow effects */}
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[300px] bg-[#00aeef]/8 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-[400px] h-[250px] bg-[#00aeef]/6 rounded-full blur-[100px] pointer-events-none" />
+
+          {/* Top edge gradient (light → dark) */}
+          <div className="h-16 bg-gradient-to-b from-transparent to-[#0a1628] relative z-10" style={{ marginTop: '-1px' }} />
+
+          {/* Content */}
+          <motion.div
+            className="relative z-10 px-6 md:px-8 py-8 md:py-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <div className="max-w-4xl mx-auto">
+              <img
+                src="/corporate/corporate-believes.png"
+                alt="Our Values — Customer-Centric, Integrity, Accountability, Innovation, Collaboration, Transparency, Gratitude"
+                className="w-full h-auto block rounded-xl"
+                loading="eager"
+              />
+            </div>
+
+            <p className="text-center text-white/50 text-sm tracking-widest uppercase mt-8 font-medium">
+              The principles that guide everything we do
+            </p>
+          </motion.div>
+
+          {/* Bottom edge gradient (dark → light) */}
+          <div className="h-16 bg-gradient-to-t from-transparent to-[#0a1628] relative z-10" style={{ marginBottom: '-1px' }} />
+        </div>
+      </div>
+
       {/* Beliefs Grid */}
       <div 
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
