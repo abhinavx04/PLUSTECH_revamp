@@ -167,7 +167,7 @@ const AnnualReturnsSection: React.FC = () => {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto text-center py-16 space-y-4">
-        <h2 className="text-3xl font-bold text-black">Annual Return</h2>
+        <h2 className="text-3xl font-bold text-black">Annual Returns</h2>
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-6 shadow-sm">
           <p className="font-semibold mb-2">Unable to load Annual Returns</p>
           <p className="text-sm">
@@ -194,7 +194,7 @@ const AnnualReturnsSection: React.FC = () => {
     return (
       <div className="max-w-7xl mx-auto text-center py-16">
         <h2 className="text-4xl md:text-5xl font-bold font-heading text-black mb-6">
-          Annual Return
+          Annual Returns
         </h2>
         {hasDrafts ? (
           <div className="space-y-3">
@@ -247,7 +247,7 @@ const AnnualReturnsSection: React.FC = () => {
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Annual Return
+          Annual Returns
         </motion.h2>
         <motion.p 
           className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
