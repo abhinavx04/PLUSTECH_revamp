@@ -86,11 +86,7 @@ const ProjectsPage: React.FC = () => {
 
           <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
             <div className="space-y-5">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/70 border border-black/5 shadow-sm backdrop-blur">
-                <span className="w-2 h-2 rounded-full bg-[#00aeef]" />
-                <span className="text-sm font-semibold text-[#0f172a]">Projects</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight whitespace-nowrap">
                 Recent Projects
               </h1>
               <p className="text-lg md:text-xl text-slate-700 max-w-3xl">

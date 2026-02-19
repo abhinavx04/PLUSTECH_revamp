@@ -48,7 +48,7 @@ const services = [
 ];
 
 const pillars3C = ['Customer-centricity', 'Cost Effectiveness', 'Competent Engineering'];
-const pillars3P = ['Productivity', 'Performance', 'Quality'];
+const pillars3P = ['Productivity', 'Performance', 'Product Quality'];
 
 const scopeAreas = [
   {
@@ -209,7 +209,7 @@ const ServicesPage: React.FC = () => {
           {/* ── Hero ── */}
           <section
             ref={heroRef}
-            className="relative isolate overflow-hidden px-6 md:px-12 lg:px-16 pt-16 pb-12 md:pt-20 md:pb-16"
+            className="relative isolate overflow-hidden px-6 md:px-12 lg:px-16 pt-16 pb-10 md:pt-20 md:pb-14"
           >
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute -top-20 -left-20 w-72 h-72 bg-[#00aeef]/12 blur-3xl rounded-full" />
@@ -217,34 +217,23 @@ const ServicesPage: React.FC = () => {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,174,239,0.06),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(8,47,73,0.06),transparent_40%)]" />
             </div>
 
-            <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-14 items-center">
-              {/* Left — headline + CTAs */}
-              <div className="space-y-5">
-                <motion.p
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={heroInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5 }}
-                  className="text-sm uppercase tracking-[0.22em] text-[#00aeef] font-semibold"
-                >
-                  Our Services
-                </motion.p>
-
+            <div className="max-w-6xl mx-auto relative z-10 space-y-8">
+              {/* Heading block */}
+              <div className="max-w-3xl space-y-4">
                 <motion.h1
                   initial={{ opacity: 0, y: 25 }}
                   animate={heroInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: 0.1 }}
-                  className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight"
+                  className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight"
                 >
-                  Nurture. Nourish.{' '}
-                  <br />
-                  <span className="text-[#00aeef]">Sustain Performance.</span>
+                  Our Services
                 </motion.h1>
 
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={heroInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed"
+                  className="text-base md:text-lg text-slate-600 leading-relaxed"
                 >
                   Long-term paintshop efficiency through high-quality, customer-friendly
                   service — delivered by specialists across mechanical, electrical, and
@@ -272,98 +261,95 @@ const ServicesPage: React.FC = () => {
                 </motion.div>
               </div>
 
-              {/* Right — 3C → 3P card */}
+              {/* 3C → 3P card — full width, light theme, horizontal layout */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 30 }}
-                animate={heroInView ? { opacity: 1, scale: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={heroInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 className="relative"
               >
-                <div className="absolute -inset-3 bg-[#00aeef]/20 rounded-[30px] blur-2xl" />
-                <div className="absolute -inset-1 bg-gradient-to-br from-[#00aeef]/40 via-[#00aeef]/20 to-blue-900/30 rounded-[26px] blur-sm" />
-                <div className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#0f2137] to-[#0a1a2e] shadow-[0_25px_70px_rgba(0,0,0,0.35)]">
-                  {/* Ambient glow effects inside card */}
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-1/4 w-40 h-40 bg-[#00aeef]/15 blur-3xl rounded-full" />
-                    <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,174,239,0.08),transparent_60%)]" />
-                  </div>
+                <div className="absolute -inset-4 bg-gradient-to-br from-[#00aeef]/10 via-white to-blue-200/20 rounded-[28px] blur-xl" />
+                <div className="relative rounded-[24px] overflow-hidden bg-gradient-to-br from-white via-[#f0f9ff] to-[#e0f2fe] border border-white/80 shadow-[0_20px_60px_rgba(8,47,73,0.09)]">
+                  <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(0,174,239,0.06),transparent_50%),radial-gradient(circle_at_80%_80%,rgba(8,47,73,0.04),transparent_50%)]" />
 
                   <div className="relative p-7 md:p-9">
-                    {/* Header */}
-                    <div className="flex items-center gap-3 mb-6">
+                    {/* Card header */}
+                    <div className="flex items-center gap-3 mb-7">
                       <div className="h-8 w-1 rounded-full bg-[#00aeef]" />
                       <div>
-                        <div className="text-[11px] uppercase tracking-[0.2em] text-[#00aeef]/70 font-semibold">
+                        <div className="text-[11px] uppercase tracking-[0.2em] text-[#00aeef] font-semibold">
                           Our Philosophy
                         </div>
-                        <div className="text-xl md:text-2xl font-extrabold text-white leading-snug mt-0.5">
+                        <div className="text-xl md:text-2xl font-extrabold text-[#0f172a] leading-snug mt-0.5">
                           3C&apos;s to deliver 3P&apos;s
                         </div>
                       </div>
                     </div>
 
-                    {/* 3C row */}
-                    <div className="mb-5">
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-slate-400 font-semibold mb-3">
-                        What drives us
-                      </div>
-                      <div className="space-y-2">
-                        {pillars3C.map((c, i) => (
-                          <motion.div
-                            key={c}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={heroInView ? { opacity: 1, x: 0 } : {}}
-                            transition={{ duration: 0.4, delay: 0.45 + i * 0.1 }}
-                            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.08] backdrop-blur-sm"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-[#00aeef]/15 flex items-center justify-center flex-shrink-0">
-                              <span className="text-[#00aeef] font-bold text-sm">C{i + 1}</span>
-                            </div>
-                            <span className="text-sm font-semibold text-white/90">{c}</span>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Animated flow divider */}
-                    <div className="flex items-center gap-3 my-4">
-                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#00aeef]/40 to-transparent" />
-                      <motion.div
-                        animate={{ y: [0, 3, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                        className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00aeef] to-[#0088cc] flex items-center justify-center shadow-lg shadow-[#00aeef]/40 ring-2 ring-[#00aeef]/20 ring-offset-2 ring-offset-[#0f2137]"
-                      >
-                        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-                        </svg>
-                      </motion.div>
-                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#00aeef]/40 to-transparent" />
-                    </div>
-
-                    {/* 3P row */}
-                    <div className="mt-5">
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-slate-400 font-semibold mb-3">
-                        What we deliver
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        {pillars3P.map((p, i) => (
-                          <motion.div
-                            key={p}
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={heroInView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 0.4, delay: 0.75 + i * 0.1 }}
-                            className="relative group text-center px-3 py-4 rounded-xl bg-gradient-to-b from-[#00aeef]/20 to-[#00aeef]/5 border border-[#00aeef]/25 overflow-hidden"
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-b from-[#00aeef]/30 to-[#00aeef]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            <div className="relative">
-                              <div className="text-2xl md:text-3xl font-extrabold text-[#00aeef] mb-1">
-                                P{i + 1}
+                    {/* Horizontal 3C → arrow → 3P */}
+                    <div className="grid md:grid-cols-[1fr_auto_1fr] gap-6 md:gap-8 items-start">
+                      {/* 3C column */}
+                      <div>
+                        <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500 font-semibold mb-3">
+                          What drives us
+                        </div>
+                        <div className="space-y-2">
+                          {pillars3C.map((c, i) => (
+                            <motion.div
+                              key={c}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={heroInView ? { opacity: 1, x: 0 } : {}}
+                              transition={{ duration: 0.4, delay: 0.45 + i * 0.1 }}
+                              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-slate-200 shadow-sm"
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-[#00aeef]/10 flex items-center justify-center flex-shrink-0">
+                                <span className="text-[#00aeef] font-bold text-sm">C{i + 1}</span>
                               </div>
-                              <div className="text-xs sm:text-sm font-bold text-white/90">{p}</div>
-                            </div>
-                          </motion.div>
-                        ))}
+                              <span className="text-sm font-semibold text-[#0f172a]">{c}</span>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Arrow divider — right arrow on desktop, down arrow on mobile */}
+                      <div className="flex md:flex-col items-center gap-3 justify-center self-center">
+                        <div className="flex-1 h-px md:h-auto md:w-px bg-gradient-to-r md:bg-gradient-to-b from-transparent via-[#00aeef]/30 to-transparent md:min-h-[60px]" />
+                        <motion.div
+                          animate={{ x: [0, 3, 0] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                          className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00aeef] to-[#0088cc] flex items-center justify-center shadow-lg shadow-[#00aeef]/30 ring-2 ring-[#00aeef]/15 ring-offset-2 ring-offset-[#f0f9ff] flex-shrink-0"
+                        >
+                          <svg className="w-5 h-5 text-white hidden md:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                          </svg>
+                          <svg className="w-5 h-5 text-white md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+                          </svg>
+                        </motion.div>
+                        <div className="flex-1 h-px md:h-auto md:w-px bg-gradient-to-r md:bg-gradient-to-b from-transparent via-[#00aeef]/30 to-transparent md:min-h-[60px]" />
+                      </div>
+
+                      {/* 3P column */}
+                      <div>
+                        <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500 font-semibold mb-3">
+                          What we deliver
+                        </div>
+                        <div className="space-y-2">
+                          {pillars3P.map((p, i) => (
+                            <motion.div
+                              key={p}
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={heroInView ? { opacity: 1, x: 0 } : {}}
+                              transition={{ duration: 0.4, delay: 0.65 + i * 0.1 }}
+                              className="group flex items-center gap-3 px-4 py-3 rounded-xl bg-[#00aeef] shadow-md shadow-[#00aeef]/15 hover:shadow-lg hover:shadow-[#00aeef]/25 transition-shadow"
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                                <span className="text-white font-bold text-sm">P{i + 1}</span>
+                              </div>
+                              <span className="text-sm font-bold text-white">{p}</span>
+                            </motion.div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
