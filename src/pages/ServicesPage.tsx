@@ -224,7 +224,7 @@ const ServicesPage: React.FC = () => {
 
             <div className="max-w-6xl mx-auto relative z-10 space-y-8">
               {/* Heading block */}
-              <div className="max-w-3xl space-y-4">
+              <div className="max-w-3xl mx-auto space-y-4 text-center">
                 <motion.h1
                   initial={{ opacity: 0, y: 25 }}
                   animate={heroInView ? { opacity: 1, y: 0 } : {}}
@@ -241,7 +241,7 @@ const ServicesPage: React.FC = () => {
                   className="text-base md:text-lg text-slate-600 leading-relaxed"
                 >
                   Long-term paintshop efficiency through high-quality, customer-friendly
-                  service — delivered by specialists across mechanical, electrical, and
+                  service delivered by specialists across mechanical, electrical, and
                   automation engineering.
                 </motion.p>
 
@@ -249,7 +249,7 @@ const ServicesPage: React.FC = () => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={heroInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.35 }}
-                  className="flex flex-wrap gap-3 pt-1"
+                  className="flex flex-wrap justify-center gap-3 pt-1"
                 >
                   <a
                     href="/contact"
