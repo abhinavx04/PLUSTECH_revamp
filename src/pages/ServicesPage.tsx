@@ -41,7 +41,7 @@ const services = [
       'Process and capacity enhancement programs',
       'Modernisation with low-downtime execution',
       'Automation upgrades across robots and conveyors',
-      'Introducing new concepts to unlock hidden capacity',
+      'Remote diagnostics paired with onsite interventions',
     ],
     accent: 'Optimize • Automate • Scale',
   },
@@ -52,10 +52,14 @@ const pillars3P = ['Productivity', 'Performance', 'Product Quality'];
 
 const scopeAreas = [
   {
-    label: 'Robotics',
+    label: 'Paint Process',
     icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714a2.25 2.25 0 0 0 .659 1.591L19 14.5m-4.75-11.396c.251.023.501.05.75.082M5 14.5l-1.47 1.47a1.75 1.75 0 0 0 1.238 2.987h14.464a1.75 1.75 0 0 0 1.238-2.987L19 14.5" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42"
+        />
       </svg>
     ),
   },
@@ -63,15 +67,28 @@ const scopeAreas = [
     label: 'Conveyors',
     icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25M3.375 14.25h17.25M3.375 14.25V6.375c0-.621.504-1.125 1.125-1.125h3.026a2.999 2.999 0 0 1 2.078.84l.97.97" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25M3.375 14.25h17.25M3.375 14.25V6.375c0-.621.504-1.125 1.125-1.125h3.026a2.999 2.999 0 0 1 2.078.84l.97.97"
+        />
       </svg>
     ),
   },
   {
-    label: 'Paint Process',
+    label: 'Robotics',
     icon: (
       <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M6.5 20.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Zm11-2.25H14.5l-2.25-3.5-2.5 1.5M15.75 3.75 13 6.5l1.5 2.5 3-1.25a1.5 1.5 0 0 0 .86-1.93l-.9-2.3a1.25 1.25 0 0 0-1.71-.67Z"
+        />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M4.75 9.75 9 7.5l2 3.25-2.25 1.25-2.5-2.25Zm9.5 8.25h3.75a1.5 1.5 0 0 0 1.5-1.5v-3.75a2.25 2.25 0 0 0-2.25-2.25h-2.25"
+        />
       </svg>
     ),
   },
@@ -131,18 +148,6 @@ const ServiceCard: React.FC<{
 
       {/* Content */}
       <div className={`space-y-5 ${isReversed ? 'lg:order-1' : ''}`}>
-        <motion.div
-          initial={{ opacity: 0, x: isReversed ? 20 : -20 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="inline-flex items-center gap-3"
-        >
-          <span className="h-px w-8 bg-[#00aeef]" />
-          <span className="text-sm uppercase tracking-[0.14em] text-[#00aeef] font-semibold">
-            Service {String(index + 1).padStart(2, '0')}
-          </span>
-        </motion.div>
-
         <motion.h3
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
