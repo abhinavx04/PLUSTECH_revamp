@@ -176,20 +176,23 @@ const CSRActivityDetailPage: React.FC = () => {
               className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 sm:p-6 overflow-hidden"
             >
               <h2 className="text-xl font-bold font-heading text-black mb-4">Impact Metrics</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {activity.metrics.map((metric, index) => (
-                  <div
-                    key={index}
-                    className="text-center p-4 bg-gray-50 rounded-lg"
-                  >
-                    <div className="text-2xl font-bold text-[#00aeef] mb-1 break-words">
-                      {metric.value}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                {activity.metrics.map((metric, index) => {
+                  const isLongValue = metric.value.length > 20;
+                  return (
+                    <div
+                      key={index}
+                      className={`bg-gray-50 rounded-lg p-4 ${isLongValue ? 'text-left' : 'text-center'}`}
+                    >
+                      <div className={`font-bold text-[#00aeef] mb-1 break-words ${isLongValue ? 'text-sm leading-relaxed' : 'text-2xl'}`}>
+                        {metric.value}
+                      </div>
+                      <div className="text-xs text-gray-600 font-medium break-words">
+                        {metric.label}
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-600 font-medium break-words">
-                      {metric.label}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </motion.div>
           )}
