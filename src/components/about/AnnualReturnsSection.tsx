@@ -554,7 +554,11 @@ const AnnualReturnsSection: React.FC = () => {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number | undefined, name: string) => value !== undefined ? [`${value.toFixed(1)}%`, name] : ['', '']}
+                      formatter={(value: number | undefined, name?: string) =>
+                        typeof value === 'number'
+                          ? [`${value.toFixed(1)}%`, name ?? '']
+                          : ['', name ?? '']
+                      }
                       contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                     />
                     <Legend
