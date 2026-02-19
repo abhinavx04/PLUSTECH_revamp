@@ -209,15 +209,8 @@ const categoryConfig = {
 
 // Group milestones by year for proper layout with improved distribution
 const groupMilestonesByYear = (milestones: Milestone[]) => {
-  // Sort by year first (Present goes last)
-  const sorted = [...milestones].sort((a, b) => {
-    if (a.year === 'Present') return 1;
-    if (b.year === 'Present') return -1;
-    return parseInt(a.year) - parseInt(b.year);
-  });
-
   // Group by year
-  const grouped = sorted.reduce((acc, milestone) => {
+  const grouped = milestones.reduce((acc, milestone) => {
     const year = milestone.year;
     if (!acc[year]) {
       acc[year] = [];
@@ -226,13 +219,19 @@ const groupMilestonesByYear = (milestones: Milestone[]) => {
     return acc;
   }, {} as Record<string, Milestone[]>);
 
-  // Return with improved distribution hints
-  return Object.entries(grouped).map(([year, milestones]) => ({
-    year,
-    milestones,
-    cardCount: milestones.length,
-    spacing: milestones.length > 1 ? 'tight' : 'normal'
-  }));
+  // Build array and sort descending (Present first, oldest last)
+  return Object.entries(grouped)
+    .map(([year, milestones]) => ({
+      year,
+      milestones,
+      cardCount: milestones.length,
+      spacing: milestones.length > 1 ? 'tight' : 'normal'
+    }))
+    .sort((a, b) => {
+      if (a.year === 'Present') return -1;
+      if (b.year === 'Present') return 1;
+      return parseInt(b.year) - parseInt(a.year);
+    });
 };
 
 // Individual milestone component with scroll-triggered animations
@@ -288,14 +287,16 @@ const TimelineMilestone: React.FC<{
   // Track max progress for this milestone - never goes backwards
   useEffect(() => {
     const ratio = timelinePx > 0 ? offsetTop / timelinePx : 1;
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
+    const updateProgress = (latest: number) => {
       const currentProgress = latest >= ratio ? 1 : Math.max(0, latest / ratio);
-      // Only update if progress increased - prevents reverse animation
       if (currentProgress > maxReachedRef.current) {
         maxReachedRef.current = currentProgress;
         maxReached.set(currentProgress);
       }
-    });
+    };
+    // Check current scroll position immediately (handles items already in view)
+    updateProgress(scrollYProgress.get());
+    const unsubscribe = scrollYProgress.on("change", updateProgress);
     return () => unsubscribe();
   }, [scrollYProgress, offsetTop, timelinePx, maxReached]);
   
@@ -337,7 +338,7 @@ const TimelineMilestone: React.FC<{
       >
         {/* Circular Node */}
         <motion.div 
-          className={`w-10 h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 ${config.node} rounded-full flex items-center justify-center shadow-lg ${config.shadow} border-2 md:border-3 lg:border-4 border-white mx-auto lg:mx-0`}
+          className={`w-10 h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-[#E63946] via-[#9B59B6] to-[#00aeef] rounded-full flex items-center justify-center shadow-lg shadow-purple-200 border-2 md:border-3 lg:border-4 border-white mx-auto lg:mx-0`}
           whileHover={{ 
             scale: 1.1,
             transition: { duration: 0.2 }
@@ -411,25 +412,20 @@ const TimelineMilestone: React.FC<{
 // Year group component
 const TimelineYearGroup: React.FC<{
   yearGroup: { year: string; milestones: Milestone[]; cardCount: number; spacing: string };
-  isEvenYear: boolean;
-  hasMultipleMilestones: boolean;
+  globalStartIndex: number;
   categoryConfig: typeof categoryConfig;
   timelineContainerRef: React.RefObject<HTMLDivElement | null>;
   scrollYProgress: ReturnType<typeof useScroll>['scrollYProgress'];
   timelinePx: number;
-}> = ({ yearGroup, isEvenYear, hasMultipleMilestones, categoryConfig, timelineContainerRef, scrollYProgress, timelinePx }) => {
+}> = ({ yearGroup, globalStartIndex, categoryConfig, timelineContainerRef, scrollYProgress, timelinePx }) => {
   const yearRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(yearRef, { once: true, margin: "-100px" });
 
   return (
     <div ref={yearRef} className="relative">
-      {/* Year Badge - alternating red/blue with gradient */}
+      {/* Year Badge */}
       <motion.div 
-        className={`text-white px-6 py-3 rounded-full font-bold text-xl shadow-lg mb-8 w-fit ${
-          isEvenYear 
-            ? 'bg-gradient-to-r from-[#E63946] to-[#9B59B6] mx-auto xl:mx-0 xl:ml-0' 
-            : 'bg-gradient-to-r from-[#9B59B6] to-[#00aeef] mx-auto xl:mx-0 xl:mr-0 xl:ml-auto'
-        }`}
+        className="text-white px-6 py-3 rounded-full font-bold text-xl shadow-lg mb-8 w-fit bg-gradient-to-r from-[#E63946] via-[#9B59B6] to-[#00aeef] mx-auto xl:mx-0 xl:ml-auto xl:mr-auto"
         initial={{ opacity: 0, y: -30, scale: 0.8 }}
         animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -30, scale: 0.8 }}
         transition={{ 
@@ -444,8 +440,8 @@ const TimelineYearGroup: React.FC<{
       {/* Milestones for this year */}
       <div className={`space-y-8 ${yearGroup.spacing === 'tight' ? 'lg:space-y-8' : 'lg:space-y-12'}`}>
         {yearGroup.milestones.map((milestone, milestoneIndex) => {
-          const isEvenMilestone = milestoneIndex % 2 === 0;
-          const isLeftSide = hasMultipleMilestones ? isEvenMilestone : isEvenYear;
+          const globalIndex = globalStartIndex + milestoneIndex;
+          const isLeftSide = globalIndex % 2 === 0;
           
           return (
             <TimelineMilestone
@@ -555,9 +551,9 @@ const HistoryMilestonesSection: React.FC = () => {
     }
 
     return merged.sort((a, b) => {
-      if (a.year === 'Present') return 1;
-      if (b.year === 'Present') return -1;
-      return parseInt(a.year, 10) - parseInt(b.year, 10);
+      if (a.year === 'Present') return -1;
+      if (b.year === 'Present') return 1;
+      return parseInt(b.year, 10) - parseInt(a.year, 10);
     });
   }, [firestoreMilestones]);
 
@@ -637,28 +633,30 @@ const HistoryMilestonesSection: React.FC = () => {
 
           {/* Timeline Items */}
           <div className="space-y-12 lg:space-y-24">
-            {groupedMilestones.map((yearGroup, yearIndex) => {
-              const isEvenYear = yearIndex % 2 === 0;
-              const hasMultipleMilestones = yearGroup.milestones.length > 1;
-              const isLastYear = yearIndex === groupedMilestones.length - 1;
-              
-              return (
-                <div 
-                  key={yearGroup.year}
-                  className={isLastYear ? 'mt-8' : ''}
-                >
-                  <TimelineYearGroup 
-                    yearGroup={yearGroup}
-                    isEvenYear={isEvenYear}
-                    hasMultipleMilestones={hasMultipleMilestones}
-                    categoryConfig={categoryConfig}
-                    timelineContainerRef={timelineRef}
-                    scrollYProgress={scrollYProgress}
-                    timelinePx={timelinePx}
-                  />
-                </div>
-              );
-            })}
+            {(() => {
+              let globalMilestoneIndex = 0;
+              return groupedMilestones.map((yearGroup, yearIndex) => {
+                const startIndex = globalMilestoneIndex;
+                globalMilestoneIndex += yearGroup.milestones.length;
+                const isLastYear = yearIndex === groupedMilestones.length - 1;
+                
+                return (
+                  <div 
+                    key={yearGroup.year}
+                    className={isLastYear ? 'mt-8' : ''}
+                  >
+                    <TimelineYearGroup 
+                      yearGroup={yearGroup}
+                      globalStartIndex={startIndex}
+                      categoryConfig={categoryConfig}
+                      timelineContainerRef={timelineRef}
+                      scrollYProgress={scrollYProgress}
+                      timelinePx={timelinePx}
+                    />
+                  </div>
+                );
+              });
+            })()}
           </div>
         </div>
       </motion.div>
