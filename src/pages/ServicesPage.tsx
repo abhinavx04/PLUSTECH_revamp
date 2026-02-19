@@ -10,7 +10,7 @@ const services = [
     title: 'Technical Consultancy',
     description:
       'Blueprints for new projects and modernization, aligned to throughput, quality, and safety KPIs.',
-    image: '/automated-customised-materialhandling/1.webp',
+    image: '/Services/technical_consultancy.png',
     bullets: [
       'Blueprinting new paint and automation projects',
       'Developing concepts and layouts tailored to each plant',
@@ -23,7 +23,7 @@ const services = [
     title: 'Maintenance Contract',
     description:
       'Proactive coverage that keeps paintshops stable — remote support, onsite specialists, and ready spares.',
-    image: '/home/home2.png',
+    image: '/Services/maintainance_contact.png',
     bullets: [
       'Annual maintenance contracts with uptime SLAs',
       'Onsite plant maintenance by certified teams',
@@ -36,7 +36,7 @@ const services = [
     title: 'Productivity Improvement',
     description:
       'Delivering smarter throughput with automation, modernization, and process tuning without compromising quality.',
-    image: '/digitization-smartfactory/Digitisation (IOT) -2.jpg',
+    image: '/Services/Productivity_improvement.png',
     bullets: [
       'Process and capacity enhancement programs',
       'Modernisation with low-downtime execution',
