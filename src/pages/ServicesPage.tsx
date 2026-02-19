@@ -27,7 +27,7 @@ const services = [
     bullets: [
       'Annual maintenance contracts with uptime SLAs',
       'Onsite plant maintenance by certified teams',
-      'Remote service and diagnostics for rapid response',
+      'Onsite process maintenance and diagnostics',
       'Spare parts support aligned to criticality',
     ],
     accent: '24/7 • Reliable • Predictable',
