@@ -11,6 +11,14 @@ const AnnualReturnsSection: React.FC = () => {
   const isVisible = isInView || publishedReturns.length > 0; // fail-safe to render even if IntersectionObserver misses
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [showDownloadMessage, setShowDownloadMessage] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const wrapLabel = (text: string, maxCharsPerLine = 16) => {
     const words = text.split(' ');
@@ -31,10 +39,14 @@ const AnnualReturnsSection: React.FC = () => {
   const renderActivityLabel = (props: any) => {
     const RADIAN = Math.PI / 180;
     const { cx, cy, midAngle, outerRadius, name, percent } = props;
-    const radius = outerRadius + 22;
+    const labelOffset = isMobile ? 14 : 22;
+    const fontSize = isMobile ? 9 : 12;
+    const lineHeight = isMobile ? 11 : 14;
+    const maxChars = isMobile ? 12 : 18;
+    const radius = outerRadius + labelOffset;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    const lines = wrapLabel(name || '', 18);
+    const lines = wrapLabel(name || '', maxChars);
     return (
       <text
         x={x}
@@ -42,14 +54,14 @@ const AnnualReturnsSection: React.FC = () => {
         fill="#0088bb"
         textAnchor={x > cx ? 'start' : 'end'}
         dominantBaseline="middle"
-        fontSize="12"
+        fontSize={fontSize}
       >
         {lines.map((line: string, idx: number) => (
-          <tspan key={idx} x={x} dy={idx === 0 ? 0 : 14}>
+          <tspan key={idx} x={x} dy={idx === 0 ? 0 : lineHeight}>
             {line}
           </tspan>
         ))}
-        <tspan x={x} dy={14}>
+        <tspan x={x} dy={lineHeight}>
           {percent ? `${(percent * 100).toFixed(1)}%` : ''}
         </tspan>
       </text>
@@ -343,25 +355,28 @@ const AnnualReturnsSection: React.FC = () => {
 
               {/* PDF Viewer Modal */}
               {showPdfViewer && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setShowPdfViewer(false)}>
-                  <div className="relative w-full h-full max-w-6xl max-h-[90vh] bg-white rounded-lg shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                    <div className="absolute top-0 left-0 right-0 bg-gray-800 text-white px-4 py-3 flex items-center justify-between z-10">
-                      <h3 className="text-lg font-semibold">Annual Return - {selectedYearData.financialYear}</h3>
+                <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/80" onClick={() => setShowPdfViewer(false)}>
+                  <div className="relative w-full h-[95dvh] sm:h-full sm:max-w-6xl sm:max-h-[90vh] bg-white rounded-t-xl sm:rounded-lg shadow-2xl overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-gray-800 text-white px-4 py-3 flex items-center justify-between flex-shrink-0">
+                      <h3 className="text-sm sm:text-lg font-semibold truncate pr-4">Annual Return - {selectedYearData.financialYear}</h3>
                       <button
                         onClick={() => setShowPdfViewer(false)}
-                        className="text-white hover:text-gray-300 transition-colors text-2xl font-bold"
+                        className="text-white hover:text-gray-300 transition-colors text-2xl font-bold flex-shrink-0"
                         aria-label="Close viewer"
                       >
                         ×
                       </button>
                     </div>
-                    <iframe
-                      src={`${selectedYearData.documentUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                      className="w-full h-full mt-12"
-                      style={{ height: 'calc(100% - 3rem)' }}
-                      title="Annual Return PDF Viewer"
-                      onContextMenu={(e) => e.preventDefault()}
-                    />
+                    <div className="flex-1 overflow-hidden">
+                      <iframe
+                        src={`${selectedYearData.documentUrl}#toolbar=0&navpanes=0&scrollbar=1`}
+                        className="w-full h-full border-0"
+                        title="Annual Return PDF Viewer"
+                        style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+                        allow="fullscreen"
+                        onContextMenu={(e) => e.preventDefault()}
+                      />
+                    </div>
                   </div>
                 </div>
               )}
@@ -442,31 +457,31 @@ const AnnualReturnsSection: React.FC = () => {
             {/* Turnover Trend Line Chart */}
             {turnoverChartData.length > 0 && (
               <motion.div 
-                className="bg-white rounded-2xl shadow-lg p-8"
+                className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8"
                 initial={{ opacity: 0, x: -30 }}
                 animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
                 transition={{ duration: 0.8, delay: 1.2 }}
               >
-                <h3 className="text-2xl font-bold font-heading text-black mb-6">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-heading text-black mb-4 sm:mb-6">
                   Turnover Trend
                 </h3>
-                <ResponsiveContainer width="100%" height={340}>
+                <ResponsiveContainer width="100%" height={isMobile ? 260 : 340}>
                   <LineChart
                     data={turnoverChartData}
-                    margin={{ top: 10, right: 16, left: 0, bottom: 12 }}
+                    margin={isMobile ? { top: 5, right: 10, left: -15, bottom: 8 } : { top: 10, right: 16, left: 0, bottom: 12 }}
                   >
                     <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
-                    <XAxis dataKey="year" tick={{ fill: '#6b7280' }} />
-                    <YAxis tickFormatter={formatCroreTick} tick={{ fill: '#6b7280' }} />
+                    <XAxis dataKey="year" tick={{ fill: '#6b7280', fontSize: isMobile ? 10 : 12 }} />
+                    <YAxis tickFormatter={formatCroreTick} tick={{ fill: '#6b7280', fontSize: isMobile ? 10 : 12 }} width={isMobile ? 45 : 60} />
                     <Tooltip formatter={(value: number | undefined) => value !== undefined ? `₹${value.toFixed(2)} Cr` : ''} />
-                    <Legend />
+                    <Legend wrapperStyle={isMobile ? { fontSize: '10px' } : undefined} />
                     <Line
                       type="monotone"
                       dataKey="turnover"
                       stroke="#00aeef"
-                      strokeWidth={3}
-                      dot={{ r: 3 }}
-                      activeDot={{ r: 6 }}
+                      strokeWidth={isMobile ? 2 : 3}
+                      dot={{ r: isMobile ? 2 : 3 }}
+                      activeDot={{ r: isMobile ? 4 : 6 }}
                       name="Turnover (₹ Cr)"
                     />
                     {selectedYearData?.netWorth && (
@@ -474,9 +489,9 @@ const AnnualReturnsSection: React.FC = () => {
                         type="monotone"
                         dataKey="netWorth"
                         stroke="#0099d4"
-                        strokeWidth={3}
-                        dot={{ r: 3 }}
-                        activeDot={{ r: 6 }}
+                        strokeWidth={isMobile ? 2 : 3}
+                        dot={{ r: isMobile ? 2 : 3 }}
+                        activeDot={{ r: isMobile ? 4 : 6 }}
                         name="Net Worth (₹ Cr)"
                         strokeDasharray="5 5"
                       />
@@ -489,24 +504,24 @@ const AnnualReturnsSection: React.FC = () => {
             {/* Business Activity Pie Chart */}
             {businessActivityData.length > 0 && (
               <motion.div 
-                className="bg-white rounded-2xl shadow-lg p-8"
+                className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8"
                 initial={{ opacity: 0, x: 30 }}
                 animate={isVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
                 transition={{ duration: 0.8, delay: 1.2 }}
               >
-                <h3 className="text-2xl font-bold font-heading text-black mb-6">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-heading text-black mb-4 sm:mb-6">
                   Business Activity Split
                 </h3>
-                <div className="flex justify-center">
-                  <ResponsiveContainer width="95%" height={400}>
+                <div className="flex justify-center overflow-hidden">
+                  <ResponsiveContainer width="100%" height={isMobile ? 300 : 400}>
                     <PieChart>
                       <Pie
                         data={businessActivityData}
                         cx="50%"
                         cy="50%"
-                        labelLine={true}
-                        label={renderActivityLabel}
-                        outerRadius={120}
+                        labelLine={!isMobile}
+                        label={isMobile ? false : renderActivityLabel}
+                        outerRadius={isMobile ? 80 : 120}
                         fill="#8884d8"
                         dataKey="value"
                       >
@@ -515,6 +530,7 @@ const AnnualReturnsSection: React.FC = () => {
                         ))}
                       </Pie>
                       <Tooltip formatter={(value: number | undefined) => value !== undefined ? `${value.toFixed(2)}%` : ''} />
+                      {isMobile && <Legend wrapperStyle={{ fontSize: '10px' }} />}
                     </PieChart>
                   </ResponsiveContainer>
                 </div>

@@ -264,19 +264,14 @@ const ProjectDetailPage: React.FC = () => {
                     )}
                   </div>
                   <div className="relative">
-                    {/* Left Scroll Button */}
+                    {/* Overlay Scroll Buttons — hidden on mobile */}
                     {imageUrls.length > 1 && canScrollLeft && (
                       <button
                         onClick={scrollLeft}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 border border-slate-200"
+                        className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all duration-200 hover:scale-110 border border-slate-200"
                         aria-label="Scroll left"
                       >
-                        <svg
-                          className="w-5 h-5 md:w-6 md:h-6 text-slate-700"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
+                        <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                       </button>
@@ -305,11 +300,10 @@ const ProjectDetailPage: React.FC = () => {
                             <img
                               src={imageUrl}
                               alt={`${project.title} - Image ${index + 1}`}
-                              className="w-full h-auto object-contain max-h-[60vh] md:max-h-[600px]"
+                              className="w-full h-auto object-contain max-h-[50vh] md:max-h-[600px]"
                               loading={index < 3 ? 'eager' : 'lazy'}
                               decoding="async"
                               onLoad={() => {
-                                // Trigger scroll button check after image loads
                                 setTimeout(() => checkScrollButtons(), 100);
                               }}
                               onError={(e) => {
@@ -326,24 +320,46 @@ const ProjectDetailPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Right Scroll Button */}
+                    {/* Overlay Scroll Buttons — hidden on mobile */}
                     {imageUrls.length > 1 && canScrollRight && (
                       <button
                         onClick={scrollRight}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-2 md:p-3 transition-all duration-200 hover:scale-110 border border-slate-200"
+                        className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white shadow-lg rounded-full p-3 transition-all duration-200 hover:scale-110 border border-slate-200"
                         aria-label="Scroll right"
                       >
-                        <svg
-                          className="w-5 h-5 md:w-6 md:h-6 text-slate-700"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
+                        <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </button>
                     )}
                   </div>
+
+                  {/* Mobile Navigation Buttons — below the carousel */}
+                  {imageUrls.length > 1 && (
+                    <div className="flex md:hidden items-center justify-center gap-4 mt-3">
+                      <button
+                        onClick={scrollLeft}
+                        disabled={!canScrollLeft}
+                        className="bg-white shadow-md rounded-full p-3 border border-slate-200 transition-all disabled:opacity-30"
+                        aria-label="Previous image"
+                      >
+                        <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <span className="text-sm text-slate-500 font-medium">Swipe or tap</span>
+                      <button
+                        onClick={scrollRight}
+                        disabled={!canScrollRight}
+                        className="bg-white shadow-md rounded-full p-3 border border-slate-200 transition-all disabled:opacity-30"
+                        aria-label="Next image"
+                      >
+                        <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })()}

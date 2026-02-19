@@ -217,7 +217,7 @@ const CorporateBeliefsSection: React.FC = () => {
 
       {/* Summary Quote */}
       <motion.div 
-        className="mt-16 text-center bg-gradient-to-r from-[#00aeef]/10 via-white to-[#00aeef]/10 rounded-2xl p-12 border border-[#00aeef]/20 relative overflow-hidden"
+        className="mt-16 text-center bg-gradient-to-r from-[#00aeef]/10 via-white to-[#00aeef]/10 rounded-2xl p-6 sm:p-8 md:p-12 border border-[#00aeef]/20 relative overflow-hidden"
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.8, delay: 0.8 }}
@@ -232,7 +232,7 @@ const CorporateBeliefsSection: React.FC = () => {
           Our Commitment
         </h3>
         <blockquote 
-          className="text-2xl text-gray-900 max-w-4xl mx-auto leading-relaxed italic text-justify"
+          className="text-lg sm:text-xl md:text-2xl text-gray-900 max-w-4xl mx-auto leading-relaxed italic text-center"
         >
           "Our customers/associates take pride and comfort in their engagement with Plustech. 
           We believe in not just meeting customer expectations but exceeding them."

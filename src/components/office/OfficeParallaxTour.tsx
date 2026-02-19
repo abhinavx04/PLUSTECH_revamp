@@ -317,15 +317,14 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
     <div
       id={section.id}
       ref={sectionRef}
-      className="relative h-screen flex items-center justify-center overflow-hidden"
+      className="relative h-[70vh] sm:h-[80vh] md:h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Background Image with subtle scale */}
       <motion.div className="absolute inset-0 z-0" style={{ scale }}>
-        <div
-          className="w-full h-full bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${section.images.foreground})`,
-          }}
+        <img
+          src={section.images.foreground}
+          alt={section.title}
+          className="w-full h-full object-cover object-center"
         />
         {/* Elegant overlay - gradient with brand tint */}
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/40 to-slate-900/70" />
@@ -343,7 +342,7 @@ const ParallaxSection: React.FC<ParallaxSectionProps> = ({
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <motion.h2
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-4 leading-tight"
+            className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-4 leading-tight"
             style={{
               textShadow: '0 4px 30px rgba(0,0,0,0.5)',
             }}
