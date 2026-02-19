@@ -36,33 +36,36 @@ const AnnualReturnsSection: React.FC = () => {
     return lines;
   };
 
-  const renderActivityLabel = (props: any) => {
+  const renderPieLabel = (props: any) => {
     const RADIAN = Math.PI / 180;
-    const { cx, cy, midAngle, outerRadius, name, percent } = props;
-    const labelOffset = isMobile ? 14 : 22;
-    const fontSize = isMobile ? 9 : 12;
-    const lineHeight = isMobile ? 11 : 14;
-    const maxChars = isMobile ? 12 : 18;
-    const radius = outerRadius + labelOffset;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    const lines = wrapLabel(name || '', maxChars);
+    const { cx, cy, midAngle, outerRadius, innerRadius, name, percent, index } = props;
+    const pct = percent ? (percent * 100) : 0;
+
+    if (isMobile) {
+      const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+      const x = cx + radius * Math.cos(-midAngle * RADIAN);
+      const y = cy + radius * Math.sin(-midAngle * RADIAN);
+      if (pct < 5) return null;
+      return (
+        <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central" fontSize={12} fontWeight={700}>
+          {`${pct.toFixed(0)}%`}
+        </text>
+      );
+    }
+
+    const labelRadius = outerRadius + 28;
+    const x = cx + labelRadius * Math.cos(-midAngle * RADIAN);
+    const y = cy + labelRadius * Math.sin(-midAngle * RADIAN);
+    const lines = wrapLabel(name || '', 16);
     return (
-      <text
-        x={x}
-        y={y}
-        fill="#0088bb"
-        textAnchor={x > cx ? 'start' : 'end'}
-        dominantBaseline="middle"
-        fontSize={fontSize}
-      >
+      <text x={x} y={y} fill="#374151" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="middle" fontSize={12}>
         {lines.map((line: string, idx: number) => (
-          <tspan key={idx} x={x} dy={idx === 0 ? 0 : lineHeight}>
+          <tspan key={idx} x={x} dy={idx === 0 ? 0 : 15} fontWeight={idx === 0 ? 600 : 400}>
             {line}
           </tspan>
         ))}
-        <tspan x={x} dy={lineHeight}>
-          {percent ? `${(percent * 100).toFixed(1)}%` : ''}
+        <tspan x={x} dy={15} fill={COLORS[index % COLORS.length]} fontWeight={700}>
+          {`${pct.toFixed(1)}%`}
         </tspan>
       </text>
     );
@@ -106,7 +109,7 @@ const AnnualReturnsSection: React.FC = () => {
     value: activity.percentage,
   })) || [];
 
-  const COLORS = ['#00aeef', '#0099d4', '#0088bb', '#0077a2', '#006688', '#005577'];
+  const COLORS = ['#00aeef', '#f97316', '#10b981', '#8b5cf6', '#ef4444', '#eab308', '#06b6d4', '#ec4899'];
 
   const formatCurrency = (amount: number) => {
     if (amount >= 10000000) {
@@ -129,7 +132,7 @@ const AnnualReturnsSection: React.FC = () => {
 
   const formatCroreTick = (value?: number) => {
     if (value === undefined || value === null) return '';
-    return `₹${value.toFixed(0)} Cr`;
+    return isMobile ? `${value.toFixed(0)}Cr` : `₹${value.toFixed(0)} Cr`;
   };
 
   const containerVariants = {
@@ -453,7 +456,7 @@ const AnnualReturnsSection: React.FC = () => {
           </motion.div>
 
           {/* Financial Highlights Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12">
             {/* Turnover Trend Line Chart */}
             {turnoverChartData.length > 0 && (
               <motion.div 
@@ -465,35 +468,53 @@ const AnnualReturnsSection: React.FC = () => {
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-heading text-black mb-4 sm:mb-6">
                   Turnover Trend
                 </h3>
-                <ResponsiveContainer width="100%" height={isMobile ? 260 : 340}>
+                <ResponsiveContainer width="100%" height={isMobile ? 240 : 340}>
                   <LineChart
                     data={turnoverChartData}
-                    margin={isMobile ? { top: 5, right: 10, left: -15, bottom: 8 } : { top: 10, right: 16, left: 0, bottom: 12 }}
+                    margin={isMobile ? { top: 5, right: 8, left: -10, bottom: 5 } : { top: 10, right: 20, left: 5, bottom: 12 }}
                   >
-                    <CartesianGrid stroke="#e5e7eb" strokeDasharray="3 3" />
-                    <XAxis dataKey="year" tick={{ fill: '#6b7280', fontSize: isMobile ? 10 : 12 }} />
-                    <YAxis tickFormatter={formatCroreTick} tick={{ fill: '#6b7280', fontSize: isMobile ? 10 : 12 }} width={isMobile ? 45 : 60} />
-                    <Tooltip formatter={(value: number | undefined) => value !== undefined ? `₹${value.toFixed(2)} Cr` : ''} />
-                    <Legend wrapperStyle={isMobile ? { fontSize: '10px' } : undefined} />
+                    <CartesianGrid stroke="#f0f0f0" strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="year"
+                      tick={{ fill: '#6b7280', fontSize: isMobile ? 10 : 12 }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e5e7eb' }}
+                    />
+                    <YAxis
+                      tickFormatter={formatCroreTick}
+                      tick={{ fill: '#6b7280', fontSize: isMobile ? 9 : 12 }}
+                      width={isMobile ? 40 : 65}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip
+                      formatter={(value: number | undefined) => value !== undefined ? [`₹${value.toFixed(2)} Cr`] : ['']}
+                      contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    />
+                    <Legend
+                      wrapperStyle={{ fontSize: isMobile ? '10px' : '13px', paddingTop: '8px' }}
+                      iconType="circle"
+                      iconSize={isMobile ? 8 : 10}
+                    />
                     <Line
                       type="monotone"
                       dataKey="turnover"
                       stroke="#00aeef"
-                      strokeWidth={isMobile ? 2 : 3}
-                      dot={{ r: isMobile ? 2 : 3 }}
-                      activeDot={{ r: isMobile ? 4 : 6 }}
+                      strokeWidth={isMobile ? 2.5 : 3}
+                      dot={{ r: isMobile ? 3 : 5, fill: '#00aeef', stroke: '#fff', strokeWidth: 2 }}
+                      activeDot={{ r: isMobile ? 5 : 7, fill: '#00aeef', stroke: '#fff', strokeWidth: 2 }}
                       name="Turnover (₹ Cr)"
                     />
                     {selectedYearData?.netWorth && (
                       <Line
                         type="monotone"
                         dataKey="netWorth"
-                        stroke="#0099d4"
-                        strokeWidth={isMobile ? 2 : 3}
-                        dot={{ r: isMobile ? 2 : 3 }}
-                        activeDot={{ r: isMobile ? 4 : 6 }}
+                        stroke="#f97316"
+                        strokeWidth={isMobile ? 2.5 : 3}
+                        dot={{ r: isMobile ? 3 : 5, fill: '#f97316', stroke: '#fff', strokeWidth: 2 }}
+                        activeDot={{ r: isMobile ? 5 : 7, fill: '#f97316', stroke: '#fff', strokeWidth: 2 }}
                         name="Net Worth (₹ Cr)"
-                        strokeDasharray="5 5"
+                        strokeDasharray="6 3"
                       />
                     )}
                   </LineChart>
@@ -512,28 +533,40 @@ const AnnualReturnsSection: React.FC = () => {
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-heading text-black mb-4 sm:mb-6">
                   Business Activity Split
                 </h3>
-                <div className="flex justify-center overflow-hidden">
-                  <ResponsiveContainer width="100%" height={isMobile ? 300 : 400}>
-                    <PieChart>
-                      <Pie
-                        data={businessActivityData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={!isMobile}
-                        label={isMobile ? false : renderActivityLabel}
-                        outerRadius={isMobile ? 80 : 120}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {businessActivityData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value: number | undefined) => value !== undefined ? `${value.toFixed(2)}%` : ''} />
-                      {isMobile && <Legend wrapperStyle={{ fontSize: '10px' }} />}
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+                <ResponsiveContainer width="100%" height={isMobile ? 260 : 350}>
+                  <PieChart>
+                    <Pie
+                      data={businessActivityData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={!isMobile}
+                      label={renderPieLabel}
+                      innerRadius={isMobile ? 45 : 65}
+                      outerRadius={isMobile ? 90 : 130}
+                      fill="#8884d8"
+                      dataKey="value"
+                      paddingAngle={2}
+                      stroke="#fff"
+                      strokeWidth={2}
+                    >
+                      {businessActivityData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number | undefined, name: string) => value !== undefined ? [`${value.toFixed(1)}%`, name] : ['', '']}
+                      contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    />
+                    <Legend
+                      wrapperStyle={{ fontSize: isMobile ? '11px' : '13px', paddingTop: '12px' }}
+                      iconType="circle"
+                      iconSize={isMobile ? 8 : 10}
+                      layout={isMobile ? 'horizontal' : 'horizontal'}
+                      verticalAlign="bottom"
+                      align="center"
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
               </motion.div>
             )}
           </div>
