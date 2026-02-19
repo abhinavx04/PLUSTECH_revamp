@@ -6,6 +6,13 @@ const HOME_VIDEO_DOWNLOAD_URL: string | undefined = import.meta.env.VITE_HOME_VI
 const HOME_VIDEO_POSTER_URL: string =
   import.meta.env.VITE_HOME_VIDEO_POSTER_URL || '/home/video-poster.png';
 
+// Descriptive labels for the turnkey paintshop plant visuals
+const TURNKEY_PAINTSHOP_IMAGE_LABELS = [
+  '3-Wheeler PT-CED & Top Coat Line',
+  '4-Wheeler PT-CED & Top Coat Line',
+  'Typical PT CED Plant'
+];
+
 function HomeFeatureVideo() {
   const videoUrl = HOME_VIDEO_DOWNLOAD_URL;
 
@@ -45,9 +52,9 @@ const capabilitiesData: CapabilityItem[] = [
     description: 'End-to-end paintshop delivery—from 3D layout to commissioning—covering process, utilities, automation, safety, quality, and sustainability to meet production and compliance goals.',
     features: [],
     images: [
-      '/home/NAHAR_1.webp',
-      '/home/NAHAR_2.webp',
-      '/home/UNITED.webp'
+      '/home/3-WHEELER PT-CED & TOP COAT LINE.JPG',
+      '/home/4-WHEELER PT-CED & TOP COAT LINE.JPG',
+      '/home/Typical PT CED Plant.png'
     ],
     bgColor: 'bg-gradient-to-b from-white via-white to-blue-50',
     textColor: 'text-black',
@@ -359,18 +366,24 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                   {capability.images.map((image, idx) => (
                     <div
                       key={image}
-                      className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group"
+                      className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group flex flex-col"
                     >
-                      <img
-                        src={image}
-                        alt={`Turnkey paintshop visual ${idx + 1}`}
-                        className="relative w-full h-[300px] md:h-[350px] object-contain bg-slate-50 cursor-pointer transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        onClick={() => setSelectedImageIndex(idx)}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                      <div className="absolute bottom-3 left-3 right-3 bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 text-sm font-semibold text-[#0f172a] shadow pointer-events-none">
-                        Plant Visual {idx + 1}
+                      {/* Image area with fixed height and clear bounds */}
+                      <div className="relative w-full h-[260px] md:h-[320px] bg-slate-50 flex items-center justify-center cursor-pointer overflow-hidden">
+                        <img
+                          src={image}
+                          alt={TURNKEY_PAINTSHOP_IMAGE_LABELS[idx] ?? `Turnkey paintshop visual ${idx + 1}`}
+                          className="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                          onClick={() => setSelectedImageIndex(idx)}
+                        />
+                      </div>
+
+                      {/* Caption area defining the box boundary */}
+                      <div className="relative px-3 py-3 border-t border-slate-200 bg-white text-xs md:text-sm font-semibold text-[#0f172a]">
+                        <span className="block truncate" title={TURNKEY_PAINTSHOP_IMAGE_LABELS[idx] ?? `Plant Visual ${idx + 1}`}>
+                          {TURNKEY_PAINTSHOP_IMAGE_LABELS[idx] ?? `Plant Visual ${idx + 1}`}
+                        </span>
                       </div>
                     </div>
                   ))}
