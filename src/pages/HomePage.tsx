@@ -167,10 +167,10 @@ const HomePage: React.FC = () => {
       <div className="w-full px-6 md:px-12 lg:px-16 py-10 bg-white">
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-black/70 text-base md:text-lg font-body leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-            At PlusTech, we design, engineer, and deliver precision systems that connect people, processes, and products—so your operations run smarter, faster, and safer.
-                </p>
-              </div>
-            </div>
+            At Plustech, we design, engineer, and deliver precision systems that connect people, processes, and products—so your operations run smarter, faster, and safer.
+          </p>
+        </div>
+      </div>
 
       {/* Company Logos Animation – Trusted by leading companies */}
       <section className="w-full px-6 md:px-12 lg:px-16 py-8 md:py-12 bg-gradient-to-b from-white via-blue-50 to-blue-100">

@@ -29,7 +29,7 @@ const AdminLogin: React.FC = () => {
         <div className="text-center">
           <img 
             src="/PLUSTECH NEW.png" 
-            alt="PlusTech Logo" 
+            alt="Plustech Logo" 
             className="h-16 w-auto mx-auto brightness-110 contrast-110"
             width="294"
             height="64"

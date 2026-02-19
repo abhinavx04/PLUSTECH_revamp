@@ -175,7 +175,7 @@ export const NavbarLogo = ({ className }: NavbarLogoProps) => {
     <a href="/" className={cn("flex items-center space-x-3", className)}>
       <img
         src="/PLUSTECH NEW.png"
-        alt="PlusTech Logo"
+        alt="Plustech Logo"
         className="h-8 w-auto brightness-110 contrast-110"
         width="147"
         height="32"

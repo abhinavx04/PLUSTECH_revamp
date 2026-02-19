@@ -265,7 +265,7 @@ const ProjectsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    document.title = 'Projects | PlusTech';
+    document.title = 'Projects | Plustech';
   }, []);
 
   return (

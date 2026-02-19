@@ -95,7 +95,7 @@ const AboutUsPage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.6 }}
           >
-            Discover the journey that has shaped PlusTech into a trusted partner 
+            Discover the journey that has shaped Plustech into a trusted partner 
             in building intelligent solutions for modern manufacturing.
           </motion.p>
 

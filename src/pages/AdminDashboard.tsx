@@ -58,7 +58,7 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between sm:justify-start gap-3">
               <img 
                 src="/PLUSTECH NEW.png" 
-                alt="PlusTech Logo" 
+                alt="Plustech Logo" 
                 className="h-8 sm:h-10 w-auto brightness-110 contrast-110"
                 width="184"
                 height="40"
@@ -175,7 +175,7 @@ const AdminDashboard: React.FC = () => {
           <>
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-white mb-2">Analytics Dashboard</h1>
-              <p className="text-gray-300">Comprehensive overview of your PlusTech website content</p>
+              <p className="text-gray-300">Comprehensive overview of your Plustech website content</p>
             </div>
 
             <AnalyticsDashboard
