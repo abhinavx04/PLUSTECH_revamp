@@ -84,5 +84,31 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function() {
+        if (new URLSearchParams(window.location.search).get('dev') === 'plustech') {
+          sessionStorage.setItem('__pt_dev', '1');
+        }
+        if (sessionStorage.getItem('__pt_dev') === '1') {
+          document.body.classList.add('dev-mode');
+        }
+        function isOwner() {
+          return sessionStorage.getItem('__pt_dev') === '1';
+        }
+        document.addEventListener('contextmenu', function(e) {
+          if (!isOwner()) e.preventDefault();
+        });
+        document.addEventListener('dragstart', function(e) {
+          if (!isOwner() && e.target.tagName === 'IMG') e.preventDefault();
+        });
+        document.addEventListener('keydown', function(e) {
+          if (isOwner()) return;
+          if (e.key === 'F12') { e.preventDefault(); return false; }
+          if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
+          if (e.ctrlKey && e.key === 'u') { e.preventDefault(); return false; }
+          if (e.ctrlKey && e.key === 's') { e.preventDefault(); return false; }
+        });
+      })();
+    </script>
   </body>
 </html>
