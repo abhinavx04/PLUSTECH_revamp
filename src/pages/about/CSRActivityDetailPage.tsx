@@ -82,9 +82,13 @@ const CSRActivityDetailPage: React.FC = () => {
     );
   }
 
-  const images = activity.imageUrls && activity.imageUrls.length > 0 
-    ? activity.imageUrls 
-    : (activity.imageUrl ? [activity.imageUrl] : ['/aboutus/2.webp']);
+  const images =
+    activity.imageUrls && activity.imageUrls.length > 0
+      ? activity.imageUrls
+      : activity.imageUrl
+        ? [activity.imageUrl]
+        : [];
+  const hasImages = images.length > 0;
   const hasMultipleImages = images.length > 1;
 
   return (
@@ -197,106 +201,108 @@ const CSRActivityDetailPage: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Image Gallery */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-            className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 sm:p-6 overflow-hidden"
-          >
-            <h2 className="text-xl font-bold font-heading text-black mb-4">Gallery</h2>
-            
-            {/* Main Image */}
-            <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-3">
-              <div className="relative w-full flex items-center justify-center" style={{ minHeight: '200px' }}>
-                <img
-                  key={currentImageIndex}
-                  src={images[currentImageIndex]}
-                  alt={`${activity.title} - Image ${currentImageIndex + 1}`}
-                  className="w-full max-h-[50vh] sm:max-h-[420px] object-contain transition-opacity duration-300"
-                />
-                
-                {/* Navigation Arrows — desktop only (overlaid) */}
-                {hasMultipleImages && (
-                  <>
-                    <button
-                      onClick={() => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)}
-                      className="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2.5 transition-all shadow-sm hover:shadow-md z-10"
-                      aria-label="Previous image"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
-                      className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2.5 transition-all shadow-sm hover:shadow-md z-10"
-                      aria-label="Next image"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </>
-                )}
+          {/* Image Gallery — only when at least one image is uploaded */}
+          {hasImages && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="bg-white border border-gray-100 rounded-xl shadow-sm p-4 sm:p-6 overflow-hidden"
+            >
+              <h2 className="text-xl font-bold font-heading text-black mb-4">Gallery</h2>
 
-                {/* Image Counter */}
-                {hasMultipleImages && (
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium z-10">
-                    {currentImageIndex + 1} / {images.length}
-                  </div>
-                )}
+              {/* Main Image */}
+              <div className="relative bg-gray-900 rounded-lg overflow-hidden mb-3">
+                <div className="relative w-full flex items-center justify-center" style={{ minHeight: '200px' }}>
+                  <img
+                    key={currentImageIndex}
+                    src={images[currentImageIndex]}
+                    alt={`${activity.title} - Image ${currentImageIndex + 1}`}
+                    className="w-full max-h-[50vh] sm:max-h-[420px] object-contain transition-opacity duration-300"
+                  />
+
+                  {/* Navigation Arrows — desktop only (overlaid) */}
+                  {hasMultipleImages && (
+                    <>
+                      <button
+                        onClick={() => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)}
+                        className="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2.5 transition-all shadow-sm hover:shadow-md z-10"
+                        aria-label="Previous image"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
+                        className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2.5 transition-all shadow-sm hover:shadow-md z-10"
+                        aria-label="Next image"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </>
+                  )}
+
+                  {/* Image Counter */}
+                  {hasMultipleImages && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium z-10">
+                      {currentImageIndex + 1} / {images.length}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Mobile Navigation Buttons — below the image */}
-            {hasMultipleImages && (
-              <div className="flex sm:hidden items-center justify-center gap-4 mb-3">
-                <button
-                  onClick={() => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)}
-                  className="bg-white shadow-md rounded-full p-3 border border-gray-200 transition-all active:scale-95"
-                  aria-label="Previous image"
-                >
-                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <span className="text-sm text-gray-500 font-medium">{currentImageIndex + 1} / {images.length}</span>
-                <button
-                  onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
-                  className="bg-white shadow-md rounded-full p-3 border border-gray-200 transition-all active:scale-95"
-                  aria-label="Next image"
-                >
-                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            )}
-
-            {/* Thumbnail Strip */}
-            {hasMultipleImages && (
-              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {images.map((img, idx) => (
+              {/* Mobile Navigation Buttons — below the image */}
+              {hasMultipleImages && (
+                <div className="flex sm:hidden items-center justify-center gap-4 mb-3">
                   <button
-                    key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
-                    className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden border transition-all ${
-                      idx === currentImageIndex 
-                        ? 'border-[#00aeef] shadow-md' 
-                        : 'border-transparent opacity-70 hover:opacity-100'
-                    }`}
+                    onClick={() => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)}
+                    className="bg-white shadow-md rounded-full p-3 border border-gray-200 transition-all active:scale-95"
+                    aria-label="Previous image"
                   >
-                    <img
-                      src={img}
-                      alt={`Thumbnail ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
                   </button>
-                ))}
-              </div>
-            )}
-          </motion.div>
+                  <span className="text-sm text-gray-500 font-medium">{currentImageIndex + 1} / {images.length}</span>
+                  <button
+                    onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
+                    className="bg-white shadow-md rounded-full p-3 border border-gray-200 transition-all active:scale-95"
+                    aria-label="Next image"
+                  >
+                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              {/* Thumbnail Strip */}
+              {hasMultipleImages && (
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden border transition-all ${
+                        idx === currentImageIndex
+                          ? 'border-[#00aeef] shadow-md'
+                          : 'border-transparent opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
 
           {/* PDF Document */}
           {activity.documentUrl && (
