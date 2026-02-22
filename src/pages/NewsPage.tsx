@@ -21,11 +21,17 @@ interface NewsArticle {
   tags: string[];
 }
 
+const ITEMS_PER_PAGE = 6;
+
 const NewsPage: React.FC = () => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const { news, loading, error } = useNewsFirestore();
 
   const publishedNews = news.filter(article => article.published);
+  const visibleNews = publishedNews.slice(0, visibleCount);
+  const hasMore = visibleCount < publishedNews.length;
+  const remaining = publishedNews.length - visibleCount;
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -107,7 +113,7 @@ const NewsPage: React.FC = () => {
             )}
 
             <div className="grid gap-10 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-              {publishedNews.map((article) => (
+              {visibleNews.map((article) => (
                 <div
                   key={article.id}
                   className="group relative bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 ease-out flex flex-col overflow-hidden"
@@ -173,6 +179,20 @@ const NewsPage: React.FC = () => {
                 </div>
               ))}
             </div>
+
+            {hasMore && (
+              <div className="flex justify-center mt-12">
+                <button
+                  onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
+                  className="inline-flex items-center gap-3 px-8 py-3 rounded-xl bg-white border-2 border-slate-200 text-slate-700 font-semibold hover:border-[#00aeef] hover:text-[#00aeef] transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  Load More
+                  <span className="text-sm font-normal text-slate-400">
+                    ({remaining > 0 ? remaining : 0} remaining)
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
         </section>
       </main>
