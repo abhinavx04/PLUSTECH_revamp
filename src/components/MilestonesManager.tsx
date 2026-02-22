@@ -1,10 +1,12 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useFormDraft } from '../hooks/useFormDraft';
 import {
   type Milestone,
   type MilestoneCategory,
   type MilestoneMetric,
   useMilestonesFirestore,
 } from '../hooks/useMilestonesFirestore';
+import SlidePanel from './SlidePanel';
 
 type FormState = {
   year: string;
@@ -48,7 +50,17 @@ const MilestonesManager: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormState>(defaultFormState);
-  const formRef = useRef<HTMLDivElement>(null);
+  const stableSetFormData = useCallback((d: FormState) => setFormData(d), []);
+  const { clearDraft } = useFormDraft({
+    key: 'milestones',
+    editingId,
+    formData,
+    setFormData: stableSetFormData,
+    isOpen: showForm,
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 15;
 
   const yearOptions = useMemo(buildYearOptions, []);
 
@@ -63,7 +75,21 @@ const MilestonesManager: React.FC = () => {
     [milestones]
   );
 
+  const filteredMilestones = useMemo(() => {
+    if (!searchQuery.trim()) return sortedMilestones;
+    const q = searchQuery.toLowerCase();
+    return sortedMilestones.filter((m) => m.title.toLowerCase().includes(q) || m.year.includes(q));
+  }, [sortedMilestones, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredMilestones.length / ITEMS_PER_PAGE));
+
+  const paginatedMilestones = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredMilestones.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredMilestones, currentPage]);
+
   const resetForm = () => {
+    clearDraft();
     setShowForm(false);
     setEditingId(null);
     setFormError(null);
@@ -129,10 +155,6 @@ const MilestonesManager: React.FC = () => {
     });
     setShowForm(true);
     setFormError(null);
-    // Scroll to form after state updates
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -178,178 +200,170 @@ const MilestonesManager: React.FC = () => {
           onClick={() => setShowForm(true)}
           className="px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
         >
-          Add Milestone
+          + Add Milestone
         </button>
       </div>
 
-      {showForm && (
-        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-white">
-              {editingId ? 'Edit Milestone' : 'Create Milestone'}
-            </h3>
+      <SlidePanel
+        open={showForm}
+        onClose={resetForm}
+        title={editingId ? 'Edit Milestone' : 'Create Milestone'}
+        footer={
+          <div className="flex flex-wrap items-center gap-3">
             <button
+              type="submit"
+              form="milestone-form"
+              className="px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
+            >
+              {editingId ? 'Update Milestone' : 'Create Milestone'}
+            </button>
+            <button
+              type="button"
               onClick={resetForm}
-              className="text-sm text-gray-300 hover:text-white underline-offset-2 hover:underline"
+              className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors duration-200"
             >
               Cancel
             </button>
           </div>
+        }
+      >
+        {formError && (
+          <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3">
+            <p className="text-red-100 text-sm">{formError}</p>
+          </div>
+        )}
 
-          {formError && (
-            <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3">
-              <p className="text-red-100 text-sm">{formError}</p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Year *</label>
-                <select
-                  value={formData.year}
-                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                  required
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
-                >
-                  <option value="" disabled>
-                    Select year (2020+)
-                  </option>
-                  {yearOptions.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Category *</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value as MilestoneCategory })
-                  }
-                  required
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
-                >
-                  {categoryOptions.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Title *</label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  required
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="Milestone title"
-                />
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Icon (optional)</label>
-                <input
-                  type="text"
-                  value={formData.icon}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="Icon name or URL"
-                />
-              </div>
-            </div>
-
+        <form id="milestone-form" onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Description *</label>
-              <textarea
-                rows={3}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              <label className="block text-white text-sm font-medium mb-2">Year *</label>
+              <select
+                value={formData.year}
+                onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                required
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
+              >
+                <option value="" disabled>
+                  Select year (2020+)
+                </option>
+                {yearOptions.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">Category *</label>
+              <select
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value as MilestoneCategory })
+                }
+                required
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
+              >
+                {categoryOptions.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">Title *</label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                placeholder="Brief description of the milestone"
+                placeholder="Milestone title"
               />
             </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-white text-sm font-medium">Metrics</label>
-                <button
-                  type="button"
-                  onClick={addMetric}
-                  className="text-sm text-[#00aeef] hover:text-white underline-offset-2 hover:underline"
-                >
-                  Add metric
-                </button>
-              </div>
-              <div className="space-y-3">
-                {formData.metrics.map((metric, idx) => (
-                  <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
-                    <input
-                      type="text"
-                      value={metric.label}
-                      onChange={(e) => updateMetric(idx, 'label', e.target.value)}
-                      placeholder="Label (e.g., Client)"
-                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    />
-                    <div className="flex space-x-2">
-                      <input
-                        type="text"
-                        value={metric.value}
-                        onChange={(e) => updateMetric(idx, 'value', e.target.value)}
-                        placeholder="Value (e.g., Ashok Leyland)"
-                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeMetric(idx)}
-                        className="px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                        aria-label="Remove metric"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">Icon (optional)</label>
+              <input
+                type="text"
+                value={formData.icon}
+                onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                placeholder="Icon name or URL"
+              />
             </div>
+          </div>
 
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.published}
-                  onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                  className="mr-2"
-                />
-                <span className="text-white">Published</span>
-              </label>
-            </div>
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">Description *</label>
+            <textarea
+              rows={3}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              required
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+              placeholder="Brief description of the milestone"
+            />
+          </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
-              >
-                {editingId ? 'Update Milestone' : 'Create Milestone'}
-              </button>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-white text-sm font-medium">Metrics</label>
               <button
                 type="button"
-                onClick={resetForm}
-                className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors duration-200"
+                onClick={addMetric}
+                className="text-sm text-[#00aeef] hover:text-white underline-offset-2 hover:underline"
               >
-                Cancel
+                Add metric
               </button>
             </div>
-          </form>
-        </div>
-      )}
+            <div className="space-y-3">
+              {formData.metrics.map((metric, idx) => (
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
+                  <input
+                    type="text"
+                    value={metric.label}
+                    onChange={(e) => updateMetric(idx, 'label', e.target.value)}
+                    placeholder="Label (e.g., Client)"
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  />
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={metric.value}
+                      onChange={(e) => updateMetric(idx, 'value', e.target.value)}
+                      placeholder="Value (e.g., Ashok Leyland)"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeMetric(idx)}
+                      className="px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      aria-label="Remove metric"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.published}
+                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                className="mr-2"
+              />
+              <span className="text-white">Published</span>
+            </label>
+          </div>
+        </form>
+      </SlidePanel>
 
       {/* Listing */}
       <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
@@ -363,58 +377,50 @@ const MilestonesManager: React.FC = () => {
           )}
         </div>
 
-        {sortedMilestones.length === 0 && !loading ? (
-          <p className="text-gray-300">No milestones added yet.</p>
+        <div className="mb-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search by title or year…"
+            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+          />
+        </div>
+
+        {filteredMilestones.length === 0 && !loading ? (
+          <p className="text-gray-300">No milestones found.</p>
         ) : (
-          <div className="space-y-3">
-            {sortedMilestones.map((item) => (
+          <div className="space-y-1">
+            {paginatedMilestones.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col lg:flex-row lg:items-center lg:justify-between bg-white/5 border border-white/10 rounded-lg p-4 gap-3"
+                className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-3">
-                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-[#00aeef]/20 text-[#00aeef] border border-[#00aeef]/40">
-                      {item.year}
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-xs uppercase tracking-wide bg-white/10 border border-white/20 text-white">
-                      {item.category}
-                    </span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        item.published
-                          ? 'bg-green-500/20 text-green-200 border border-green-500/40'
-                          : 'bg-yellow-500/20 text-yellow-100 border border-yellow-500/40'
-                      }`}
-                    >
-                      {item.published ? 'Published' : 'Draft'}
-                    </span>
-                  </div>
-                  <h4 className="text-lg font-bold text-white">{item.title}</h4>
-                  <p className="text-gray-300 text-sm">{item.description}</p>
-                  {item.metrics && item.metrics.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {item.metrics.map((metric, idx) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 rounded-full text-xs bg-white/10 border border-white/10 text-white"
-                        >
-                          <strong className="text-gray-200">{metric.label}:</strong> {metric.value}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span
+                    className={`w-2 h-2 rounded-full shrink-0 ${item.published ? 'bg-green-400' : 'bg-yellow-400'}`}
+                  />
+                  <span className="text-white font-medium truncate">{item.title}</span>
+                  <span className="px-2 py-0.5 text-xs rounded bg-[#00aeef]/20 text-[#00aeef] border border-[#00aeef]/40 shrink-0">
+                    {item.year}
+                  </span>
+                  <span className="hidden sm:inline px-2 py-0.5 text-xs rounded bg-white/10 text-gray-300 border border-white/10 capitalize shrink-0">
+                    {item.category}
+                  </span>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => handleEdit(item)}
-                    className="px-3 py-2 text-sm bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors duration-200"
+                    className="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+                    className="px-2.5 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                   >
                     Delete
                   </button>
@@ -423,10 +429,31 @@ const MilestonesManager: React.FC = () => {
             ))}
           </div>
         )}
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-white/10">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 text-sm rounded bg-white/10 text-white hover:bg-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Prev
+            </button>
+            <span className="text-sm text-gray-300">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 text-sm rounded bg-white/10 text-white hover:bg-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default MilestonesManager;
-

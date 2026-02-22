@@ -1,52 +1,4 @@
-import React from 'react';
-
-// This component injects the necessary CSS keyframes and animation classes into the document's head.
-// This is a common pattern for single-file components that need custom animations.
-const AnimationStyles = () => {
-  React.useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @keyframes scroll {
-        to {
-          /* This moves the container to the left by half of its total width, which is the width of one full set of logos. */
-          transform: translate(-50%);
-        }
-      }
-      .animate-scroll {
-        /* The w-max class is important to allow the container to be wider than its parent. */
-        animation: scroll 45s linear infinite;
-      }
-      .animate-scroll-mobile {
-        /* Slower animation on mobile for better performance */
-        animation: scroll 60s linear infinite;
-      }
-      .animate-scroll-tablet {
-        /* Medium speed for tablets */
-        animation: scroll 50s linear infinite;
-      }
-      .logo-carousel-container:hover .animate-scroll,
-      .logo-carousel-container:hover .animate-scroll-mobile,
-      .logo-carousel-container:hover .animate-scroll-tablet {
-        animation-play-state: paused;
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .animate-scroll,
-        .animate-scroll-mobile,
-        .animate-scroll-tablet {
-          animation: none;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-  return null;
-};
-
-
-// --- Main Company Animation Component ---
+import React, { useRef, useEffect, useCallback } from 'react';
 
 const CompanyAnimation: React.FC = () => {
   const logos: { id: number; src: string; alt: string }[] = [
@@ -74,37 +26,110 @@ const CompanyAnimation: React.FC = () => {
     { id: 22, src: '/company logos/ace-designer-664-removebg-preview.png', alt: 'Ace Designers' },
     { id: 23, src: '/company logos/laxmi_new-removebg-preview.png', alt: 'Laxmi' },
     { id: 24, src: '/company logos/chaphekar_new-193-removebg-preview.png', alt: 'Chaphekar' },
+    { id: 25, src: '/company logos/motherson.png', alt: 'Motherson' },
+    { id: 26, src: '/company logos/belrise-industries.png', alt: 'Belrise Industries' },
+    { id: 27, src: '/company logos/orient-electric.png', alt: 'Orient Electric' },
+    { id: 28, src: '/company logos/united-industires.png', alt: 'United Industries' },
+    { id: 29, src: '/company logos/runner.png', alt: 'Runner' },
   ];
 
-  // The key to the seamless loop is to duplicate the logos.
-  // The animation moves the container by -50%, which is the exact width of the first set of logos.
-  // When it resets, the second set is perfectly in place, creating a seamless effect.
+  const trackRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const halfWidthRef = useRef(0);
+  const startTimeRef = useRef(0);
+
+  const SPEED = 60;
+
+  const measure = useCallback(() => {
+    if (trackRef.current) {
+      halfWidthRef.current = Math.floor(trackRef.current.scrollWidth / 2);
+    }
+  }, []);
+
+  useEffect(() => {
+    measure();
+
+    const images = trackRef.current?.querySelectorAll('img') ?? [];
+    let loaded = 0;
+    const total = images.length;
+    const onLoad = () => {
+      loaded++;
+      if (loaded >= total) measure();
+    };
+    images.forEach((img) => {
+      if (img.complete) loaded++;
+      else img.addEventListener('load', onLoad);
+    });
+    if (loaded >= total) measure();
+
+    window.addEventListener('resize', measure);
+
+    const tick = (time: number) => {
+      if (startTimeRef.current === 0) startTimeRef.current = time;
+
+      if (halfWidthRef.current > 0) {
+        const elapsed = time - startTimeRef.current;
+        const pos = ((elapsed / 1000) * SPEED) % halfWidthRef.current;
+
+        if (trackRef.current) {
+          const dpr = window.devicePixelRatio || 1;
+          const snapped = Math.round(pos * dpr) / dpr;
+          trackRef.current.style.transform = `translate3d(${-snapped}px, 0, 0)`;
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('resize', measure);
+      images.forEach((img) => img.removeEventListener('load', onLoad));
+    };
+  }, [measure]);
+
   const duplicatedLogos = [...logos, ...logos];
 
   return (
-    <>
-      <AnimationStyles />
-      <div className="w-full flex flex-col items-center justify-center gap-4 sm:gap-6 px-4 sm:px-0 font-sans">
-        <h2 className="text-black/70 text-center text-xl sm:text-2xl md:text-3xl font-semibold font-sans">
-          Trusted by leading companies
-        </h2>
-        <div className="logo-carousel-container w-full mx-auto relative overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-r from-white via-blue-50 to-white shadow-[0_8px_24px_rgba(59,130,246,0.15)] cursor-pointer"
-             style={{ maskImage: 'linear-gradient(to right, transparent, white 8%, white 92%, transparent)' }}>
-          <div className="flex w-max animate-scroll sm:animate-scroll-tablet md:animate-scroll py-4">
-            {duplicatedLogos.map((logo, index) => (
-              <div key={index} className="flex-shrink-0 w-32 xs:w-40 sm:w-52 md:w-64 h-16 xs:h-20 sm:h-24 md:h-28 mx-4 xs:mx-6 sm:mx-8 md:mx-12 flex items-center justify-center">
-                <img
-                  src={logo.src}
-                  alt={logo.alt}
-                  className="max-h-full max-w-full object-contain drop-shadow"
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </div>
+    <div className="w-full flex flex-col items-center justify-center gap-4 sm:gap-6 px-4 sm:px-0 font-sans">
+      <h2 className="text-black/70 text-center text-xl sm:text-2xl md:text-3xl font-semibold font-sans">
+        Trusted by leading companies
+      </h2>
+      <div
+        className="w-full mx-auto relative overflow-hidden"
+      >
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-24 z-10 bg-gradient-to-r from-blue-50 to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-24 z-10 bg-gradient-to-l from-blue-50 to-transparent" />
+
+        <div
+          ref={trackRef}
+          className="flex w-max py-4"
+          style={{
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            willChange: 'transform',
+            transform: 'translate3d(0, 0, 0)',
+          }}
+        >
+          {duplicatedLogos.map((logo, index) => (
+            <div
+              key={index}
+              className="flex-shrink-0 w-32 xs:w-40 sm:w-52 md:w-56 h-16 xs:h-20 sm:h-24 md:h-28 mx-3 xs:mx-4 sm:mx-5 md:mx-6 flex items-center justify-center"
+            >
+              <img
+                src={logo.src}
+                alt={logo.alt}
+                className="max-h-full max-w-full object-contain"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

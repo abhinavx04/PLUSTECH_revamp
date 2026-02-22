@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useFormDraft } from '../hooks/useFormDraft';
 import { Download, Plus } from 'lucide-react';
 import { useCareersFirestore } from '../hooks/useCareersFirestore';
 import { validateJDFile } from '../lib/careersUtils';
+import SlidePanel from './SlidePanel';
 import type {
   ApplicationStatus,
   CareerApplication,
@@ -63,7 +65,6 @@ const CareersManager: React.FC = () => {
   const [newJobSpecificQuestion, setNewJobSpecificQuestion] = useState<CareerQuestion>(newQuestion('job'));
   const [localBaseQuestions, setLocalBaseQuestions] = useState<CareerQuestion[]>(baseQuestions);
   const [jdUploadFile, setJdUploadFile] = useState<File | null>(null);
-  const formRef = useRef<HTMLDivElement>(null);
 
   const [jobForm, setJobForm] = useState<CreateCareerJobData>({
     title: '',
@@ -81,6 +82,14 @@ const CareersManager: React.FC = () => {
     jdFileName: '',
     jdFileUrl: '',
     questionnaire: baseQuestions.map((q) => ({ ...q, enabled: true })),
+  });
+  const stableSetJobForm = useCallback((d: CreateCareerJobData) => setJobForm(d), []);
+  const { clearDraft } = useFormDraft({
+    key: 'careers',
+    editingId: editingJobId,
+    formData: jobForm,
+    setFormData: stableSetJobForm,
+    isOpen: showForm,
   });
 
   useEffect(() => {
@@ -100,6 +109,7 @@ const CareersManager: React.FC = () => {
   }, [applications, applicationsStatusFilter, applicationsJobFilter]);
 
   const resetForm = () => {
+    clearDraft();
     setJobForm({
       title: '',
       department: '',
@@ -153,10 +163,6 @@ const CareersManager: React.FC = () => {
     setShowForm(true);
     setJobFormStep(1);
     setActionError(null);
-    // Scroll to form after state updates
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
   };
 
   const updateListItem = (field: 'responsibilities' | 'mustHave' | 'niceToHave' | 'successMetrics', index: number, value: string) => {
@@ -376,12 +382,52 @@ const CareersManager: React.FC = () => {
             </table>
           </div>
 
-          {showForm && (
-            <div ref={formRef} className="bg-white/10 rounded-xl border border-white/20 p-5 space-y-5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-white">{editingJobId ? 'Edit Job' : 'Create Job'}</h3>
-                <div className="text-sm text-gray-300">Step {jobFormStep} of 4</div>
+          <SlidePanel
+            open={showForm}
+            onClose={resetForm}
+            title={editingJobId ? 'Edit Job' : 'Create Job'}
+            footer={
+              <div className="flex flex-wrap gap-2">
+                {jobFormStep > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setJobFormStep((s) => (s - 1) as JobFormStep)}
+                    className="px-4 py-2 bg-white/10 text-white rounded-lg"
+                  >
+                    Back
+                  </button>
+                )}
+                {jobFormStep < 4 && (
+                  <button
+                    type="button"
+                    onClick={() => setJobFormStep((s) => (s + 1) as JobFormStep)}
+                    className="px-4 py-2 bg-[#00aeef] text-black rounded-lg font-semibold"
+                  >
+                    Next
+                  </button>
+                )}
+                {jobFormStep === 4 && (
+                  <button
+                    type="button"
+                    onClick={saveJob}
+                    disabled={saving}
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg disabled:opacity-60"
+                  >
+                    {saving ? 'Saving...' : editingJobId ? 'Update Job' : 'Create Job'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg"
+                >
+                  Cancel
+                </button>
               </div>
+            }
+          >
+            <div className="space-y-5">
+              <div className="text-sm text-gray-300">Step {jobFormStep} of 4</div>
 
               {jobFormStep === 1 && (
                 <div className="grid md:grid-cols-2 gap-4">
@@ -716,45 +762,8 @@ const CareersManager: React.FC = () => {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-2 pt-2">
-                {jobFormStep > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => setJobFormStep((s) => (s - 1) as JobFormStep)}
-                    className="px-4 py-2 bg-white/10 text-white rounded-lg"
-                  >
-                    Back
-                  </button>
-                )}
-                {jobFormStep < 4 && (
-                  <button
-                    type="button"
-                    onClick={() => setJobFormStep((s) => (s + 1) as JobFormStep)}
-                    className="px-4 py-2 bg-[#00aeef] text-black rounded-lg font-semibold"
-                  >
-                    Next
-                  </button>
-                )}
-                {jobFormStep === 4 && (
-                  <button
-                    type="button"
-                    onClick={saveJob}
-                    disabled={saving}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg disabled:opacity-60"
-                  >
-                    {saving ? 'Saving...' : editingJobId ? 'Update Job' : 'Create Job'}
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg"
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
-          )}
+          </SlidePanel>
         </div>
       )}
 

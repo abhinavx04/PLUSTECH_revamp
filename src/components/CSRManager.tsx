@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useMemo } from 'react';
+import { useFormDraft } from '../hooks/useFormDraft';
 import {
   useCSRActivitiesFirestore,
   type CSRActivity,
@@ -8,6 +9,7 @@ import {
 } from '../hooks/useCSRActivitiesFirestore';
 import { uploadImageToStorage } from '../lib/storageUtils';
 import { uploadPDFToStorage } from '../lib/pdfUtils';
+import SlidePanel from './SlidePanel';
 
 interface CSRFormState {
   title: string;
@@ -57,16 +59,40 @@ const CSRManager: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<CSRFormState>(defaultFormState);
+  const stableSetFormData = useCallback((d: CSRFormState) => setFormData(d), []);
+  const { clearDraft } = useFormDraft({
+    key: 'csr',
+    editingId,
+    formData,
+    setFormData: stableSetFormData,
+    isOpen: showForm,
+  });
   const [formError, setFormError] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLDivElement>(null);
   const [uploadingPDF, setUploadingPDF] = useState(false);
   const [selectedPDFFile, setSelectedPDFFile] = useState<File | null>(null);
   const [pdfPreview, setPdfPreview] = useState<string | null>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 15;
+
+  const filteredActivities = useMemo(() => {
+    if (!searchQuery.trim()) return activities;
+    const q = searchQuery.toLowerCase();
+    return activities.filter((a) => a.title.toLowerCase().includes(q) || a.category.toLowerCase().includes(q) || a.year.includes(q));
+  }, [activities, searchQuery]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredActivities.length / ITEMS_PER_PAGE));
+
+  const paginatedActivities = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredActivities.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredActivities, currentPage]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -75,7 +101,6 @@ const CSRManager: React.FC = () => {
     setFormError(null);
     setSelectedImageFiles((prev) => [...prev, ...files]);
 
-    // Create previews for new files
     const newPreviews: string[] = [];
     files.forEach((file) => {
       const reader = new FileReader();
@@ -115,7 +140,6 @@ const CSRManager: React.FC = () => {
     setFormError(null);
     setSelectedPDFFile(file);
 
-    // Create preview URL
     const reader = new FileReader();
     reader.onloadend = () => {
       setPdfPreview(reader.result as string);
@@ -133,6 +157,7 @@ const CSRManager: React.FC = () => {
   };
 
   const resetForm = () => {
+    clearDraft();
     setShowForm(false);
     setEditingId(null);
     setFormError(null);
@@ -259,10 +284,6 @@ const CSRManager: React.FC = () => {
     setSelectedImageFiles([]);
     setSelectedPDFFile(null);
     setShowForm(true);
-    // Scroll to form after state updates
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -316,442 +337,400 @@ const CSRManager: React.FC = () => {
           onClick={() => setShowForm(true)}
           className="px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
         >
-          Add CSR Activity
+          + Add CSR Activity
         </button>
       </div>
 
-      {showForm && (
-        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-white">
-              {editingId ? 'Edit CSR Activity' : 'Create CSR Activity'}
-            </h3>
-            <button
-              onClick={resetForm}
-              className="text-sm text-gray-300 hover:text-white"
-              type="button"
-            >
-              Close
-            </button>
+      <SlidePanel
+        open={showForm}
+        onClose={resetForm}
+        title={editingId ? 'Edit CSR Activity' : 'Create CSR Activity'}
+        footer={
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" form="csr-form" className="px-6 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200">{editingId ? 'Update CSR Activity' : 'Save CSR Activity'}</button>
+            <button type="button" onClick={resetForm} className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors text-sm">Cancel</button>
           </div>
+        }
+      >
+        {formError && (
+          <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-100 text-sm">
+            {formError}
+          </div>
+        )}
 
-          {formError && (
-            <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-100 text-sm">
-              {formError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Title *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="Green Manufacturing Initiative"
-                />
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Impact Highlight</label>
-                <input
-                  type="text"
-                  value={formData.impact}
-                  onChange={(e) => setFormData({ ...formData, impact: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="30% carbon reduction"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Category *</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value as CSRCategory })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
-                >
-                  {categoryOptions.map((category) => (
-                    <option key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Status *</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as CSRStatus })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
-                >
-                  {statusOptions.map((status) => (
-                    <option key={status} value={status}>
-                      {status.charAt(0).toUpperCase() + status.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Year *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.year}
-                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="2024"
-                />
-              </div>
-            </div>
-
+        <form id="csr-form" onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Description *</label>
-              <textarea
+              <label className="block text-white text-sm font-medium mb-2">Title *</label>
+              <input
+                type="text"
                 required
-                rows={4}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                placeholder="Explain the CSR program, partners, and outcomes"
+                placeholder="Green Manufacturing Initiative"
               />
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Brand Color (gradient)</label>
-                <input
-                  type="text"
-                  value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="from-green-500 to-green-700"
-                />
-                <p className="text-xs text-gray-300 mt-1">Optional Tailwind gradient (uses defaults if empty)</p>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">Sort Order</label>
-                  <input
-                    type="number"
-                    value={formData.sortOrder}
-                    onChange={(e) => setFormData({ ...formData, sortOrder: e.target.value })}
-                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    placeholder="0"
-                  />
-                </div>
-                <div className="flex items-center gap-2 pt-6">
-                  <input
-                    type="checkbox"
-                    checked={formData.published}
-                    onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                  />
-                  <span className="text-white text-sm">Published</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-white/20 pt-4">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-white font-semibold">Impact Metrics</h4>
-                <button
-                  type="button"
-                  onClick={handleAddMetric}
-                  className="px-3 py-1 bg-[#00aeef] text-black text-sm rounded hover:bg-[#0099d4] transition-colors"
-                >
-                  Add Metric
-                </button>
-              </div>
-              {formData.metrics.length === 0 ? (
-                <p className="text-gray-300 text-sm">No metrics added. Click "Add Metric" to add one.</p>
-              ) : (
-                <div className="space-y-3">
-                  {formData.metrics.map((metric, index) => (
-                    <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
-                      <input
-                        type="text"
-                        value={metric.label}
-                        onChange={(e) => handleMetricChange(index, 'label', e.target.value)}
-                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        placeholder="Metric label (e.g., Families Supported)"
-                      />
-                      <input
-                        type="text"
-                        value={metric.value}
-                        onChange={(e) => handleMetricChange(index, 'value', e.target.value)}
-                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        placeholder="Metric value (e.g., 500+)"
-                      />
-                      <div className="flex md:justify-end">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveMetric(index)}
-                          className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <div>
-              <label className="block text-white text-sm font-medium mb-2">PDF Document (Optional)</label>
-              
-              {(pdfPreview || formData.documentUrl) && (
-                <div className="mb-3 relative">
-                  <div className="bg-white/10 border border-white/20 rounded-lg p-4 flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <svg className="w-10 h-10 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                      </svg>
-                      <div>
-                        <p className="text-white text-sm font-medium">PDF Document</p>
-                        {formData.documentUrl && (
-                          <a
-                            href={formData.documentUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#00aeef] text-xs hover:underline"
-                          >
-                            View PDF
-                          </a>
-                        )}
-                      </div>
+              <label className="block text-white text-sm font-medium mb-2">Impact Highlight</label>
+              <input
+                type="text"
+                value={formData.impact}
+                onChange={(e) => setFormData({ ...formData, impact: e.target.value })}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                placeholder="30% carbon reduction"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">Category *</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value as CSRCategory })}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
+              >
+                {categoryOptions.map((category) => (
+                  <option key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">Status *</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as CSRStatus })}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00aeef] [&>option]:bg-gray-900 [&>option]:text-white"
+              >
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">Year *</label>
+              <input
+                type="text"
+                required
+                value={formData.year}
+                onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                placeholder="2024"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">Description *</label>
+            <textarea
+              required
+              rows={4}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+              placeholder="Explain the CSR program, partners, and outcomes"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">Brand Color (gradient)</label>
+              <input
+                type="text"
+                value={formData.color}
+                onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                placeholder="from-green-500 to-green-700"
+              />
+              <p className="text-xs text-gray-300 mt-1">Optional Tailwind gradient (uses defaults if empty)</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">Sort Order</label>
+                <input
+                  type="number"
+                  value={formData.sortOrder}
+                  onChange={(e) => setFormData({ ...formData, sortOrder: e.target.value })}
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  placeholder="0"
+                />
+              </div>
+              <div className="flex items-center gap-2 pt-6">
+                <input
+                  type="checkbox"
+                  checked={formData.published}
+                  onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                />
+                <span className="text-white text-sm">Published</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-white/20 pt-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-white font-semibold">Impact Metrics</h4>
+              <button
+                type="button"
+                onClick={handleAddMetric}
+                className="px-3 py-1 bg-[#00aeef] text-black text-sm rounded hover:bg-[#0099d4] transition-colors"
+              >
+                Add Metric
+              </button>
+            </div>
+            {formData.metrics.length === 0 ? (
+              <p className="text-gray-300 text-sm">No metrics added. Click "Add Metric" to add one.</p>
+            ) : (
+              <div className="space-y-3">
+                {formData.metrics.map((metric, index) => (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                    <input
+                      type="text"
+                      value={metric.label}
+                      onChange={(e) => handleMetricChange(index, 'label', e.target.value)}
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                      placeholder="Metric label (e.g., Families Supported)"
+                    />
+                    <input
+                      type="text"
+                      value={metric.value}
+                      onChange={(e) => handleMetricChange(index, 'value', e.target.value)}
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                      placeholder="Metric value (e.g., 500+)"
+                    />
+                    <div className="flex md:justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMetric(index)}
+                        className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
+                      >
+                        Remove
+                      </button>
                     </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">PDF Document (Optional)</label>
+            
+            {(pdfPreview || formData.documentUrl) && (
+              <div className="mb-3 relative">
+                <div className="bg-white/10 border border-white/20 rounded-lg p-4 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-10 h-10 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                    </svg>
+                    <div>
+                      <p className="text-white text-sm font-medium">PDF Document</p>
+                      {formData.documentUrl && (
+                        <a
+                          href={formData.documentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#00aeef] text-xs hover:underline"
+                        >
+                          View PDF
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemovePDF}
+                    className="bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <input
+                ref={pdfInputRef}
+                type="file"
+                accept="application/pdf"
+                onChange={handlePDFSelect}
+                className="hidden"
+                id="csr-pdf-upload"
+                disabled={uploadingPDF}
+              />
+              <label
+                htmlFor="csr-pdf-upload"
+                className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                  uploadingPDF
+                    ? 'border-gray-500 bg-gray-500/20 cursor-not-allowed'
+                    : 'border-white/30 bg-white/5 hover:border-[#00aeef] hover:bg-white/10'
+                }`}
+              >
+                {uploadingPDF ? (
+                  <div className="flex items-center space-x-2 text-white">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00aeef]" />
+                    <span>Uploading PDF...</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center space-y-2 text-white">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span className="text-sm">
+                      {selectedPDFFile
+                        ? `Selected: ${selectedPDFFile.name} (${(selectedPDFFile.size / (1024 * 1024)).toFixed(2)}MB)`
+                        : 'Click to upload PDF document (Max 50MB)'}
+                    </span>
+                  </div>
+                )}
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">Images (Multiple images supported)</label>
+
+            {(imagePreviews.length > 0 || formData.imageUrls.length > 0) && (
+              <div className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+                {(imagePreviews.length > 0 ? imagePreviews : formData.imageUrls).map((img, index) => (
+                  <div key={index} className="relative group bg-white/5 rounded-lg border border-white/20 p-2 flex items-center justify-center min-h-[120px] max-h-[200px] overflow-hidden">
+                    <img
+                      src={img}
+                      alt={`Preview ${index + 1}`}
+                      className="max-w-full max-h-full object-contain rounded-lg"
+                    />
                     <button
                       type="button"
-                      onClick={handleRemovePDF}
-                      className="bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition-colors"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
                   </div>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <input
-                  ref={pdfInputRef}
-                  type="file"
-                  accept="application/pdf"
-                  onChange={handlePDFSelect}
-                  className="hidden"
-                  id="csr-pdf-upload"
-                  disabled={uploadingPDF}
-                />
-                <label
-                  htmlFor="csr-pdf-upload"
-                  className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-                    uploadingPDF
-                      ? 'border-gray-500 bg-gray-500/20 cursor-not-allowed'
-                      : 'border-white/30 bg-white/5 hover:border-[#00aeef] hover:bg-white/10'
-                  }`}
-                >
-                  {uploadingPDF ? (
-                    <div className="flex items-center space-x-2 text-white">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00aeef]" />
-                      <span>Uploading PDF...</span>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center space-y-2 text-white">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      <span className="text-sm">
-                        {selectedPDFFile
-                          ? `Selected: ${selectedPDFFile.name} (${(selectedPDFFile.size / (1024 * 1024)).toFixed(2)}MB)`
-                          : 'Click to upload PDF document (Max 50MB)'}
-                      </span>
-                    </div>
-                  )}
-                </label>
+                ))}
               </div>
-            </div>
+            )}
 
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">Images (Multiple images supported)</label>
-
-              {/* Image Gallery */}
-              {(imagePreviews.length > 0 || formData.imageUrls.length > 0) && (
-                <div className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {(imagePreviews.length > 0 ? imagePreviews : formData.imageUrls).map((img, index) => (
-                    <div key={index} className="relative group bg-white/5 rounded-lg border border-white/20 p-2 flex items-center justify-center min-h-[120px] max-h-[200px] overflow-hidden">
-                      <img
-                        src={img}
-                        alt={`Preview ${index + 1}`}
-                        className="max-w-full max-h-full object-contain rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(index)}
-                        className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {imagePreviews.length > 0 && (
-                <button
-                  type="button"
-                  onClick={handleRemoveAllImages}
-                  className="mb-3 px-3 py-1.5 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
-                >
-                  Remove All Images
-                </button>
-              )}
-
-              <div className="space-y-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                  id="csr-image-upload"
-                  disabled={uploadingImage}
-                  multiple
-                />
-                <label
-                  htmlFor="csr-image-upload"
-                  className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-                    uploadingImage
-                      ? 'border-gray-500 bg-gray-500/20 cursor-not-allowed'
-                      : 'border-white/30 bg-white/5 hover:border-[#00aeef] hover:bg-white/10'
-                  }`}
-                >
-                  {uploadingImage ? (
-                    <div className="flex items-center space-x-2 text-white">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00aeef]" />
-                      <span>Uploading images...</span>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center space-y-2 text-white">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      <span className="text-sm text-center">
-                        {selectedImageFiles.length > 0
-                          ? `${selectedImageFiles.length} image(s) selected`
-                          : 'Click to upload images (JPEG, PNG, WebP) - Multiple selection allowed'}
-                      </span>
-                    </div>
-                  )}
-                </label>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
-              >
-                {editingId ? 'Update CSR Activity' : 'Save CSR Activity'}
-              </button>
+            {imagePreviews.length > 0 && (
               <button
                 type="button"
-                onClick={resetForm}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors text-sm"
+                onClick={handleRemoveAllImages}
+                className="mb-3 px-3 py-1.5 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
               >
-                Cancel
+                Remove All Images
               </button>
+            )}
+
+            <div className="space-y-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onChange={handleImageSelect}
+                className="hidden"
+                id="csr-image-upload"
+                disabled={uploadingImage}
+                multiple
+              />
+              <label
+                htmlFor="csr-image-upload"
+                className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                  uploadingImage
+                    ? 'border-gray-500 bg-gray-500/20 cursor-not-allowed'
+                    : 'border-white/30 bg-white/5 hover:border-[#00aeef] hover:bg-white/10'
+                }`}
+              >
+                {uploadingImage ? (
+                  <div className="flex items-center space-x-2 text-white">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00aeef]" />
+                    <span>Uploading images...</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center space-y-2 text-white">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span className="text-sm text-center">
+                      {selectedImageFiles.length > 0
+                        ? `${selectedImageFiles.length} image(s) selected`
+                        : 'Click to upload images (JPEG, PNG, WebP) - Multiple selection allowed'}
+                    </span>
+                  </div>
+                )}
+              </label>
             </div>
-          </form>
-        </div>
-      )}
+          </div>
+        </form>
+      </SlidePanel>
 
       <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold text-white">CSR Activities ({activities.length})</h3>
+          <h3 className="text-xl font-semibold text-white">CSR Activities ({filteredActivities.length})</h3>
           {loading && <span className="text-xs text-gray-300">Loading…</span>}
         </div>
 
-        <div className="space-y-3">
-          {activities.length === 0 ? (
+        <div className="mb-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+            placeholder="Search by title, category, or year..."
+            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+          />
+        </div>
+
+        <div className="space-y-1">
+          {paginatedActivities.length === 0 ? (
             <p className="text-gray-300 text-sm">No CSR activities yet. Add your first activity!</p>
           ) : (
-            activities.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white/5 rounded-lg p-4 border border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="text-lg font-semibold text-white">{item.title}</h4>
-                    <span
-                      className={`px-2 py-1 text-xs rounded border ${
-                        item.published
-                          ? 'bg-green-500/20 text-green-200 border-green-500/40'
-                          : 'bg-yellow-500/20 text-yellow-200 border-yellow-500/40'
-                      }`}
-                    >
-                      {item.published ? 'Published' : 'Draft'}
-                    </span>
-                    <span className="px-2 py-1 text-xs rounded bg-white/10 text-gray-200 border border-white/10 capitalize">
-                      {item.status}
-                    </span>
-                    <span className="px-2 py-1 text-xs rounded bg-white/10 text-gray-200 border border-white/10 capitalize">
-                      {item.category}
-                    </span>
-                    {item.year && <span className="px-2 py-1 text-xs rounded bg-white/10 text-gray-200 border border-white/10">Year: {item.year}</span>}
-                  </div>
-                  <p className="text-gray-300 text-sm mt-1 line-clamp-2">{item.description}</p>
-                  <div className="text-xs text-gray-400 mt-1 flex items-center gap-3 flex-wrap">
-                    {item.impact && <span>Impact: {item.impact}</span>}
-                    <span>Metrics: {item.metrics.length}</span>
-                    {item.documentUrl && (
-                      <span className="flex items-center gap-1 text-green-400">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                        </svg>
-                        PDF Available
-                      </span>
-                    )}
-                  </div>
+            paginatedActivities.map((item) => (
+              <div key={item.id} className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${item.published ? 'bg-green-400' : 'bg-yellow-400'}`} />
+                  <span className="text-white font-medium truncate">{item.title}</span>
+                  <span className="hidden sm:inline px-2 py-0.5 text-xs rounded bg-white/10 text-gray-300 border border-white/10 capitalize shrink-0">{item.category}</span>
+                  {item.year && <span className="hidden md:inline text-xs text-gray-400 shrink-0">{item.year}</span>}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 shrink-0">
-                  <button
-                    onClick={() => handlePublishToggle(item)}
-                    className={`px-3 py-1 text-white text-sm rounded transition-colors ${
-                      item.published ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700'
-                    }`}
-                  >
-                    {item.published ? 'Unpublish' : 'Publish'}
-                  </button>
-                  <button
-                    onClick={() => handleEdit(item)}
-                    className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
-                  >
-                    Delete
-                  </button>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => handlePublishToggle(item)} className={`px-2.5 py-1 text-xs text-white rounded transition-colors ${item.published ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700'}`}>{item.published ? 'Unpublish' : 'Publish'}</button>
+                  <button onClick={() => handleEdit(item)} className="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Edit</button>
+                  <button onClick={() => handleDelete(item.id)} className="px-2.5 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors">Delete</button>
                 </div>
               </div>
             ))
           )}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-white/10">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 text-sm rounded bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Prev
+            </button>
+            <span className="text-sm text-gray-300">Page {currentPage} of {totalPages}</span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 text-sm rounded bg-white/10 text-white hover:bg-white/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default CSRManager;
-
-

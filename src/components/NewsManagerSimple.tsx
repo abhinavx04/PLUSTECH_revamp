@@ -1,7 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { useNewsFirestore } from '../hooks/useNewsFirestore';
 import { uploadImageToStorage } from '../lib/storageUtils';
 import { getFileSizeMB } from '../lib/imageUtils';
+import { useFormDraft } from '../hooks/useFormDraft';
+import SlidePanel from './SlidePanel';
 
 interface NewsArticle {
   id: string;
@@ -46,7 +48,6 @@ const NewsManagerSimple: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState<CreateNewsData>({
     title: '',
     content: '',
@@ -60,6 +61,32 @@ const NewsManagerSimple: React.FC = () => {
   });
   const [publishDate, setPublishDate] = useState<string>('');
 
+  const stableSetFormData = useCallback((d: CreateNewsData) => setFormData(d), []);
+  const { clearDraft } = useFormDraft({
+    key: 'news',
+    editingId: editingNews?.id || null,
+    formData,
+    setFormData: stableSetFormData,
+    isOpen: showForm,
+    extraState: publishDate,
+    setExtraState: setPublishDate,
+  });
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 15;
+
+  const filteredNews = useMemo(() => {
+    if (!searchQuery.trim()) return news;
+    const q = searchQuery.toLowerCase();
+    return news.filter((a) => a.title.toLowerCase().includes(q) || a.author.toLowerCase().includes(q));
+  }, [news, searchQuery]);
+  const totalPages = Math.max(1, Math.ceil(filteredNews.length / ITEMS_PER_PAGE));
+  const paginatedNews = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredNews.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredNews, currentPage]);
+
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -67,7 +94,6 @@ const NewsManagerSimple: React.FC = () => {
     setFormError(null);
     setSelectedImageFile(file);
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result as string);
@@ -91,7 +117,6 @@ const NewsManagerSimple: React.FC = () => {
     try {
       let finalImageUrl = formData.imageUrl;
 
-      // Upload image if a new file is selected
       if (selectedImageFile) {
         setUploadingImage(true);
         try {
@@ -103,10 +128,8 @@ const NewsManagerSimple: React.FC = () => {
         setUploadingImage(false);
       }
 
-      // Convert selected publish date (YYYY-MM-DD) to Date (midnight local)
       const publishedAtDate = publishDate ? new Date(`${publishDate}T00:00:00`) : undefined;
 
-      // Create or update news with final image URL and logical publish date
       const newsData: CreateNewsData = { 
         ...formData, 
         imageUrl: finalImageUrl || undefined,
@@ -119,7 +142,7 @@ const NewsManagerSimple: React.FC = () => {
         await createNews(newsData);
       }
 
-      // Reset form
+      clearDraft();
       setShowForm(false);
       setEditingNews(null);
       setSelectedImageFile(null);
@@ -168,10 +191,6 @@ const NewsManagerSimple: React.FC = () => {
     setImagePreview(article.imageUrl || null);
     setSelectedImageFile(null);
     setShowForm(true);
-    // Scroll to form after state updates
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
   };
 
   const handleDelete = async (id: string) => {
@@ -185,6 +204,7 @@ const NewsManagerSimple: React.FC = () => {
   };
 
   const handleCancel = () => {
+    clearDraft();
     setShowForm(false);
     setEditingNews(null);
     setFormError(null);
@@ -211,14 +231,6 @@ const NewsManagerSimple: React.FC = () => {
     const tags = value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
     setFormData({ ...formData, tags });
   };
-
-  if (loading && news.length === 0) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00aeef]"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -250,273 +262,238 @@ const NewsManagerSimple: React.FC = () => {
           onClick={() => setShowForm(true)}
           className="px-4 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
         >
-          Add New Article
+          + Add New Article
         </button>
       </div>
 
-      {/* News Form */}
-      {showForm && (
-        <div ref={formRef} className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-          <h3 className="text-xl font-semibold text-white mb-4">
-            {editingNews ? 'Edit Article' : 'Create New Article'}
-          </h3>
-          {formError && (
-            <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3">
-              <p className="text-red-200 text-sm">{formError}</p>
-            </div>
-          )}
-          {error && (
-            <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3">
-              <p className="text-red-200 text-sm">{error}</p>
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="Article title"
-                />
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  Author *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  placeholder="Author name"
-                />
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  News Date *
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={publishDate}
-                  onChange={(e) => setPublishDate(e.target.value)}
-                  min="2006-01-01"
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                />
-                <p className="mt-1 text-xs text-gray-300">
-                  Select the actual date of this news (you can backdate to 2006 for older updates).
-                </p>
-              </div>
-            </div>
-
+      {/* SlidePanel Form */}
+      <SlidePanel open={showForm} onClose={handleCancel} title={editingNews ? 'Edit Article' : 'Create New Article'}
+        footer={
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" form="news-form" className="px-6 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200">
+              {editingNews ? 'Update Article' : 'Create Article'}
+            </button>
+            <button type="button" onClick={handleCancel} className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200">Cancel</button>
+          </div>
+        }
+      >
+        {formError && (<div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3"><p className="text-red-200 text-sm">{formError}</p></div>)}
+        {error && (<div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg p-3"><p className="text-red-200 text-sm">{error}</p></div>)}
+        <form id="news-form" onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-white text-sm font-medium mb-2">
-                Excerpt *
-              </label>
-              <textarea
-                required
-                rows={2}
-                value={formData.excerpt}
-                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                placeholder="Brief description of the article"
-              />
-            </div>
-
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Content *
-              </label>
-              <textarea
-                required
-                rows={6}
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                placeholder="Full article content"
-              />
-            </div>
-
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Article Image
-              </label>
-              
-              {/* Image Preview */}
-              {(imagePreview || formData.imageUrl) && (
-                <div className="mb-3 relative bg-white/5 rounded-lg border border-white/20 p-3 flex items-center justify-center min-h-[200px] max-h-[400px] overflow-hidden">
-                  <img
-                    src={imagePreview || formData.imageUrl}
-                    alt="Preview"
-                    className="max-w-full max-h-full object-contain rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleRemoveImage}
-                    className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              )}
-
-              {/* File Input */}
-              <div className="space-y-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                  id="image-upload"
-                  disabled={uploadingImage}
-                />
-                <label
-                  htmlFor="image-upload"
-                  className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
-                    uploadingImage
-                      ? 'border-gray-500 bg-gray-500/20 cursor-not-allowed'
-                      : 'border-white/30 bg-white/5 hover:border-[#00aeef] hover:bg-white/10'
-                  }`}
-                >
-                  {uploadingImage ? (
-                    <div className="flex items-center space-x-2 text-white">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00aeef]"></div>
-                      <span>Uploading and compressing image...</span>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center space-y-2 text-white">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                      <span className="text-sm">
-                        {selectedImageFile
-                          ? `Selected: ${selectedImageFile.name} (${getFileSizeMB(selectedImageFile).toFixed(2)}MB)`
-                          : 'Click to upload image (JPEG, PNG, WebP)'}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        Image will be compressed to 1-2MB automatically
-                      </span>
-                    </div>
-                  )}
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Tags (comma-separated)
+                Title *
               </label>
               <input
                 type="text"
-                value={formData.tags.join(', ')}
-                onChange={(e) => handleTagChange(e.target.value)}
+                required
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                placeholder="technology, innovation, manufacturing"
+                placeholder="Article title"
               />
             </div>
-
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.published}
-                  onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                  className="mr-2"
-                />
-                <span className="text-white">Published</span>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                Author *
               </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.featured}
-                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                  className="mr-2"
+              <input
+                type="text"
+                required
+                value={formData.author}
+                onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                placeholder="Author name"
+              />
+            </div>
+            <div>
+              <label className="block text-white text-sm font-medium mb-2">
+                News Date *
+              </label>
+              <input
+                type="date"
+                required
+                value={publishDate}
+                onChange={(e) => setPublishDate(e.target.value)}
+                min="2006-01-01"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+              />
+              <p className="mt-1 text-xs text-gray-300">
+                Select the actual date of this news (you can backdate to 2006 for older updates).
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Excerpt *
+            </label>
+            <textarea
+              required
+              rows={2}
+              value={formData.excerpt}
+              onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+              placeholder="Brief description of the article"
+            />
+          </div>
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Content *
+            </label>
+            <textarea
+              required
+              rows={6}
+              value={formData.content}
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+              placeholder="Full article content"
+            />
+          </div>
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Article Image
+            </label>
+            
+            {/* Image Preview */}
+            {(imagePreview || formData.imageUrl) && (
+              <div className="mb-3 relative bg-white/5 rounded-lg border border-white/20 p-3 flex items-center justify-center min-h-[200px] max-h-[400px] overflow-hidden">
+                <img
+                  src={imagePreview || formData.imageUrl}
+                  alt="Preview"
+                  className="max-w-full max-h-full object-contain rounded-lg"
                 />
-                <span className="text-white">Featured</span>
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* File Input */}
+            <div className="space-y-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onChange={handleImageSelect}
+                className="hidden"
+                id="image-upload"
+                disabled={uploadingImage}
+              />
+              <label
+                htmlFor="image-upload"
+                className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                  uploadingImage
+                    ? 'border-gray-500 bg-gray-500/20 cursor-not-allowed'
+                    : 'border-white/30 bg-white/5 hover:border-[#00aeef] hover:bg-white/10'
+                }`}
+              >
+                {uploadingImage ? (
+                  <div className="flex items-center space-x-2 text-white">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00aeef]"></div>
+                    <span>Uploading and compressing image...</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center space-y-2 text-white">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span className="text-sm">
+                      {selectedImageFile
+                        ? `Selected: ${selectedImageFile.name} (${getFileSizeMB(selectedImageFile).toFixed(2)}MB)`
+                        : 'Click to upload image (JPEG, PNG, WebP)'}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      Image will be compressed to 1-2MB automatically
+                    </span>
+                  </div>
+                )}
               </label>
             </div>
+          </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-[#00aeef] text-black rounded-lg hover:bg-[#0099d4] transition-colors duration-200"
-              >
-                {editingNews ? 'Update Article' : 'Create Article'}
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">
+              Tags (comma-separated)
+            </label>
+            <input
+              type="text"
+              value={formData.tags.join(', ')}
+              onChange={(e) => handleTagChange(e.target.value)}
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+              placeholder="technology, innovation, manufacturing"
+            />
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.published}
+                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                className="mr-2"
+              />
+              <span className="text-white">Published</span>
+            </label>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.featured}
+                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                className="mr-2"
+              />
+              <span className="text-white">Featured</span>
+            </label>
+          </div>
+        </form>
+      </SlidePanel>
 
       {/* News List */}
       <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-        <h3 className="text-xl font-semibold text-white mb-4">All Articles ({news.length})</h3>
-        <div className="space-y-4">
-          {news.length === 0 ? (
-            <p className="text-gray-300 text-center py-8">No news articles found. Create your first article!</p>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+          <h3 className="text-xl font-semibold text-white">All Articles ({filteredNews.length})</h3>
+          <input type="text" value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+            placeholder="Search by title, author..."
+            className="w-full sm:w-72 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00aeef] text-sm" />
+        </div>
+        {loading && <span className="text-xs text-gray-300">Loading...</span>}
+        <div className="space-y-1">
+          {paginatedNews.length === 0 ? (
+            <p className="text-gray-300 text-sm py-4">{searchQuery ? 'No articles match your search.' : 'No news articles found. Create your first article!'}</p>
           ) : (
-            news.map((article) => (
-              <div key={article.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h4 className="text-lg font-semibold text-white">{article.title}</h4>
-                      {article.published && (
-                        <span className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded">
-                          Published
-                        </span>
-                      )}
-                      {article.featured && (
-                        <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded">
-                          Featured
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-300 text-sm mb-2">{article.excerpt}</p>
-                    <div className="flex items-center space-x-4 text-xs text-gray-400">
-                      <span>By {article.author}</span>
-                      <span>{article.createdAt.toLocaleDateString()}</span>
-                      {article.tags.length > 0 && (
-                        <span>Tags: {article.tags.join(', ')}</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 md:ml-4">
-                    <button
-                      onClick={() => handleEdit(article)}
-                      className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(article.id)}
-                      className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
+            paginatedNews.map((article) => (
+              <div key={article.id} className="flex items-center justify-between gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${article.published ? 'bg-green-400' : 'bg-yellow-400'}`} />
+                  <span className="text-white font-medium truncate">{article.title}</span>
+                  {article.featured && <span className="hidden sm:inline px-2 py-0.5 text-xs rounded bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 shrink-0">Featured</span>}
+                  <span className="hidden sm:inline text-xs text-gray-400 shrink-0">{article.author}</span>
+                  <span className="hidden md:inline text-xs text-gray-400 shrink-0">{article.createdAt.toLocaleDateString()}</span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => handleEdit(article)} className="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Edit</button>
+                  <button onClick={() => handleDelete(article.id)} className="px-2.5 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors">Delete</button>
                 </div>
               </div>
             ))
           )}
         </div>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-4 pt-4 border-t border-white/10">
+            <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-3 py-1 text-sm rounded bg-white/10 text-white disabled:opacity-40 hover:bg-white/20 transition-colors">Previous</button>
+            <span className="text-sm text-gray-300">Page {currentPage} of {totalPages}</span>
+            <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-3 py-1 text-sm rounded bg-white/10 text-white disabled:opacity-40 hover:bg-white/20 transition-colors">Next</button>
+          </div>
+        )}
       </div>
     </div>
   );
