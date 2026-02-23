@@ -1,32 +1,31 @@
 import { useEffect, useRef } from 'react';
 
-interface Particle {
+interface Node {
   x: number;
   y: number;
   vx: number;
   vy: number;
   radius: number;
-  opacity: number;
+  baseOpacity: number;
+  pulseOffset: number;
 }
 
 interface MobileParticleFieldProps {
-  particleCount?: number;
-  color?: string;
-  connectionDistance?: number;
   className?: string;
 }
 
-const MobileParticleField: React.FC<MobileParticleFieldProps> = ({
-  particleCount = 60,
-  color = '0, 174, 239',
-  connectionDistance = 100,
-  className = '',
-}) => {
+const PARTICLE_COUNT = 70;
+const CONNECTION_DIST = 110;
+const NODE_COLOR = [0, 174, 239] as const; // #00aeef
+const ACCENT_COLOR = [0, 130, 200] as const;
+
+const MobileParticleField: React.FC<MobileParticleFieldProps> = ({ className = '' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
-  const particlesRef = useRef<Particle[]>([]);
+  const nodesRef = useRef<Node[]>([]);
   const touchRef = useRef<{ x: number; y: number; active: boolean }>({ x: 0, y: 0, active: false });
   const dprRef = useRef(1);
+  const timeRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -43,23 +42,23 @@ const MobileParticleField: React.FC<MobileParticleFieldProps> = ({
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
     };
 
-    const initParticles = () => {
+    const initNodes = () => {
       const rect = canvas.getBoundingClientRect();
-      particlesRef.current = Array.from({ length: particleCount }, () => ({
+      nodesRef.current = Array.from({ length: PARTICLE_COUNT }, () => ({
         x: Math.random() * rect.width,
         y: Math.random() * rect.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 1.5 + 0.5,
-        opacity: Math.random() * 0.5 + 0.2,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        radius: Math.random() * 2 + 1,
+        baseOpacity: Math.random() * 0.4 + 0.4,
+        pulseOffset: Math.random() * Math.PI * 2,
       }));
     };
 
     resize();
-    initParticles();
+    initNodes();
     window.addEventListener('resize', resize);
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -71,22 +70,21 @@ const MobileParticleField: React.FC<MobileParticleFieldProps> = ({
         active: true,
       };
     };
-    const handleTouchEnd = () => {
-      touchRef.current.active = false;
-    };
+    const handleTouchEnd = () => { touchRef.current.active = false; };
 
     canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
     canvas.addEventListener('touchend', handleTouchEnd);
 
     let lastTime = 0;
-    const targetInterval = 1000 / 30;
+    const frameInterval = 1000 / 30;
 
     const draw = (time: number) => {
-      if (time - lastTime < targetInterval) {
+      if (time - lastTime < frameInterval) {
         animationRef.current = requestAnimationFrame(draw);
         return;
       }
       lastTime = time;
+      timeRef.current = time * 0.001;
 
       const rect = canvas.getBoundingClientRect();
       const w = rect.width;
@@ -95,55 +93,91 @@ const MobileParticleField: React.FC<MobileParticleFieldProps> = ({
       ctx.setTransform(dprRef.current, 0, 0, dprRef.current, 0, 0);
       ctx.clearRect(0, 0, w, h);
 
-      const particles = particlesRef.current;
+      const nodes = nodesRef.current;
       const touch = touchRef.current;
+      const t = timeRef.current;
 
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
+      // Update positions
+      for (const n of nodes) {
+        n.x += n.vx;
+        n.y += n.vy;
 
-        if (p.x < 0) { p.x = 0; p.vx *= -1; }
-        if (p.x > w) { p.x = w; p.vx *= -1; }
-        if (p.y < 0) { p.y = 0; p.vy *= -1; }
-        if (p.y > h) { p.y = h; p.vy *= -1; }
+        if (n.x < -10) { n.x = w + 10; }
+        if (n.x > w + 10) { n.x = -10; }
+        if (n.y < -10) { n.y = h + 10; }
+        if (n.y > h + 10) { n.y = -10; }
 
         if (touch.active) {
-          const dx = p.x - touch.x;
-          const dy = p.y - touch.y;
+          const dx = n.x - touch.x;
+          const dy = n.y - touch.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            const force = (120 - dist) / 120;
-            p.vx += (dx / dist) * force * 0.8;
-            p.vy += (dy / dist) * force * 0.8;
+          if (dist < 140 && dist > 0) {
+            const force = (140 - dist) / 140;
+            n.vx += (dx / dist) * force * 1.2;
+            n.vy += (dy / dist) * force * 1.2;
           }
         }
 
-        p.vx *= 0.99;
-        p.vy *= 0.99;
+        n.vx *= 0.985;
+        n.vy *= 0.985;
       }
 
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
+      // Draw connections
+      ctx.lineCap = 'round';
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < connectionDistance) {
-            const alpha = (1 - dist / connectionDistance) * 0.15;
+          if (dist < CONNECTION_DIST) {
+            const alpha = (1 - dist / CONNECTION_DIST) * 0.35;
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(${color}, ${alpha})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(${NODE_COLOR[0]}, ${NODE_COLOR[1]}, ${NODE_COLOR[2]}, ${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
             ctx.stroke();
           }
         }
       }
 
-      for (const p of particles) {
+      // Draw nodes with pulsing glow
+      for (const n of nodes) {
+        const pulse = Math.sin(t * 1.5 + n.pulseOffset) * 0.15 + 0.85;
+        const opacity = n.baseOpacity * pulse;
+
+        // Outer glow
+        const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius * 4);
+        grad.addColorStop(0, `rgba(${NODE_COLOR[0]}, ${NODE_COLOR[1]}, ${NODE_COLOR[2]}, ${opacity * 0.3})`);
+        grad.addColorStop(1, `rgba(${NODE_COLOR[0]}, ${NODE_COLOR[1]}, ${NODE_COLOR[2]}, 0)`);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${color}, ${p.opacity})`;
+        ctx.arc(n.x, n.y, n.radius * 4, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Core dot
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${ACCENT_COLOR[0]}, ${ACCENT_COLOR[1]}, ${ACCENT_COLOR[2]}, ${opacity})`;
+        ctx.fill();
+      }
+
+      // Draw a couple of larger "hub" nodes (first 5) with extra prominence
+      for (let i = 0; i < Math.min(5, nodes.length); i++) {
+        const n = nodes[i];
+        const pulse = Math.sin(t * 0.8 + n.pulseOffset) * 0.2 + 0.8;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${NODE_COLOR[0]}, ${NODE_COLOR[1]}, ${NODE_COLOR[2]}, ${0.7 * pulse})`;
+        ctx.fill();
+
+        const ring = ctx.createRadialGradient(n.x, n.y, 2, n.x, n.y, 12);
+        ring.addColorStop(0, `rgba(${NODE_COLOR[0]}, ${NODE_COLOR[1]}, ${NODE_COLOR[2]}, ${0.15 * pulse})`);
+        ring.addColorStop(1, `rgba(${NODE_COLOR[0]}, ${NODE_COLOR[1]}, ${NODE_COLOR[2]}, 0)`);
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 12, 0, Math.PI * 2);
+        ctx.fillStyle = ring;
         ctx.fill();
       }
 
@@ -158,7 +192,7 @@ const MobileParticleField: React.FC<MobileParticleFieldProps> = ({
       canvas.removeEventListener('touchmove', handleTouchMove);
       canvas.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [particleCount, color, connectionDistance]);
+  }, []);
 
   return (
     <canvas

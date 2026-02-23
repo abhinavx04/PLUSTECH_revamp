@@ -76,35 +76,41 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Mobile Hero - Immersive */}
-      <div className="md:hidden w-full pt-16 pb-6">
-        <div className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
-          {/* Gradient base */}
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-blue-50/60" />
+      <div className="md:hidden w-full pt-16">
+        <div className="relative min-h-[55vh] flex items-center justify-center overflow-hidden">
+          {/* Dark-to-light gradient for contrast against particles */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#112240]" />
+
+          {/* Subtle grid pattern overlay */}
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage: `linear-gradient(rgba(0,174,239,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,174,239,1) 1px, transparent 1px)`,
+              backgroundSize: '40px 40px',
+            }}
+          />
 
           {/* Particle constellation */}
           <Suspense fallback={null}>
-            <MobileParticleField
-              particleCount={55}
-              color="0, 174, 239"
-              connectionDistance={90}
-            />
+            <MobileParticleField />
           </Suspense>
 
-          {/* Subtle radial glow behind text */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] bg-[#00aeef]/8 rounded-full blur-3xl pointer-events-none" />
+          {/* Central radial glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[320px] h-[320px] bg-[#00aeef]/15 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-[180px] h-[180px] bg-cyan-400/10 rounded-full blur-[60px] pointer-events-none" />
 
           {/* Content layer */}
-          <div className="relative z-10 text-center px-6 py-8 flex flex-col items-center">
+          <div className="relative z-10 text-center px-6 py-10 flex flex-col items-center">
 
             {/* Kinetic heading — word-by-word stagger */}
             <h1 className="font-heading" style={{ fontWeight: 950 }}>
               {['DEVELOPING', 'SOLUTIONS'].map((word, i) => (
                 <motion.span
                   key={`l1-${i}`}
-                  initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+                  initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.6, delay: 0.15 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                  className="inline-block text-2xl sm:text-3xl tracking-tight text-black/75 mr-2 last:mr-0"
+                  transition={{ duration: 0.7, delay: 0.2 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+                  className="inline-block text-2xl sm:text-3xl tracking-tight text-white/90 mr-2 last:mr-0 drop-shadow-[0_2px_12px_rgba(0,174,239,0.3)]"
                 >
                   {word}
                 </motion.span>
@@ -113,10 +119,10 @@ const HomePage: React.FC = () => {
               {['DELIVERING', 'QUALITY'].map((word, i) => (
                 <motion.span
                   key={`l2-${i}`}
-                  initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+                  initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.6, delay: 0.45 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                  className="inline-block text-2xl sm:text-3xl tracking-tight text-black/75 mr-2 last:mr-0"
+                  transition={{ duration: 0.7, delay: 0.55 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+                  className="inline-block text-2xl sm:text-3xl tracking-tight text-white/90 mr-2 last:mr-0 drop-shadow-[0_2px_12px_rgba(0,174,239,0.3)]"
                 >
                   {word}
                 </motion.span>
@@ -127,16 +133,16 @@ const HomePage: React.FC = () => {
             <motion.div
               initial={{ scaleX: 0, opacity: 0 }}
               animate={{ scaleX: 1, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-4 h-[2px] w-16 bg-gradient-to-r from-transparent via-[#00aeef] to-transparent origin-center"
+              transition={{ duration: 0.8, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-5 h-[2px] w-20 bg-gradient-to-r from-transparent via-[#00aeef] to-transparent origin-center"
             />
 
-            {/* Subtle tagline */}
+            {/* Tagline */}
             <motion.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.1 }}
-              className="mt-3 text-xs sm:text-sm text-slate-500 font-body tracking-wide"
+              transition={{ duration: 0.5, delay: 1.2 }}
+              className="mt-3 text-xs sm:text-sm text-blue-200/60 font-body tracking-widest uppercase"
             >
               Engineering precision. Delivering excellence.
             </motion.p>
@@ -145,31 +151,29 @@ const HomePage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.3, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-8 flex flex-col items-center gap-3 w-full"
+              transition={{ duration: 0.6, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-10 flex flex-col items-center gap-4 w-full"
             >
               {/* Primary CTA with shimmer */}
               <button
                 onClick={() => smoothScrollTo('capabilities')}
-                className="hero-shimmer w-full max-w-xs px-6 py-3.5 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_4px_20px_rgba(0,174,239,0.35)] active:scale-[0.97] transition-transform duration-150"
+                className="hero-shimmer w-full max-w-[280px] px-6 py-3.5 rounded-full bg-[#00aeef] text-white font-bold tracking-wide shadow-[0_0_30px_rgba(0,174,239,0.4),0_0_60px_rgba(0,174,239,0.15)] active:scale-[0.97] transition-transform duration-150"
               >
                 Get Started
               </button>
 
-              {/* Secondary CTA with drawn border */}
+              {/* Secondary CTA */}
               <a
                 href="/about"
-                className="hero-border-draw relative w-full max-w-xs rounded-full text-center"
+                className="w-full max-w-[280px] px-6 py-3.5 rounded-full text-center font-semibold text-[#00aeef] border border-[#00aeef]/40 bg-white/5 backdrop-blur-sm active:scale-[0.97] transition-all duration-200 hover:bg-white/10"
               >
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 48" preserveAspectRatio="none" fill="none">
-                  <rect x="1" y="1" width="298" height="46" rx="23" stroke="#00aeef" strokeWidth="2" strokeDasharray="1000" strokeDashoffset="1000" />
-                </svg>
-                <span className="relative block px-6 py-3.5 font-semibold text-[#0077a8]">
-                  Discover Our Company
-                </span>
+                Discover Our Company
               </a>
             </motion.div>
           </div>
+
+          {/* Bottom gradient fade to white (next section) */}
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
         </div>
       </div>
 
