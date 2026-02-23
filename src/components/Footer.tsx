@@ -38,11 +38,11 @@ const Footer = () => {
             <h2 className="text-sm md:text-base font-semibold text-white">Explore</h2>
             <ul className="space-y-1.5 text-sm">
               {NAV_ITEMS.map((item) => (
-                <li key={item.label}>
+                <li key={item.name}>
                   <a
                     href={item.link}
                     className="text-gray-300 hover:text-[#00aeef] transition-colors duration-200"
-                    aria-label={`Navigate to ${item.label}`}
+                    aria-label={`Navigate to ${item.name}`}
                   >
                     {item.name}
                   </a>
