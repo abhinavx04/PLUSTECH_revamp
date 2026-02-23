@@ -62,12 +62,56 @@ const HomePage: React.FC = () => {
       <main>
 
       {/* Threads Hero - Desktop Only */}
-      <div className="hidden md:flex w-full items-center justify-center pt-20 overflow-visible">
-        <div className="w-full h-[80vh] relative overflow-visible">
-          <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
+      <div className="hidden md:flex w-full items-center justify-center pt-12 overflow-visible">
+        <div className="w-full h-[72vh] relative overflow-visible">
+          {/* Very light top gradient for atmosphere */}
+          <div
+            className="absolute inset-0 z-[1] pointer-events-none"
+            style={{
+              background: 'linear-gradient(180deg, rgba(248,250,252,0.7) 0%, transparent 45%, transparent 100%)',
+            }}
+          />
+
+          {/* Breathing glow behind headline */}
+          <motion.div
+            className="absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 z-[1] pointer-events-none"
+            style={{
+              width: 'min(90vw, 640px)',
+              height: '280px',
+              background: 'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(0,174,239,0.08) 0%, rgba(0,174,239,0.03) 50%, transparent 70%)',
+            }}
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none pt-[5%]">
             <div className="text-center px-6 lg:px-8 max-w-5xl">
-              <h1 className="text-black/60 text-6xl font-extrabold tracking-tight leading-tight font-heading" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)', fontWeight: 950 }}>
-                DEVELOPING SOLUTIONS<br />DELIVERING QUALITY
+              <h1 className="font-heading text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight" style={{ fontWeight: 950 }}>
+                {['DEVELOPING', 'SOLUTIONS'].map((word, i) => (
+                  <motion.span
+                    key={`d1-${i}`}
+                    initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.65, delay: 0.2 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="inline-block text-black/60 mr-2 last:mr-0"
+                    style={{ textShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+                <br />
+                {['DELIVERING', 'QUALITY'].map((word, i) => (
+                  <motion.span
+                    key={`d2-${i}`}
+                    initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.65, delay: 0.5 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="inline-block text-black/60 mr-2 last:mr-0"
+                    style={{ textShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </h1>
             </div>
           </div>
