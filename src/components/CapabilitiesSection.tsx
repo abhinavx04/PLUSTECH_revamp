@@ -124,7 +124,8 @@ const capabilitiesData: CapabilityItem[] = [
   {
     id: 'digitization',
     title: 'Digitization & Smart Factory',
-    description: 'Empowering industry transformation through advanced digital solutions and Industry 4.0 technologies. Our smart factory implementations deliver real-time insights, optimize processes, and enable data-driven decision making.',
+    description:
+      'Plustech, through its sister concern Pluscon Systems Pvt. Ltd., delivers advanced digitization and smart factory solutions that drive Industry 4.0 transformation. These solutions provide real-time operational visibility, optimize processes, and enable data-driven decision-making.',
     features: [
       'Advanced process visualization and control systems',
       'Real-time performance analytics and KPI tracking',
@@ -142,7 +143,9 @@ const capabilitiesData: CapabilityItem[] = [
     ],
     bgColor: 'bg-gradient-to-b from-blue-50 via-blue-100 to-white',
     textColor: 'text-black',
-    animationDirection: 'up'
+    animationDirection: 'up',
+    logoSrc: '/digitization-smartfactory/pluscon-logo.png',
+    logoAlt: 'Pluscon Systems Pvt. Ltd.'
   }
 ];
 
@@ -332,7 +335,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
     return 0.8 + (0.2 * progress);
   });
 
-  const isPrimaryLogo = capability.id === 'paint-circulation';
+  const isPrimaryLogo = capability.id === 'paint-circulation' || capability.id === 'digitization';
 
 
   return (
@@ -354,7 +357,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
             <div className="space-y-6">
               <div className="flex items-center gap-4 flex-wrap">
                 {capability.logoSrc && (
-                  <div className={isPrimaryLogo ? 'h-12 md:h-14' : 'h-10 md:h-12'}>
+                  <div className={isPrimaryLogo ? 'h-14 md:h-16' : 'h-10 md:h-12'}>
                     <div
                       className={
                         isPrimaryLogo
@@ -365,7 +368,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
                       <img
                         src={capability.logoSrc}
                         alt={capability.logoAlt ?? `${capability.title} logo`}
-                        className="h-full w-auto object-contain"
+                        className="h-full w-auto object-contain transform scale-110 md:scale-125"
                         loading="lazy"
                       />
                     </div>
