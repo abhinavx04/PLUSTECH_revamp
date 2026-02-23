@@ -78,15 +78,15 @@ const HomePage: React.FC = () => {
       {/* Mobile Hero - Immersive */}
       <div className="md:hidden w-full pt-16">
         <div className="relative min-h-[55vh] flex items-center justify-center overflow-hidden">
-          {/* Dark-to-light gradient for contrast against particles */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#0d1f3c] to-[#112240]" />
+          {/* Light gradient background matching site aesthetic */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-blue-50/80 to-white" />
 
-          {/* Subtle grid pattern overlay */}
+          {/* Subtle blueprint grid */}
           <div
-            className="absolute inset-0 opacity-[0.04]"
+            className="absolute inset-0 opacity-[0.06]"
             style={{
-              backgroundImage: `linear-gradient(rgba(0,174,239,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,174,239,1) 1px, transparent 1px)`,
-              backgroundSize: '40px 40px',
+              backgroundImage: `linear-gradient(rgba(0,100,180,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,100,180,1) 1px, transparent 1px)`,
+              backgroundSize: '36px 36px',
             }}
           />
 
@@ -95,14 +95,10 @@ const HomePage: React.FC = () => {
             <MobileParticleField />
           </Suspense>
 
-          {/* Central radial glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[320px] h-[320px] bg-[#00aeef]/15 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-[180px] h-[180px] bg-cyan-400/10 rounded-full blur-[60px] pointer-events-none" />
-
           {/* Content layer */}
           <div className="relative z-10 text-center px-6 py-10 flex flex-col items-center">
 
-            {/* Kinetic heading — word-by-word stagger */}
+            {/* Kinetic heading */}
             <h1 className="font-heading" style={{ fontWeight: 950 }}>
               {['DEVELOPING', 'SOLUTIONS'].map((word, i) => (
                 <motion.span
@@ -110,7 +106,7 @@ const HomePage: React.FC = () => {
                   initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   transition={{ duration: 0.7, delay: 0.2 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                  className="inline-block text-2xl sm:text-3xl tracking-tight text-white/90 mr-2 last:mr-0 drop-shadow-[0_2px_12px_rgba(0,174,239,0.3)]"
+                  className="inline-block text-2xl sm:text-3xl tracking-tight text-slate-800 mr-2 last:mr-0"
                 >
                   {word}
                 </motion.span>
@@ -122,7 +118,7 @@ const HomePage: React.FC = () => {
                   initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   transition={{ duration: 0.7, delay: 0.55 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                  className="inline-block text-2xl sm:text-3xl tracking-tight text-white/90 mr-2 last:mr-0 drop-shadow-[0_2px_12px_rgba(0,174,239,0.3)]"
+                  className="inline-block text-2xl sm:text-3xl tracking-tight text-slate-800 mr-2 last:mr-0"
                 >
                   {word}
                 </motion.span>
@@ -142,7 +138,7 @@ const HomePage: React.FC = () => {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.2 }}
-              className="mt-3 text-xs sm:text-sm text-blue-200/60 font-body tracking-widest uppercase"
+              className="mt-3 text-xs sm:text-sm text-slate-400 font-body tracking-widest uppercase"
             >
               Engineering precision. Delivering excellence.
             </motion.p>
@@ -154,26 +150,21 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.6, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
               className="mt-10 flex flex-col items-center gap-4 w-full"
             >
-              {/* Primary CTA with shimmer */}
               <button
                 onClick={() => smoothScrollTo('capabilities')}
-                className="hero-shimmer w-full max-w-[280px] px-6 py-3.5 rounded-full bg-[#00aeef] text-white font-bold tracking-wide shadow-[0_0_30px_rgba(0,174,239,0.4),0_0_60px_rgba(0,174,239,0.15)] active:scale-[0.97] transition-transform duration-150"
+                className="hero-shimmer w-full max-w-[280px] px-6 py-3.5 rounded-full bg-[#00aeef] text-white font-bold tracking-wide shadow-[0_4px_24px_rgba(0,174,239,0.35)] active:scale-[0.97] transition-transform duration-150"
               >
                 Get Started
               </button>
 
-              {/* Secondary CTA */}
               <a
                 href="/about"
-                className="w-full max-w-[280px] px-6 py-3.5 rounded-full text-center font-semibold text-[#00aeef] border border-[#00aeef]/40 bg-white/5 backdrop-blur-sm active:scale-[0.97] transition-all duration-200 hover:bg-white/10"
+                className="w-full max-w-[280px] px-6 py-3.5 rounded-full text-center font-semibold text-[#0077a8] border-2 border-[#00aeef]/50 bg-white/80 backdrop-blur-sm active:scale-[0.97] transition-all duration-200"
               >
                 Discover Our Company
               </a>
             </motion.div>
           </div>
-
-          {/* Bottom gradient fade to white (next section) */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
         </div>
       </div>
 
