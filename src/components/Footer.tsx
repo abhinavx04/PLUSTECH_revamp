@@ -51,24 +51,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* About Subpages (from navbar submenu) */}
-          <div className="flex flex-col space-y-2">
-            <h2 className="text-sm md:text-base font-semibold text-white">About</h2>
-            <ul className="space-y-1.5 text-sm">
-              {NAV_ITEMS.find((item) => item.name === 'About')?.submenu?.map((subItem) => (
-                <li key={subItem.title}>
-                  <a
-                    href={subItem.path}
-                    className="text-gray-300 hover:text-[#00aeef] transition-colors duration-200"
-                    aria-label={`Navigate to ${subItem.title}`}
-                  >
-                    {subItem.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Contact Info - Main Office */}
           <div className="flex flex-col space-y-2">
             <h2 className="text-sm md:text-base font-semibold text-white">Contact</h2>
