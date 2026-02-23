@@ -133,21 +133,11 @@ const HomePage: React.FC = () => {
               className="mt-5 h-[2px] w-20 bg-gradient-to-r from-transparent via-[#00aeef] to-transparent origin-center"
             />
 
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.2 }}
-              className="mt-3 text-xs sm:text-sm text-slate-400 font-body tracking-widest uppercase"
-            >
-              Engineering precision. Delivering excellence.
-            </motion.p>
-
             {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.6, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
               className="mt-10 flex flex-col items-center gap-4 w-full"
             >
               <button
