@@ -90,6 +90,7 @@ const capabilitiesData: CapabilityItem[] = [
     features: [],
     images: [
       '/automated-customised-materialhandling/4.png',
+      '/automated-customised-materialhandling/5.png',
       '/automated-customised-materialhandling/1.webp',
       '/automated-customised-materialhandling/2.webp',
       '/automated-customised-materialhandling/3.webp'
