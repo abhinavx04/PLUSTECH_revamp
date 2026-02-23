@@ -125,7 +125,7 @@ const capabilitiesData: CapabilityItem[] = [
     id: 'digitization',
     title: 'Digitization & Smart Factory',
     description:
-      'Plustech, through it's sister concern Pluscon Systems Pvt. Ltd., delivers advanced digitization and smart factory solutions that drive Industry 4.0 transformation. These solutions provide real-time operational visibility, optimize processes, and enable data-driven decision-making.',
+      "Plustech, through it's sister concern Pluscon Systems Pvt. Ltd., delivers advanced digitization and smart factory solutions that drive Industry 4.0 transformation. These solutions provide real-time operational visibility, optimize processes, and enable data-driven decision-making.",
     features: [
       'Advanced process visualization and control systems',
       'Real-time performance analytics and KPI tracking',
