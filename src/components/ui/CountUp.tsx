@@ -14,6 +14,7 @@ const CountUp: React.FC<CountUpProps> = ({ to, durationMs = 1400, delayMs = 0, c
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
   const spanRef = useRef<HTMLSpanElement | null>(null);
+  const hasAnimatedRef = useRef(false);
   const isInView = useInView(spanRef, { margin: '-20% 0px -20% 0px' });
 
   useEffect(() => {
@@ -31,23 +32,20 @@ const CountUp: React.FC<CountUpProps> = ({ to, durationMs = 1400, delayMs = 0, c
     };
 
     const start = () => {
-      // reset to restart from 0
       startRef.current = null;
       setValue(0);
       rafRef.current = requestAnimationFrame(step);
     };
 
-    const maybeStart = () => {
-      if (!startOnVisible || isInView) {
-        if (delayMs > 0) {
-          timeoutId = window.setTimeout(start, delayMs);
-        } else {
-          start();
-        }
-      }
-    };
+    if (!startOnVisible || !isInView) return;
+    if (hasAnimatedRef.current) return;
 
-    maybeStart();
+    hasAnimatedRef.current = true;
+    if (delayMs > 0) {
+      timeoutId = window.setTimeout(start, delayMs);
+    } else {
+      start();
+    }
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);

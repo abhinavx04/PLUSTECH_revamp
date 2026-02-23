@@ -1,15 +1,19 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Footer from '../components/Footer';
 import { Outlet, useLocation } from 'react-router-dom';
 import CountUp from '../components/ui/CountUp';
 import { PageLayout } from '../components/PageLayout';
+import { ImageViewer } from '../components/ui/ImageViewer';
 
 const TESTIMONIAL_VIDEO_URL: string | undefined = import.meta.env.VITE_TESTIMONIAL_VIDEO_URL;
 
+const ABOUT_US_TEAM_IMAGE = '/aboutus/team.jpg';
+
 const AboutUsPage: React.FC = () => {
   const location = useLocation();
-  
+  const [teamImageOpen, setTeamImageOpen] = useState(false);
+
   const heroRef = useRef<HTMLDivElement>(null);
   const aboutUsSectionRef = useRef<HTMLDivElement>(null);
   const contentSectionRef = useRef<HTMLDivElement>(null);
@@ -147,8 +151,11 @@ const AboutUsPage: React.FC = () => {
           <section ref={aboutUsSectionRef} className="w-full px-6 md:px-12 lg:px-16 py-16 bg-white">
             <div className="max-w-7xl mx-auto w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                <div className="w-full">
-                  <img src="/aboutus/team.jpg" alt="Plustech team" className="w-full rounded-2xl shadow-[0_12px_36px_rgba(0,0,0,0.25)] object-cover" loading="lazy" />
+                <div
+                  className="w-full cursor-pointer rounded-2xl overflow-hidden shadow-[0_12px_36px_rgba(0,0,0,0.25)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.2)] transition-shadow duration-300"
+                  onClick={() => setTeamImageOpen(true)}
+                >
+                  <img src={ABOUT_US_TEAM_IMAGE} alt="Plustech team" className="w-full object-cover" loading="lazy" />
                 </div>
                 <div className="space-y-5">
                   <h3 className="text-3xl md:text-4xl font-heading font-bold text-black">ABOUT US</h3>
@@ -234,6 +241,17 @@ const AboutUsPage: React.FC = () => {
       <div ref={contentSectionRef} className={`relative px-6 md:px-12 lg:px-16 z-10 ${isRootAboutPage ? 'py-16' : 'pt-8 pb-16'}`}>
         <Outlet />
       </div>
+
+      {/* Team image viewer */}
+      {teamImageOpen && (
+        <ImageViewer
+          images={[ABOUT_US_TEAM_IMAGE]}
+          currentIndex={0}
+          onClose={() => setTeamImageOpen(false)}
+          onNavigate={() => {}}
+          alt="Plustech team"
+        />
+      )}
 
       {/* Footer */}
       <Footer />
