@@ -366,7 +366,7 @@ const patternHUD: PatternFn = (w, h, cx, cy, safeR) => {
   return { lines, arcs, dots };
 };
 
-// --- All patterns: geometric only (points drawn); random constellation formations (Circuit, Mesh) excluded ---
+// --- All patterns (geometric + circuit/mesh) ---
 const PATTERNS: PatternFn[] = [
   patternHex,
   patternRadial,
@@ -374,6 +374,8 @@ const PATTERNS: PatternFn[] = [
   patternConcentricPoly,
   patternVoronoiGrid,
   patternChevron,
+  patternCircuit,
+  patternMesh,
 ];
 
 // ==================== Component ====================
