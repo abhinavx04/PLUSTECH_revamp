@@ -89,7 +89,8 @@ const capabilitiesData: CapabilityItem[] = [
     images: [
       '/automated-customised-materialhandling/1.webp',
       '/automated-customised-materialhandling/2.webp',
-      '/automated-customised-materialhandling/3.webp'
+      '/automated-customised-materialhandling/3.webp',
+      '/automated-customised-materialhandling/4.png'
     ],
     bgColor: 'bg-gradient-to-b from-white via-white to-blue-50',
     textColor: 'text-black',
@@ -391,28 +392,8 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
 
                 <HomeFeatureVideo />
               </div>
-            ) : capability.id === 'robotic-applications' ? (
-              // Robotic applications with carousel (buttons only, no counter)
-              <RoboticImageCarousel images={capability.images} onImageClick={(index) => setSelectedImageIndex(index)} />
-            ) : capability.id === 'material-handling' ? (
-              // 3-column responsive grid for material handling (no horizontal scroll)
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {capability.images.map((image, imageIndex) => (
-                  <div
-                    key={imageIndex}
-                    className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer"
-                    onClick={() => setSelectedImageIndex(imageIndex)}
-                  >
-                    <img 
-                      src={image} 
-                      alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[300px] md:h-[350px] object-contain bg-slate-50 group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  </div>
-                ))}
-              </div>
+            ) : (capability.id === 'robotic-applications' || capability.id === 'material-handling') ? (
+              <ImageCarousel images={capability.images} onImageClick={(index) => setSelectedImageIndex(index)} />
             ) : (
               // 3-column grid for digitization (6 images, 2 rows of 3)
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -451,72 +432,103 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
   );
 };
 
-const RoboticImageCarousel: React.FC<{ images: string[]; onImageClick: (index: number) => void }> = ({ images, onImageClick }) => {
-  const scrollerRef = useRef<HTMLDivElement>(null);
+const CARD_GAP = 24;
+
+const ImageCarousel: React.FC<{ images: string[]; onImageClick: (index: number) => void }> = ({ images, onImageClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const scrollToImage = (index: number) => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    const child = scroller.children[index] as HTMLElement;
-    if (!child) return;
-    scroller.scrollTo({
-      left: child.offsetLeft - scroller.offsetLeft,
-      behavior: 'smooth'
-    });
-    setCurrentIndex(index);
-  };
-
-  const nextImage = () => scrollToImage((currentIndex + 1) % images.length);
-  const prevImage = () => scrollToImage(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
-
+  const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
+
+  const goTo = (index: number) => setCurrentIndex(index);
+  const nextImage = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX.current;
-    const minSwipeDistance = 50;
-
-    if (Math.abs(diff) > minSwipeDistance) {
-      if (diff > 0) {
-        nextImage();
-      } else {
-        prevImage();
-      }
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? nextImage() : prevImage();
     }
   };
 
+  const [cardWidth, setCardWidth] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  useEffect(() => {
+    const measure = () => {
+      if (!containerRef.current) return;
+      const containerW = containerRef.current.offsetWidth;
+      if (containerW >= 768) {
+        setVisibleCount(3);
+        setCardWidth((containerW - CARD_GAP * 2) / 3);
+      } else if (containerW >= 640) {
+        setVisibleCount(2);
+        setCardWidth((containerW - CARD_GAP) / 2);
+      } else {
+        setVisibleCount(1);
+        setCardWidth(containerW);
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  const maxIndex = Math.max(0, images.length - visibleCount);
+  const clampedIndex = Math.min(currentIndex, maxIndex);
+  const translateX = cardWidth > 0
+    ? -(clampedIndex * (cardWidth + CARD_GAP))
+    : 0;
+
   return (
-    <div className="relative">
-      {/* Carousel Container */}
+    <div className="relative" ref={containerRef}>
+      {/* Sliding track with overflow visible for adjacent "peek" */}
       <div
-        ref={scrollerRef}
-        className="flex overflow-hidden gap-6"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {images.map((image, i) => (
-          <div key={i} className="flex-none w-[450px] md:w-[550px]">
+        <div
+          className="flex transition-transform duration-500 ease-in-out"
+          style={{
+            gap: `${CARD_GAP}px`,
+            transform: `translateX(${translateX}px)`,
+          }}
+        >
+          {images.map((image, i) => (
             <div
-              className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer"
-              onClick={() => onImageClick(i)}
+              key={i}
+              className="flex-none"
+              style={{ width: cardWidth > 0 ? `${cardWidth}px` : '100%' }}
             >
-              <img
-                src={image}
-                alt={`Robotic application ${i + 1}`}
-                className="w-full h-[300px] md:h-[350px] object-contain bg-slate-50 group-hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div
+                className={`relative overflow-hidden rounded-2xl shadow-lg border bg-white group cursor-pointer transition-all duration-500 ${
+                  i === currentIndex
+                    ? 'border-[#00aeef]/40 scale-100 opacity-100'
+                    : 'border-slate-200 scale-[0.97] opacity-60'
+                }`}
+                onClick={() => {
+                  if (i === currentIndex) {
+                    onImageClick(currentIndex);
+                  } else {
+                    goTo(i);
+                  }
+                }}
+              >
+                <img
+                  src={image}
+                  alt={`Image ${i + 1}`}
+                  className="w-full aspect-[16/10] object-contain bg-slate-50 transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Navigation: arrows + dot indicators */}
@@ -535,7 +547,7 @@ const RoboticImageCarousel: React.FC<{ images: string[]; onImageClick: (index: n
           {images.map((_, i) => (
             <button
               key={i}
-              onClick={() => scrollToImage(i)}
+              onClick={() => goTo(i)}
               className={`rounded-full transition-all duration-300 ${
                 i === currentIndex
                   ? 'w-8 h-2.5 bg-[#00aeef]'

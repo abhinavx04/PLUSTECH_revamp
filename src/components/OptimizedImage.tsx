@@ -51,7 +51,13 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         height={height}
         loading={imageLoading}
         decoding="async"
-        className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} w-full h-full object-${objectFit}`}
+        className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} w-full h-full ${
+          objectFit === 'contain' ? 'object-contain' :
+          objectFit === 'cover' ? 'object-cover' :
+          objectFit === 'fill' ? 'object-fill' :
+          objectFit === 'none' ? 'object-none' :
+          'object-scale-down'
+        }`}
         onLoad={() => setIsLoaded(true)}
         onError={() => {
           setHasError(true);
