@@ -71,6 +71,8 @@ const capabilitiesData: CapabilityItem[] = [
       'General industrial parts'
     ],
     images: [
+      '/robotic/Robotic Painting (1).png',
+      '/robotic/Robotic Painting(2).png',
       '/robotic/indoor-painting_and_door_opening.webp',
       '/robotic/2-wheeler-fueltanks_plaSTIC.webp',
       '/robotic/scooter-metal_plastic-part.webp',
@@ -87,10 +89,10 @@ const capabilitiesData: CapabilityItem[] = [
     description: 'Plustech deploys fully or partially automated handling solutions across various sections and operations of paint shops to boost productivity, efficiency, and optimize the plant footprint.',
     features: [],
     images: [
+      '/automated-customised-materialhandling/4.png',
       '/automated-customised-materialhandling/1.webp',
       '/automated-customised-materialhandling/2.webp',
-      '/automated-customised-materialhandling/3.webp',
-      '/automated-customised-materialhandling/4.png'
+      '/automated-customised-materialhandling/3.webp'
     ],
     bgColor: 'bg-gradient-to-b from-white via-white to-blue-50',
     textColor: 'text-black',
@@ -392,28 +394,9 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
 
                 <HomeFeatureVideo />
               </div>
-            ) : (capability.id === 'robotic-applications' || capability.id === 'material-handling') ? (
+            ) : (capability.id === 'robotic-applications' || capability.id === 'material-handling' || capability.id === 'digitization') ? (
               <ImageCarousel images={capability.images} onImageClick={(index) => setSelectedImageIndex(index)} />
-            ) : (
-              // 3-column grid for digitization (6 images, 2 rows of 3)
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {capability.images.map((image, imageIndex) => (
-                  <div
-                    key={imageIndex}
-                    className="relative overflow-hidden rounded-2xl shadow-lg border border-slate-200 bg-white group cursor-pointer"
-                    onClick={() => setSelectedImageIndex(imageIndex)}
-                  >
-                    <img 
-                      src={image} 
-                      alt={`${capability.title} ${imageIndex + 1}`}
-                      className="w-full h-[300px] md:h-[350px] object-contain bg-slate-50 group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  </div>
-                ))}
-              </div>
-            )}
+            ) : null}
           </motion.div>
         </div>
       </div>
