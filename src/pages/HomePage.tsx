@@ -9,7 +9,7 @@ import { OptimizedImage } from '../components/OptimizedImage';
 import { PageLayout } from '../components/PageLayout';
 import { ImageViewer } from '../components/ui/ImageViewer';
 
-const MobileParticleField = lazy(() => import('../components/MobileParticleField'));
+const MobileHeroPattern = lazy(() => import('../components/MobileHeroPattern'));
 
 const HomePage: React.FC = () => {
   const [selectedWelcomeImage, setSelectedWelcomeImage] = useState<number | null>(null);
@@ -90,9 +90,9 @@ const HomePage: React.FC = () => {
             }}
           />
 
-          {/* Particle constellation */}
+          {/* Geometric pattern */}
           <Suspense fallback={null}>
-            <MobileParticleField />
+            <MobileHeroPattern />
           </Suspense>
 
           {/* Content layer */}
