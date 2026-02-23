@@ -31,6 +31,7 @@ const CompanyAnimation: React.FC = () => {
     { id: 27, src: '/company logos/orient-electric.png', alt: 'Orient Electric' },
     { id: 28, src: '/company logos/united-industires.png', alt: 'United Industries' },
     { id: 29, src: '/company logos/runner.png', alt: 'Runner' },
+    { id: 30, src: '/company logos/hyundai-removebg-preview.png', alt: 'Hyundai' },
   ];
 
   const trackRef = useRef<HTMLDivElement>(null);

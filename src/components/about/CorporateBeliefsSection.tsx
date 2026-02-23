@@ -269,7 +269,7 @@ const CorporateBeliefsSection: React.FC = () => {
                     spotlightColor="rgba(220, 38, 38, 0.45)"
                     className="h-full flex items-center justify-center min-h-[170px] w-full"
                   >
-                    <span className="text-center font-bold font-sans text-[#333333] text-lg sm:text-xl px-4">
+                    <span className="text-center font-bold font-sans text-[#333333] text-lg sm:text-xl px-4 whitespace-nowrap">
                       {value}
                     </span>
                   </SpotlightCard>
@@ -297,7 +297,7 @@ const CorporateBeliefsSection: React.FC = () => {
                     spotlightColor="rgba(220, 38, 38, 0.45)"
                     className="h-full flex items-center justify-center min-h-[170px] w-full"
                   >
-                    <span className="text-center font-bold font-sans text-[#333333] text-lg sm:text-xl px-4">
+                    <span className="text-center font-bold font-sans text-[#333333] text-lg sm:text-xl px-4 whitespace-nowrap">
                       {value}
                     </span>
                   </SpotlightCard>
