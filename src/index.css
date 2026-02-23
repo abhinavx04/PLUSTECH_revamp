@@ -118,6 +118,52 @@
   animation: slide-in-right 0.25s ease-out;
 }
 
+/* Hero shimmer sweep for CTA buttons */
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.hero-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.hero-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.35) 45%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.35) 55%,
+    transparent 80%
+  );
+  animation: shimmer-sweep 3s ease-in-out infinite;
+  animation-delay: 1.5s;
+  pointer-events: none;
+}
+
+/* Self-drawing border animation for outlined buttons */
+@keyframes border-draw {
+  0%   { stroke-dashoffset: 1000; }
+  100% { stroke-dashoffset: 0; }
+}
+.hero-border-draw svg {
+  animation: border-draw 1.8s ease-out forwards;
+  animation-delay: 1.2s;
+}
+
+/* Horizontal rule sweep after text reveal */
+@keyframes line-expand {
+  0%   { transform: scaleX(0); opacity: 0; }
+  50%  { opacity: 1; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
 /* Performance optimizations for animations */
 .will-change-transform {
   will-change: transform;

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
+import { motion } from 'framer-motion';
 import Threads from '../components/Threads';
 import CompanyAnimation from '../components/ui/CompanyAnimation';
 import CapabilitiesSection from '../components/CapabilitiesSection';
@@ -7,6 +8,8 @@ import { SEO } from '../components/SEO';
 import { OptimizedImage } from '../components/OptimizedImage';
 import { PageLayout } from '../components/PageLayout';
 import { ImageViewer } from '../components/ui/ImageViewer';
+
+const MobileParticleField = lazy(() => import('../components/MobileParticleField'));
 
 const HomePage: React.FC = () => {
   const [selectedWelcomeImage, setSelectedWelcomeImage] = useState<number | null>(null);
@@ -72,39 +75,100 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Hero - Simplified */}
-      <div className="md:hidden w-full pt-20 pb-8">
-        <div className="relative min-h-[35vh] flex items-center justify-center overflow-hidden">
-          {/* Animated gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-cyan-50">
-            <div className="absolute inset-0 opacity-40">
-              <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-[#00aeef]/30 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-1/3 right-1/4 w-40 h-40 bg-blue-400/25 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-              <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-cyan-300/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
-            </div>
-          </div>
-          
-          {/* Content */}
-          <div className="relative z-10 text-center px-6">
-            <h1 className="text-black/70 text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight font-heading" style={{ fontWeight: 950 }}>
-              DEVELOPING SOLUTIONS<br />DELIVERING QUALITY
+      {/* Mobile Hero - Immersive */}
+      <div className="md:hidden w-full pt-16 pb-6">
+        <div className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+          {/* Gradient base */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-blue-50/60" />
+
+          {/* Particle constellation */}
+          <Suspense fallback={null}>
+            <MobileParticleField
+              particleCount={55}
+              color="0, 174, 239"
+              connectionDistance={90}
+            />
+          </Suspense>
+
+          {/* Subtle radial glow behind text */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] bg-[#00aeef]/8 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Content layer */}
+          <div className="relative z-10 text-center px-6 py-8 flex flex-col items-center">
+
+            {/* Kinetic heading — word-by-word stagger */}
+            <h1 className="font-heading" style={{ fontWeight: 950 }}>
+              {['DEVELOPING', 'SOLUTIONS'].map((word, i) => (
+                <motion.span
+                  key={`l1-${i}`}
+                  initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.6, delay: 0.15 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                  className="inline-block text-2xl sm:text-3xl tracking-tight text-black/75 mr-2 last:mr-0"
+                >
+                  {word}
+                </motion.span>
+              ))}
+              <br />
+              {['DELIVERING', 'QUALITY'].map((word, i) => (
+                <motion.span
+                  key={`l2-${i}`}
+                  initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  transition={{ duration: 0.6, delay: 0.45 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                  className="inline-block text-2xl sm:text-3xl tracking-tight text-black/75 mr-2 last:mr-0"
+                >
+                  {word}
+                </motion.span>
+              ))}
             </h1>
-            
-            {/* Mobile CTAs */}
-            <div className="mt-8 flex flex-col items-center gap-3">
-              <button 
+
+            {/* Animated accent line */}
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-4 h-[2px] w-16 bg-gradient-to-r from-transparent via-[#00aeef] to-transparent origin-center"
+            />
+
+            {/* Subtle tagline */}
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1.1 }}
+              className="mt-3 text-xs sm:text-sm text-slate-500 font-body tracking-wide"
+            >
+              Engineering precision. Delivering excellence.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.3, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-8 flex flex-col items-center gap-3 w-full"
+            >
+              {/* Primary CTA with shimmer */}
+              <button
                 onClick={() => smoothScrollTo('capabilities')}
-                className="w-full max-w-xs px-6 py-3 rounded-full bg-[#00aeef] text-black font-semibold shadow-lg shadow-[#00aeef]/30 hover:bg-[#0099d4] transition-all duration-300"
+                className="hero-shimmer w-full max-w-xs px-6 py-3.5 rounded-full bg-[#00aeef] text-white font-semibold shadow-[0_4px_20px_rgba(0,174,239,0.35)] active:scale-[0.97] transition-transform duration-150"
               >
                 Get Started
               </button>
-              <a 
-                href="/about" 
-                className="w-full max-w-xs px-6 py-3 rounded-full bg-white text-[#0077a8] font-semibold border-2 border-[#00aeef] transition-all duration-300 text-center"
+
+              {/* Secondary CTA with drawn border */}
+              <a
+                href="/about"
+                className="hero-border-draw relative w-full max-w-xs rounded-full text-center"
               >
-                Discover Our Company
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 48" preserveAspectRatio="none" fill="none">
+                  <rect x="1" y="1" width="298" height="46" rx="23" stroke="#00aeef" strokeWidth="2" strokeDasharray="1000" strokeDashoffset="1000" />
+                </svg>
+                <span className="relative block px-6 py-3.5 font-semibold text-[#0077a8]">
+                  Discover Our Company
+                </span>
               </a>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
