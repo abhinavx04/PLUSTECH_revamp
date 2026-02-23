@@ -1,3 +1,5 @@
+import { NAV_ITEMS } from './PageLayout';
+
 const Footer = () => {
   return (
     <footer
@@ -35,21 +37,32 @@ const Footer = () => {
           <div className="flex flex-col space-y-2">
             <h2 className="text-sm md:text-base font-semibold text-white">Explore</h2>
             <ul className="space-y-1.5 text-sm">
-              {[
-                { label: 'Home', href: '/' },
-                { label: 'About', href: '/about' },
-                { label: 'Services', href: '/services' },
-                { label: 'News', href: '/news' },
-                { label: 'Careers', href: '/careers' },
-                { label: 'Contact', href: '/contact' },
-              ].map((item) => (
+              {NAV_ITEMS.map((item) => (
                 <li key={item.label}>
                   <a
-                    href={item.href}
+                    href={item.link}
                     className="text-gray-300 hover:text-[#00aeef] transition-colors duration-200"
                     aria-label={`Navigate to ${item.label}`}
                   >
-                    {item.label}
+                    {item.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* About Subpages (from navbar submenu) */}
+          <div className="flex flex-col space-y-2">
+            <h2 className="text-sm md:text-base font-semibold text-white">About</h2>
+            <ul className="space-y-1.5 text-sm">
+              {NAV_ITEMS.find((item) => item.name === 'About')?.submenu?.map((subItem) => (
+                <li key={subItem.title}>
+                  <a
+                    href={subItem.path}
+                    className="text-gray-300 hover:text-[#00aeef] transition-colors duration-200"
+                    aria-label={`Navigate to ${subItem.title}`}
+                  >
+                    {subItem.title}
                   </a>
                 </li>
               ))}
