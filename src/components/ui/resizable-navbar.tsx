@@ -109,7 +109,7 @@ export const NavItems = ({ items, className }: NavItemsProps) => {
   }, [openDropdown]);
 
   return (
-    <ul className={cn("flex items-center space-x-8", className)}>
+    <ul className={cn("flex items-center space-x-4 lg:space-x-6 xl:space-x-8", className)}>
       {items.map((item, idx) => {
         const hasSubmenu = item.submenu && item.submenu.length > 0;
         const isOpen = openDropdown === item.name;
@@ -117,7 +117,7 @@ export const NavItems = ({ items, className }: NavItemsProps) => {
         return (
           <li 
             key={`nav-item-${idx}`} 
-            className="relative dropdown-container"
+            className="relative dropdown-container shrink-0"
           >
             <a
               href={item.link}
@@ -128,7 +128,7 @@ export const NavItems = ({ items, className }: NavItemsProps) => {
                 }
               }}
               className={cn(
-                "relative text-[#222222] hover:text-[#333333] transition-colors duration-200 font-medium transform hover:scale-105 inline-block flex items-center gap-1",
+                "relative text-[#222222] hover:text-[#333333] transition-colors duration-200 font-medium transform hover:scale-105 inline-flex items-center gap-1 whitespace-nowrap",
                 isOpen && "text-[#00aeef]"
               )}
             >

@@ -60,7 +60,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) =
           {/* Desktop Navigation */}
           <NavBody>
             <NavbarLogo />
-            <div className="flex-1 flex justify-center mr-24">
+            <div className="flex-1 flex justify-center min-w-0 mr-12 lg:mr-24">
               <NavItems items={NAV_ITEMS} />
             </div>
           </NavBody>
