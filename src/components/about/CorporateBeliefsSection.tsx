@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas, faUsers, faGlasses, faBullseye, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { far, faCircleCheck } from '@fortawesome/free-regular-svg-icons';
+import SpotlightCard from '../SpotlightCard';
 import '../../styles/animatedBorder.css';
 
 // Add icons to library
@@ -78,8 +79,19 @@ const beliefsData: BeliefCard[] = [
   }
 ];
 
+const ourValues = [
+  'CUSTOMER-CENTRIC',
+  'INTEGRITY',
+  'ACCOUNTABILITY',
+  'INNOVATION',
+  'COLLABORATION',
+  'TRANSPARENCY',
+  'GRATITUDE',
+];
+
 const CorporateBeliefsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const valuesSectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
 
   return (
@@ -215,7 +227,88 @@ const CorporateBeliefsSection: React.FC = () => {
          })}
        </div>
 
-      {/* Summary Quote */}
+      {/* Our Values — spotlight grid: 4 top row, 3 centered bottom; scroll-in animation */}
+      <div ref={valuesSectionRef} className="mt-16 values-section-wrapper">
+        <div className="values-section-inner">
+          <motion.h3
+            className="values-title"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            Our Values
+          </motion.h3>
+          <motion.p
+            className="values-subtitle"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            What we stand for
+          </motion.p>
+          <div className="flex flex-col items-center gap-6 lg:gap-7">
+            {/* Top row: 4 cards — stagger so they enter one by one */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6 w-full max-w-5xl">
+              {ourValues.slice(0, 4).map((value, index) => (
+                <motion.div
+                  key={value}
+                  initial={{ opacity: 0, y: 56, scale: 0.92 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: index * 0.18,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <SpotlightCard
+                    variant="light"
+                    accentBar
+                    spotlightColor="rgba(220, 38, 38, 0.45)"
+                    className="h-full flex items-center justify-center min-h-[170px] w-full"
+                  >
+                    <span className="text-center font-bold font-sans text-[#333333] text-lg sm:text-xl px-4">
+                      {value}
+                    </span>
+                  </SpotlightCard>
+                </motion.div>
+              ))}
+            </div>
+            {/* Bottom row: 3 cards — continue cascade after top row */}
+            <div className="flex flex-wrap justify-center gap-5 lg:gap-6 w-full">
+              {ourValues.slice(4, 7).map((value, index) => (
+                <motion.div
+                  key={value}
+                  className="w-full min-w-[220px] max-w-[360px] sm:max-w-[320px] lg:w-[340px]"
+                  initial={{ opacity: 0, y: 56, scale: 0.92 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.72 + index * 0.18,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <SpotlightCard
+                    variant="light"
+                    accentBar
+                    spotlightColor="rgba(220, 38, 38, 0.45)"
+                    className="h-full flex items-center justify-center min-h-[170px] w-full"
+                  >
+                    <span className="text-center font-bold font-sans text-[#333333] text-lg sm:text-xl px-4">
+                      {value}
+                    </span>
+                  </SpotlightCard>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Quote — Our Commitment */}
       <motion.div 
         className="mt-16 text-center bg-gradient-to-r from-[#00aeef]/10 via-white to-[#00aeef]/10 rounded-2xl p-6 sm:p-8 md:p-12 border border-[#00aeef]/20 relative overflow-hidden"
         initial={{ opacity: 0, y: 30 }}

@@ -164,6 +164,90 @@
   100% { transform: scaleX(1); opacity: 1; }
 }
 
+/* Our Values — scroll-in hero block */
+.values-section-wrapper {
+  position: relative;
+  padding: 2.5rem 1.5rem 2rem;
+  border-radius: 1.5rem;
+  background: transparent;
+  transition: opacity 0.6s ease-out;
+}
+
+.values-section-inner {
+  position: relative;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.values-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.values-subtitle {
+  font-size: 0.95rem;
+  color: #00aeef;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Our Values pills: scroll-triggered entrance + interactive hover */
+@keyframes values-pill-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes values-pill-glow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(0, 174, 239, 0.28); }
+  50%  { box-shadow: 0 6px 28px rgba(0, 174, 239, 0.4); }
+}
+
+.values-pill-enter {
+  opacity: 0;
+}
+
+.values-section-visible .values-pill-enter {
+  animation: values-pill-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.values-pill {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  font-weight: 700;
+  font-family: var(--font-body);
+  color: #1e293b;
+  letter-spacing: 0.04em;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 9999px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+
+.values-pill:hover {
+  transform: scale(1.08) translateY(-3px);
+  color: #00aeef;
+  border-color: #00aeef;
+  box-shadow: 0 6px 24px rgba(0, 174, 239, 0.3);
+  animation: values-pill-glow 1.2s ease-in-out infinite;
+}
+
 /* Performance optimizations for animations */
 .will-change-transform {
   will-change: transform;
