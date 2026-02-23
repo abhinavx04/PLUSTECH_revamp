@@ -43,6 +43,8 @@ interface CapabilityItem {
   bgColor: string;
   textColor: string;
   animationDirection: 'left' | 'right' | 'up';
+  logoSrc?: string;
+  logoAlt?: string;
 }
 
 const capabilitiesData: CapabilityItem[] = [
@@ -59,6 +61,26 @@ const capabilitiesData: CapabilityItem[] = [
     bgColor: 'bg-gradient-to-b from-white via-white to-blue-50',
     textColor: 'text-black',
     animationDirection: 'left'
+  },
+  {
+    id: 'paint-circulation',
+    title: 'Paint Circulation Systems',
+    description:
+      'Plustech Systems is also an authorized distributor & integrator to Graco – USA for their industrial finishing products & fluid handling equipment. We also provide turnkey solutions for paint, sealer & underbody circulation & application systems.',
+    features: [],
+    images: [
+      '/graco/1.png',
+      '/graco/2.jpeg',
+      '/graco/3.jpeg',
+      '/graco/4.jpg',
+      '/graco/5.jpg',
+      '/graco/6.jpg'
+    ],
+    bgColor: 'bg-gradient-to-b from-blue-50 via-blue-100 to-white',
+    textColor: 'text-black',
+    animationDirection: 'right',
+    logoSrc: '/graco/graco-logo.png',
+    logoAlt: 'Graco – Authorized Partner'
   },
   {
     id: 'robotic-applications',
@@ -310,6 +332,8 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
     return 0.8 + (0.2 * progress);
   });
 
+  const isPrimaryLogo = capability.id === 'paint-circulation';
+
 
   return (
     <motion.div
@@ -328,9 +352,29 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
           {/* Content Section */}
           <div className="text-left max-w-5xl">
             <div className="space-y-6">
-              <h3 className={`text-2xl md:text-3xl font-semibold font-heading leading-tight ${capability.textColor}`}>
-                {capability.title}
-              </h3>
+              <div className="flex items-center gap-4 flex-wrap">
+                {capability.logoSrc && (
+                  <div className={isPrimaryLogo ? 'h-12 md:h-14' : 'h-10 md:h-12'}>
+                    <div
+                      className={
+                        isPrimaryLogo
+                          ? 'h-full w-auto rounded-2xl bg-white shadow-[0_10px_30px_rgba(0,0,0,0.18)] ring-2 ring-[#00aeef]/70 px-4 py-1 flex items-center justify-center transition-transform duration-300 hover:scale-105'
+                          : 'h-full w-auto flex items-center'
+                      }
+                    >
+                      <img
+                        src={capability.logoSrc}
+                        alt={capability.logoAlt ?? `${capability.title} logo`}
+                        className="h-full w-auto object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+                )}
+                <h3 className={`text-2xl md:text-3xl font-semibold font-heading leading-tight ${capability.textColor}`}>
+                  {capability.title}
+                </h3>
+              </div>
               <p className={`text-lg md:text-xl font-body leading-relaxed ${capability.textColor === 'text-white' ? 'text-gray-200' : 'text-gray-700'}`}>
                 {capability.description}
               </p>
@@ -395,7 +439,7 @@ const CapabilityItem: React.FC<CapabilityItemProps> = ({
 
                 <HomeFeatureVideo />
               </div>
-            ) : (capability.id === 'robotic-applications' || capability.id === 'material-handling' || capability.id === 'digitization') ? (
+            ) : (capability.id === 'paint-circulation' || capability.id === 'robotic-applications' || capability.id === 'material-handling' || capability.id === 'digitization') ? (
               <ImageCarousel images={capability.images} onImageClick={(index) => setSelectedImageIndex(index)} />
             ) : null}
           </motion.div>
