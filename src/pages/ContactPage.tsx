@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
+import { MapPin } from 'lucide-react';
 import Footer from '../components/Footer';
 import { db } from '../lib/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
@@ -140,6 +141,16 @@ const ContactPage: React.FC = () => {
                       <br />
                       Pune, Maharashtra 411011
                     </p>
+                    <a
+                      href="https://www.google.com/maps?sca_esv=566ee744d85630e4&sxsrf=ANbL-n5v2B2rD5iTayTMMEpBsoGHG0CpMg:1771839664654&uact=5&gs_lp=Egxnd3Mtd2l6LXNlcnAiJXBsdXN0ZWNoIHN5c3RlbXMgJiBzb2x1dGlvbnMgbG9jYXRpb24yBRAhGKABMgUQIRigATIFECEYkgMyBRAhGJIDMgUQIRiSAzIFECEYkgMyBRAhGJIDSKgkUIwSWNkgcAF4AJABAJgBxwGgAaEMqgEEMC4xMLgBA8gBAPgBAZgCCqACvAvCAgoQABiwAxjWBBhHwgIWEC4YgAQYsAMYQxjHARiKBRiOBRivAcICExAuGIAEGEMYxwEYyQMYigUYrwHCAgoQABiABBgUGIcCwgIFEAAYgATCAgYQABgWGB7CAgIQJsICCxAAGIAEGIYDGIoFwgIIEAAYgAQYogTCAiIQLhiABBhDGMcBGMkDGIoFGK8BGJcFGNwEGN4EGOAE2AEBwgIJEAAYFhjJAxgemAMAiAYBkAYJugYGCAEQARgUkgcFMS44LjGgB-89sgcFMC44LjG4B7YLwgcFMC44LjLIBxSACAA&um=1&ie=UTF-8&fb=1&gl=in&sa=X&geocode=KUV0F18VwcI7MU7OXtoiXPBN&daddr=Office+no.+412,+Antariksh+Towers,+9th+Floor,+Building+B,+Station+Rd,+opp.+Old+Zilla+Parishad,+Mangalwar+Peth,+Pune,+Maharashtra+411001"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 text-sm text-[#00aeef] font-semibold hover:underline underline-offset-4"
+                      aria-label="Click here to get location"
+                    >
+                      <MapPin className="h-4 w-4" aria-hidden="true" />
+                      Click here to get location
+                    </a>
                   </div>
 
                   {/* Call us – Head Office numbers */}
