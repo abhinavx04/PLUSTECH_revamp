@@ -115,7 +115,49 @@ const patternCircuit: PatternFn = (w, h, cx, cy, safeR) => {
   return { lines, arcs, dots };
 };
 
-// --- Pattern 3: Concentric Arcs & Radials ---
+// --- Pattern 3: Concentric Polygons (hexagons + radial spokes) — new ---
+
+const patternConcentricPoly: PatternFn = (w, h, cx, cy, safeR) => {
+  const lines: Line[] = [];
+  const dots: Dot[] = [];
+  const arcs: Arc[] = [];
+  const maxR = Math.max(w, h) * 0.52;
+  const rings = [0.25, 0.4, 0.55, 0.7, 0.85];
+  const sides = 6;
+
+  for (let ri = 0; ri < rings.length; ri++) {
+    const r = maxR * rings[ri];
+    if (r < safeR * 1.1) continue;
+    const order = rings[ri];
+    for (let i = 0; i < sides; i++) {
+      const a1 = (TAU / sides) * i - Math.PI / 6;
+      const a2 = (TAU / sides) * (i + 1) - Math.PI / 6;
+      const x1 = cx + r * Math.cos(a1);
+      const y1 = cy + r * Math.sin(a1);
+      const x2 = cx + r * Math.cos(a2);
+      const y2 = cy + r * Math.sin(a2);
+      if (!lineInSafe(x1, y1, x2, y2, cx, cy, safeR * 2.4, safeR * 1.8)) {
+        lines.push({ x1, y1, x2, y2, w: ri === 0 ? 1.5 : 1, order });
+      }
+    }
+  }
+
+  const spokeCount = 12;
+  for (let i = 0; i < spokeCount; i++) {
+    const angle = (TAU / spokeCount) * i;
+    const x1 = cx + Math.cos(angle) * safeR * 1.2;
+    const y1 = cy + Math.sin(angle) * safeR * 1.2;
+    const x2 = cx + Math.cos(angle) * maxR;
+    const y2 = cy + Math.sin(angle) * maxR;
+    if (!lineInSafe(x1, y1, x2, y2, cx, cy, safeR * 2.4, safeR * 1.8)) {
+      lines.push({ x1, y1, x2, y2, w: 1, order: 0.5 });
+    }
+  }
+
+  return { lines, arcs, dots };
+};
+
+// --- Pattern 4: Concentric Arcs & Radials ---
 
 const patternRadial: PatternFn = (w, h, cx, cy, safeR) => {
   const lines: Line[] = [];
@@ -159,7 +201,7 @@ const patternRadial: PatternFn = (w, h, cx, cy, safeR) => {
   return { lines, arcs, dots };
 };
 
-// --- Pattern 4: Triangulated Mesh ---
+// --- Pattern 5: Triangulated Mesh ---
 
 const patternMesh: PatternFn = (w, h, cx, cy, safeR) => {
   const lines: Line[] = [];
@@ -207,7 +249,73 @@ const patternMesh: PatternFn = (w, h, cx, cy, safeR) => {
   return { lines, arcs, dots };
 };
 
-// --- Pattern 5: HUD / Tech Frame ---
+// --- Pattern 6: Voronoi-style grid (deterministic hexagonal cells) — new ---
+
+const patternVoronoiGrid: PatternFn = (w, h, cx, cy, safeR) => {
+  const lines: Line[] = [];
+  const dots: Dot[] = [];
+  const arcs: Arc[] = [];
+  const sw = safeR * 2.4;
+  const sh = safeR * 1.8;
+  const cellSize = Math.min(w, h) * 0.12;
+  const strideX = cellSize * 1.5;
+  const strideY = cellSize * Math.sqrt(3);
+
+  for (let row = -4; row <= 4; row++) {
+    for (let col = -4; col <= 4; col++) {
+      const px = cx + col * strideX + (row % 2 !== 0 ? strideX / 2 : 0);
+      const py = cy + row * strideY;
+      if (px < -cellSize || px > w + cellSize || py < -cellSize || py > h + cellSize) continue;
+      const distNorm = Math.sqrt((px - cx) ** 2 + (py - cy) ** 2) / (Math.max(w, h) * 0.5);
+
+      for (let i = 0; i < 6; i++) {
+        const [ax, ay] = hexCorner(px, py, cellSize * 0.95, i);
+        const [bx, by] = hexCorner(px, py, cellSize * 0.95, (i + 1) % 6);
+        if (lineInSafe(ax, ay, bx, by, cx, cy, sw, sh)) continue;
+        lines.push({ x1: ax, y1: ay, x2: bx, y2: by, w: 1.1, order: distNorm });
+      }
+    }
+  }
+
+  return { lines, arcs, dots };
+};
+
+// --- Pattern 7: Chevron / Arrow grid — new ---
+
+const patternChevron: PatternFn = (w, h, cx, cy, safeR) => {
+  const lines: Line[] = [];
+  const dots: Dot[] = [];
+  const arcs: Arc[] = [];
+  const sw = safeR * 2.4;
+  const sh = safeR * 1.8;
+  const step = Math.min(w, h) * 0.1;
+  const half = step / 2;
+
+  for (let gx = -Math.ceil(w / step) - 1; gx <= Math.ceil(w / step) + 1; gx++) {
+    for (let gy = -Math.ceil(h / step) - 1; gy <= Math.ceil(h / step) + 1; gy++) {
+      const baseX = cx + gx * step;
+      const baseY = cy + gy * step;
+      const o = Math.sqrt((baseX - cx) ** 2 + (baseY - cy) ** 2) / (Math.max(w, h) * 0.5);
+      const parity = (gx + gy) % 2;
+      const x1 = baseX;
+      const y1 = baseY + (parity ? 0 : half);
+      const x2 = baseX + half;
+      const y2 = baseY + (parity ? half : step);
+      const x3 = baseX + step;
+      const y3 = baseY + (parity ? 0 : half);
+      if (!lineInSafe(x1, y1, x2, y2, cx, cy, sw, sh)) {
+        lines.push({ x1, y1, x2, y2, w: 1.2, order: o });
+      }
+      if (!lineInSafe(x2, y2, x3, y3, cx, cy, sw, sh)) {
+        lines.push({ x1: x2, y1: y2, x2: x3, y2: y3, w: 1.2, order: o });
+      }
+    }
+  }
+
+  return { lines, arcs, dots };
+};
+
+// --- Pattern 8: HUD / Tech Frame ---
 
 const patternHUD: PatternFn = (w, h, cx, cy, safeR) => {
   const lines: Line[] = [];
@@ -258,8 +366,15 @@ const patternHUD: PatternFn = (w, h, cx, cy, safeR) => {
   return { lines, arcs, dots };
 };
 
-// --- All patterns ---
-const PATTERNS: PatternFn[] = [patternHex, patternCircuit, patternRadial, patternMesh, patternHUD];
+// --- All patterns: geometric only (points drawn); random constellation formations (Circuit, Mesh) excluded ---
+const PATTERNS: PatternFn[] = [
+  patternHex,
+  patternRadial,
+  patternHUD,
+  patternConcentricPoly,
+  patternVoronoiGrid,
+  patternChevron,
+];
 
 // ==================== Component ====================
 
@@ -371,7 +486,7 @@ const MobileHeroPattern: React.FC<{ className?: string }> = ({ className = '' })
         ctx.stroke();
       }
 
-      // Draw dots
+      // Draw points (dots) — subtle but stylish glow
       for (const dot of pattern.dots) {
         const dotProgress = Math.max(0, Math.min(1, (eased - dot.order * 0.6) / 0.3));
         if (dotProgress <= 0) continue;
@@ -384,16 +499,16 @@ const MobileHeroPattern: React.FC<{ className?: string }> = ({ className = '' })
         const r = dot.r * dotProgress * pulse;
         const alpha = 0.7 * fadeNear * dotProgress;
 
-        // Glow
-        if (dot.r > 2.5) {
-          const glow = ctx.createRadialGradient(dot.x, dot.y, r, dot.x, dot.y, r * 4);
-          glow.addColorStop(0, `rgba(0, 160, 230, ${alpha * 0.3})`);
-          glow.addColorStop(1, 'rgba(0, 160, 230, 0)');
-          ctx.beginPath();
-          ctx.arc(dot.x, dot.y, r * 4, 0, TAU);
-          ctx.fillStyle = glow;
-          ctx.fill();
-        }
+        // Soft outer glow (all dots) — subtle halo
+        const glowRadius = Math.max(r * 6, 12);
+        const glowGrad = ctx.createRadialGradient(dot.x, dot.y, r * 0.5, dot.x, dot.y, glowRadius);
+        glowGrad.addColorStop(0, `rgba(0, 174, 239, ${alpha * 0.25})`);
+        glowGrad.addColorStop(0.4, `rgba(0, 155, 220, ${alpha * 0.12})`);
+        glowGrad.addColorStop(1, 'rgba(0, 140, 200, 0)');
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, glowRadius, 0, TAU);
+        ctx.fillStyle = glowGrad;
+        ctx.fill();
 
         // Core
         ctx.beginPath();
@@ -401,26 +516,26 @@ const MobileHeroPattern: React.FC<{ className?: string }> = ({ className = '' })
         ctx.fillStyle = `rgba(10, 55, 100, ${alpha})`;
         ctx.fill();
 
-        // Bright center
+        // Bright center (larger dots)
         if (dot.r > 2.5) {
           ctx.beginPath();
           ctx.arc(dot.x, dot.y, r * 0.35, 0, TAU);
-          ctx.fillStyle = `rgba(0, 174, 239, ${alpha * 0.8})`;
+          ctx.fillStyle = `rgba(0, 174, 239, ${alpha * 0.9})`;
           ctx.fill();
         }
       }
 
-      // Post-draw: subtle ambient pulse wave from a random dot every ~3s
+      // Subtle ambient pulse: one dot emits a soft expanding ring every ~3s
       if (drawProgress >= 1 && pattern.dots.length > 0) {
         const pulseIdx = Math.floor(t / 3) % pattern.dots.length;
         const pulseDot = pattern.dots[pulseIdx];
         const pulseT = (t % 3) / 3;
-        if (pulseT < 0.8) {
-          const pr = pulseT * 50;
-          const pa = (1 - pulseT / 0.8) * 0.3;
+        if (pulseT < 0.7) {
+          const pr = pulseT * 45;
+          const pa = (1 - pulseT / 0.7) * 0.22;
           ctx.beginPath();
           ctx.arc(pulseDot.x, pulseDot.y, pr, 0, TAU);
-          ctx.strokeStyle = `rgba(0, 155, 220, ${pa})`;
+          ctx.strokeStyle = `rgba(0, 174, 239, ${pa})`;
           ctx.lineWidth = 1.5;
           ctx.stroke();
         }
