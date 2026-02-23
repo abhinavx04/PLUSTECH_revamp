@@ -7,7 +7,7 @@ const industries = [
   { label: 'Automotive Plastics', image: '/industry focus/Automotive_parts.png' },
   { label: 'Farm and Construction Machinery', image: '/industry focus/Farm_construction.png' },
   { label: 'Consumer Durables', image: '/industry focus/consumer_durables.png' },
-  { label: 'General Industry', image: '/industry focus/General_industry.png' },
+  { label: 'General Industry', image: '/industry focus/General-industry.png' },
 ];
 
 const IndustrySection: React.FC<{

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoutes';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Lazy load all page components for code splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -35,34 +36,40 @@ const PageLoader = () => (
 
 function App() {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/services" element={<ServicesPage />} />
-      <Route path="/projects" element={<ProjectsPage />} />
-      <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
-      <Route path="/news" element={<NewsPage />} />
-      <Route path="/careers" element={<CareersPage />} />
-      <Route path="/careers/apply/:jobId" element={<CareerApplyPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/facility" element={<OfficeTourPage />} />
-      <Route path="/about/csr-activities/:activityId" element={<CSRActivityDetailPage />} />
-      <Route path="/about" element={<AboutUsPage />}>
-        <Route path="corporate-beliefs" element={<CorporateBeliefsPage />} />
-        <Route path="industry-focus" element={<IndustryFocusPage />} />
-        <Route path="certifications" element={<CertificationsPage />} />
-        <Route path="history" element={<HistoryPage />} />
-        <Route path="annual-returns" element={<AnnualReturnsPage />} />
-        <Route path="csr-activities" element={<CSRActivitiesPage />} />
-      </Route>
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/dashboard" element={
-        <ProtectedRoute requireAdmin={true}>
-          <AdminDashboard />
-        </ProtectedRoute>
-      } />
-      </Routes>
-    </Suspense>
+    <>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/careers" element={<CareersPage />} />
+          <Route path="/careers/apply/:jobId" element={<CareerApplyPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/facility" element={<OfficeTourPage />} />
+          <Route path="/about/csr-activities/:activityId" element={<CSRActivityDetailPage />} />
+          <Route path="/about" element={<AboutUsPage />}>
+            <Route path="corporate-beliefs" element={<CorporateBeliefsPage />} />
+            <Route path="industry-focus" element={<IndustryFocusPage />} />
+            <Route path="certifications" element={<CertificationsPage />} />
+            <Route path="history" element={<HistoryPage />} />
+            <Route path="annual-returns" element={<AnnualReturnsPage />} />
+            <Route path="csr-activities" element={<CSRActivitiesPage />} />
+          </Route>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Suspense>
+      <SpeedInsights />
+    </>
   );
 }
 
