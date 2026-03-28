@@ -67,7 +67,7 @@ const beliefsData: BeliefCard[] = [
     description: 'Our USP outlined under the acronym PEACE (Productivity, Efficiency, Affordability, Cost and Environment) focuses on delivering best value proposition to customers for long lasting relationships.',
     icon: 'chart-line',
     color: 'from-[#00aeef] to-[#0099d4]',
-    stats: ['Productivity', 'Cost', 'Efficiency', 'Environment', 'Affordability']
+    stats: ['Productivity', 'Efficiency', 'Affordability', 'Cost', 'Environment']
   },
   {
     id: 'future-plans',
