@@ -6,6 +6,6 @@ Allow: /
 User-agent: *
 Disallow: /admin/
 
-# Sitemap location (update this URL to your actual domain)
-Sitemap: https://plustech.com/sitemap.xml
+# Sitemap location
+Sitemap: https://www.plustech.co.in/sitemap.xml
 
