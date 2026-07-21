@@ -131,6 +131,21 @@ const Footer = () => {
           <div className="text-xs text-gray-400">
             © {new Date().getFullYear()} Plustech Systems and Solutions. All rights reserved.
           </div>
+          {/* D&B Registered Seal */}
+          <div className="flex flex-col items-center">
+            <div className="bg-white rounded-md p-1 shadow-md">
+              <iframe
+                id="Iframe1"
+                src="https://dunsregistered.dnb.com/SealAuthentication.aspx?Cid=1"
+                width="114"
+                height="97"
+                frameBorder="0"
+                scrolling="no"
+                title="D&B Registered Seal"
+                style={{ border: 'none', display: 'block' }}
+              />
+            </div>
+          </div>
           <div className="flex space-x-4">
             {[
               {
